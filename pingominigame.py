@@ -71,7 +71,7 @@ class PingoMinigame:
 			self.tela.blit(aumentado, (428 / 2 - aumentado.get_width() / 2, 240 / 2 - aumentado.get_height() / 2))
 			if self.jumpscare_tempo >= 1:
 				fechar = True
-		screen.blit(pygame.transform.scale_by(self.tela, (screen.get_width() / 428, screen.get_height() / 240)), (0, 0))
+		screen.blit(pygame.transform.scale(self.tela, screen.get_size()), (0, 0))
 		if fechar:
 			return "perdeu"
 		for balde in self.baldes:

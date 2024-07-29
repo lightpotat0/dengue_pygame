@@ -4,9 +4,9 @@ import random
 
 CENTRO = (1066 / 2 - (72 * 7 + 72 - 64) / 2, 600 / 2 - (72 * 7 + 72 - 64) / 2)
 TIPOS = [
-	"+R$5",
-	"-R$2",
-	"dado",
+	#"+R$5",
+	#"-R$2",
+	#"dado",
 	#"pergunta",
 	"minigame",
 	#"medalha",
