@@ -1,4 +1,5 @@
 import pygame
+import util
 
 fonte = pygame.font.SysFont('arial', 40, True, True)
 fonte1 = pygame.font.SysFont('arial', 25, True, True)
@@ -17,7 +18,7 @@ class Titulo:
 		mensagem1 = 'Ou pressione esc para sair'
 		texto_formatado = fonte.render(mensagem, True, (000,000,000))
 		texto_formatado1 = fonte1.render(mensagem1, True, (000,000,000))
-		screen.blit(texto_formatado, (200, 480))
-		screen.blit(texto_formatado1, (370, 530))
+		util.scaleblit(screen, 600, texto_formatado, (200, 480))
+		util.scaleblit(screen, 600, texto_formatado1, (370, 530))
 		if self.comecar:
 			return "novo jogo"

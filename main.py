@@ -10,7 +10,7 @@ clock = pygame.time.Clock()
 import util
 import titulo
 import tabuleiro
-import pingominigame
+import pingominigame as pingominigame
 import walkminigame
 
 minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
@@ -34,6 +34,7 @@ class Jogo:
 		self.jogadores[self.jogador_atual].moedas += moedas
 
 jogo = Jogo()
+casas = None
 
 while True:
 	for event in pygame.event.get():
@@ -53,15 +54,16 @@ while True:
 	match modo.frame(screen, delta, jogo):
 		case "novo jogo":
 			jogo = Jogo()
-			modo = tabuleiro.Tabuleiro()
+			modo = tabuleiro.Tabuleiro(None, jogo)
+			casas = modo.casas
 		case "minigame":
 			modo = random.choice(minigames)()
 		case "ganhou":
 			jogo.receber_moedas(10)
 			jogo.passar_vez()
-			modo = tabuleiro.Tabuleiro()
+			modo = tabuleiro.Tabuleiro(casas, jogo)
 		case "perdeu":
 			jogo.passar_vez()
-			modo = tabuleiro.Tabuleiro()
+			modo = tabuleiro.Tabuleiro(casas, jogo)
 	pygame.display.update()
 	delta = clock.tick() / 1000

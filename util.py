@@ -7,9 +7,23 @@ pressionado_agora = pressionado
 def clamp(v, x, y):
 	return max(min(v, y), x)
 
-def scaleblit(screen, altura_esperada, obj, pos):
+def scaleblit(screen, altura_esperada, obj, pos, area = None, escala = 1):
 	scale = screen.get_height() / altura_esperada
-	screen.blit(pygame.transform.scale_by(obj, scale), (pos[0] * scale, pos[1] * scale))
+	if area != None:
+		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), pygame.rect.Rect(area[0] * escala, area[1] * escala, area[2] * escala, area[3] * escala))
+	else:
+		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), None)
+
+def tint(obj, cor):
+	obj = obj.copy()
+	obj.fill((191, 191, 191, 255), None, pygame.BLEND_RGBA_MULT)
+	obj.fill(cor, None, pygame.BLEND_RGB_ADD)
+	return obj
+
+def tint_mult(obj, cor):
+	obj = obj.copy()
+	obj.fill(cor, None, pygame.BLEND_RGBA_MULT)
+	return obj
 
 def blitanimado(screen, obj, pos, tempo, fps):
 	frame_atual = int(tempo * fps) % len(obj)
