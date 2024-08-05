@@ -49,6 +49,7 @@ while True:
 	if util.pressionado_agora[pygame.K_ESCAPE]:
 		pygame.quit()
 		sys.exit()
+
 	match modo.frame(screen, delta, jogo):
 		case "novo jogo":
 			jogo = Jogo()
@@ -62,5 +63,6 @@ while True:
 		case "perdeu":
 			jogo.passar_vez()
 			modo = tabuleiro.Tabuleiro()
+			
 	pygame.display.update()
 	delta = clock.tick() / 1000

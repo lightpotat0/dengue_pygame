@@ -31,38 +31,38 @@ class Obstacle(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         if self.object == 'down' and keys[pygame.K_DOWN]:
             self.kill()
-            spawn = True
         if self.object == 'up' and keys[pygame.K_UP]:
             self.kill()
-            spawn = True
         if self.object == 'right' and keys[pygame.K_RIGHT]:
             self.kill()
-            spawn = True
 
 
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
 pygame.display.set_caption('Alerta Mosquito')
 clock = pygame.time.Clock()
-spawn = True
+spawn = 3
 
+#Player
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+#Obstacle
 obstacles = pygame.sprite.Group()
 
+#Ground
 ground = pygame.image.load('walkminigame\Sprites\ground.png').convert()
 groundrect = ground.get_rect(bottomleft = (0,720))
 
+#Game Loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
 
-    if spawn:
+    while len(obstacles) < 10:
         obstacles.add(Obstacle(choice(['up', 'down', 'right'])))
-        spawn = False
 
 
     screen.fill('Blue')
