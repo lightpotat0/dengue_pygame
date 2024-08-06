@@ -2,7 +2,7 @@ import pygame
 import sys
 import random
 
-pygame.init()iuy
+pygame.init()
 screen = pygame.display.set_mode((1066, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
@@ -10,7 +10,7 @@ clock = pygame.time.Clock()
 import util
 import titulo
 import tabuleiro
-import pingominigame as pingominigame
+import pingominigame
 import walkminigame
 
 minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
@@ -34,7 +34,6 @@ class Jogo:
 		self.jogadores[self.jogador_atual].moedas += moedas
 
 jogo = Jogo()
-casas = None
 
 while True:
 	for event in pygame.event.get():
@@ -54,16 +53,15 @@ while True:
 	match modo.frame(screen, delta, jogo):
 		case "novo jogo":
 			jogo = Jogo()
-			modo = tabuleiro.Tabuleiro(None, jogo)
-			casas = modo.casas
+			modo = tabuleiro.Tabuleiro()
 		case "minigame":
 			modo = random.choice(minigames)()
 		case "ganhou":
 			jogo.receber_moedas(10)
 			jogo.passar_vez()
-			modo = tabuleiro.Tabuleiro(casas, jogo)
+			modo = tabuleiro.Tabuleiro()
 		case "perdeu":
 			jogo.passar_vez()
-			modo = tabuleiro.Tabuleiro(casas, jogo)
+			modo = tabuleiro.Tabuleiro()
 	pygame.display.update()
 	delta = clock.tick() / 1000
