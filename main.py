@@ -2,7 +2,7 @@ import pygame
 import sys
 import random
 
-pygame.init()
+pygame.init()iuy
 screen = pygame.display.set_mode((1066, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
