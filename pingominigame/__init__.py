@@ -10,7 +10,7 @@ class Balde:
 		self.pos = pos
 		self.cheio = 0
 		self.fechado = False
-		self.velocidade = random.uniform(1.4, 1.8)
+		self.velocidade = random.uniform(1.2, 2.0)
 
 class PingoMinigame:
 	def __init__(self):
