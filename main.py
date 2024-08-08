@@ -12,6 +12,8 @@ import titulo
 import tabuleiro
 import pingominigame
 import walkminigame
+import spacedengue
+
 
 minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
 
