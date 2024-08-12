@@ -32,12 +32,16 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(300 + self.index*200, 474))
 
     def update(self):
-        if self.minigame.trigger and self.index == self.minigame.kills:
-            direction_key = self.directions[self.object]
-            if self.minigame.key_pressed == direction_key:
-                self.kill()
-                self.minigame.kills += 1
-                self.minigame.trigger = False
+        if not self.minigame.trigger:
+            return
+
+        keys = pygame.key.get_pressed()
+        direction_key = self.directions[self.object]
+
+        if keys[direction_key] and self.index == self.minigame.kills:
+            self.kill()
+            self.minigame.kills += 1
+            self.minigame.trigger = False
 
 # Main Game Class
 class WalkMinigame:
@@ -45,7 +49,6 @@ class WalkMinigame:
         self.screen = pygame.Surface((1280, 720))
         self.spawn = True
         self.trigger = False
-        self.key_pressed = None
 
         self.player = pygame.sprite.GroupSingle(Player())
         self.obstacles = pygame.sprite.Group()
@@ -60,14 +63,13 @@ class WalkMinigame:
         self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert_alpha()
         self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
 
-    def frame(self, screen, delta, jogo):
-        self.key_pressed = None
+    def frame(self, screen, delta):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 self.trigger = True
-                self.key_pressed = event.key
             if event.type == pygame.QUIT:
                 pygame.quit()
+                exit()
 
         if self.spawn:
             for i in range(30):
@@ -98,7 +100,7 @@ def main():
 
     while running:
         delta = clock.tick(60) / 1000
-        result = jogo.frame(screen, delta, jogo)
+        result = jogo.frame(screen, delta)
 
         if result == "ganhou":
             print("Você ganhou!")

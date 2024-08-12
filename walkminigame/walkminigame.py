@@ -1,107 +1,129 @@
 import pygame
 from random import choice
 
-#Player Class
+# Player Class
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('walkminigame/Sprites/player.png').convert_alpha()
-        self.rect = self.image.get_rect(midbottom=(120, 320))
+        self.rect = self.image.get_rect(midbottom=(120, 474))
 
-#Obstacle Class
+# Obstacle Class
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, object, minigame):
-        super().__init__()
-        self.minigame = minigame
-        self.object = object
-
-        object_images = {
+    directions = {
+        'down': pygame.K_DOWN,
+        'up': pygame.K_UP,
+        'right': pygame.K_RIGHT
+    }
+    object_images = {
             'down': 'walkminigame/Sprites/bucketdown.png',
             'up': 'walkminigame/Sprites/trashup.png',
             'right': 'walkminigame/Sprites/tireright.png'
-        }
+    }
 
-        self.image = pygame.image.load(object_images[object]).convert_alpha()
-        self.rect = self.image.get_rect(midbottom=(300, 320))
+    def __init__(self, object, minigame, index):
+        super().__init__()
+        #Objects Main Var
+        self.minigame = minigame
+        self.object = object
+        self.index = index
 
-    def update(self): #Update Obstacles
+        #Objects Image
+        self.image = pygame.image.load(self.object_images[object]).convert_alpha()
+        self.rect = self.image.get_rect(midbottom=(300 + self.index*200, 474))
+
+    def update(self):
         keys = pygame.key.get_pressed()
+        direction_key = self.directions[self.object]
 
-        directions = {
-            'down': pygame.K_DOWN,
-            'up': pygame.K_UP,
-            'right': pygame.K_RIGHT
-        }
+        #Trigger Check
+        if not self.minigame.trigger:
+            return
 
-        if self.object in directions and keys[directions[self.object]]:
+        #Key Check
+        if keys[direction_key] and self.index == self.minigame.kills:
             self.kill()
             self.minigame.kills += 1
-            self.minigame.spawn = True
+            self.minigame.trigger = False
 
 # Main Game Class
 class WalkMinigame:
     def __init__(self):
-        pygame.init()
-
-        # Screen setup
-        self.screen = pygame.display.set_mode((1280, 720))
-        pygame.display.set_caption('Walk Minigame')
-
-        # Game variables
-        self.clock = pygame.time.Clock()
+        #Main Vars
+        self.screen = pygame.Surface((1280, 720))
         self.spawn = True
+        self.trigger = False
         self.kills = 0
 
-        # Player setup
-        self.player = pygame.sprite.GroupSingle()
-        self.player.add(Player())
+        #Player
+        self.player = pygame.sprite.GroupSingle(Player())
 
-        # Obstacles setup
+        #Obstacles
         self.obstacles = pygame.sprite.Group()
 
-        # Scenario setup
-        self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert()
-        self.groundrect = self.ground.get_rect(bottomleft=(0, 720))
+        #Scenario
+        self.clouds = pygame.image.load('walkminigame/Sprites/cloudsbackground.png').convert_alpha()
+        self.clouds_rect = self.clouds.get_rect(topleft=(0, 0))
+        self.background = pygame.image.load('walkminigame/Sprites/background.png').convert_alpha()
+        self.background_rect = self.background.get_rect(topleft=(0, 0))
+        self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert_alpha()
+        self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
 
-        # Main loop control
-        self.running = True
-
-    def run(self):
-        while self.running:
-            self.handle_events()
-            self.update()
-            self.draw()
-            self.clock.tick(60)
-
-    def handle_events(self):
+    def frame(self, screen, delta):
+        #Trigger Check
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
+            if event.type == pygame.KEYDOWN:
+                self.trigger = True
 
-    def update(self):
-        if self.kills < 10 and self.spawn:
-            self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self))
+        #Obstacle Spawn
+        if self.spawn:
+            for i in range(30):
+                self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self, i))
             self.spawn = False
 
+        #Scenario
+        self.screen.fill('#87CEEB')
+        self.screen.blit(self.clouds, self.clouds_rect)
+        self.screen.blit(self.background, self.background_rect)
+        self.screen.blit(self.ground, self.ground_rect)
+
+        #Player
+        self.player.draw(self.screen)
+
+        #Obstcles
+        self.obstacles.draw(self.screen)
         self.obstacles.update()
 
-    def draw(self):
-        self.screen.fill('Blue')
-        self.screen.blit(self.ground, self.groundrect)
+        screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
 
-        self.player.draw(self.screen)
-        self.obstacles.draw(self.screen)
+        #Win Check
+        if self.kills >= 30:
+            return "ganhou"
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption('Walk Minigame')
+    clock = pygame.time.Clock()
+    jogo = WalkMinigame()
+    running = True
+
+    while running:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        delta = clock.tick(60) / 1000
+        result = jogo.frame(screen, delta)
+
+        if result == "ganhou":
+            print("Você ganhou!")
+            running = False
 
         pygame.display.flip()
 
-        if self.kills >= 10:
-            print("Você ganhou!")
-            self.running = False
-
-    def quit(self):
-        pygame.quit()
+    pygame.quit()
 
 if __name__ == "__main__":
-    game = WalkMinigame()
-    game.run()
-    game.quit()
+    main()
