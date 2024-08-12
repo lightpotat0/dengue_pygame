@@ -1,31 +1,33 @@
 import pygame
 from random import randint, choice
 
-#Player Class
+# Player Class
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('walkminigame/Sprites/player.png').convert_alpha()
         self.rect = self.image.get_rect(midbottom=(120, 474))
 
-#Obstacle Class
+# Obstacle Class
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, object, minigame):
+    def __init__(self, object, minigame, index):
         super().__init__()
         self.minigame = minigame
         self.object = object
+        self.index = index
 
-		object_images = {
-			'down': 'Sprites/bucketdown.png',
-			'up': 'Sprites/trashup.png',
-			'right': 'Sprites/tireright.png'
-			}
+        object_images = {
+            'down': 'walkminigame/Sprites/bucketdown.png',
+            'up': 'walkminigame/Sprites/trashup.png',
+            'right': 'walkminigame/Sprites/tireright.png'
+        }
 
         self.image = pygame.image.load(object_images[object]).convert_alpha()
-        self.rect = self.image.get_rect(midbottom=(300, 474))
+        self.rect = self.image.get_rect(midbottom=(300 + self.index*200, 474))
 
-    def update(self): #Update Obstacles
+    def update(self):  # Update Obstacles
         keys = pygame.key.get_pressed()
+
 
         directions = {
             'down': pygame.K_DOWN,
@@ -34,22 +36,22 @@ class Obstacle(pygame.sprite.Sprite):
         }
 
         if self.object in directions and keys[directions[self.object]]:
-            self.kill()
-            self.minigame.kills += 1
-            self.minigame.spawn = True
+            if self.index == self.minigame.kills:
+                self.kill()
+                self.minigame.kills += 1
 
-#Main Game Class
+# Main Game Class
 class WalkMinigame:
     def __init__(self):
         self.screen = pygame.Surface((1280, 720))
         self.spawn = True
-        
+
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player())
-        
+
         self.obstacles = pygame.sprite.Group()
         self.kills = 0
-        
+
         # Clouds
         self.clouds = pygame.image.load('walkminigame/Sprites/cloudsbackground.png').convert_alpha()
         self.clouds_rect = self.clouds.get_rect(topleft=(0, 0))
@@ -63,22 +65,21 @@ class WalkMinigame:
         self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
 
     def frame(self, screen, delta, jogo):
+
         if self.spawn:
-            self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self))
-            self.spawn = False
+            for i in range(30):
+                self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self, i))
+                self.spawn = False
 
         self.screen.fill('#87CEEB')
         self.screen.blit(self.clouds, self.clouds_rect)
         self.screen.blit(self.background, self.background_rect)
         self.screen.blit(self.ground, self.ground_rect)
-        
-        self.player.draw(self.screen)
 
-        
+        self.player.draw(self.screen)
         self.obstacles.draw(self.screen)
-        
         self.obstacles.update()
-        
+
         screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
 
         if self.kills >= 30:
@@ -86,7 +87,7 @@ class WalkMinigame:
             return "ganhou"
 
 '''
-def main(): #Testejogo
+def main():  # Testejogo
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption('Walk Minigame')
