@@ -52,7 +52,7 @@ class Tabuleiro:
 			"    XX   XX    ",
 			"    X XXX X    ",
 			"    XXX XXX    ",
-   			"               "
+			"               "
 		]
 		if casas != None:
 			self.casas = casas
