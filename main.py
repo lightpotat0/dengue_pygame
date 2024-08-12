@@ -11,8 +11,12 @@ import util
 import titulo
 import tabuleiro
 import pingominigame
+import walkminigame
+import spacedengue
+import fnaf_minigame
 
-minigames = [pingominigame.PingoMinigame]
+
+minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
 
 modo = titulo.Titulo()
 delta = 1 / 60
