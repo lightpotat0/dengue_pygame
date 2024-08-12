@@ -20,10 +20,10 @@ class Obstacle(pygame.sprite.Sprite):
 		self.object = object
 
 		object_images = {
-			'down': 'Sprites/bucketdown.png',
-			'up': 'Sprites/trashup.png',
-			'right': 'Sprites/tireright.png'
-			}
+			'down': 'walkminigame/Sprites/bucketdown.png',
+			'up': 'walkminigame/Sprites/trashup.png',
+			'right': 'walkminigame/Sprites/tireright.png'
+		}
 
 		self.image = pygame.image.load(object_images[object]).convert_alpha()
 		self.rect = self.image.get_rect(midbottom=(300, 320))

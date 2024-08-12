@@ -10,10 +10,11 @@ clock = pygame.time.Clock()
 import util
 import titulo
 import tabuleiro
-import pingominigame
-import walkminigame
+from pingominigame import PingoMinigame
+from walkminigame import WalkMinigame
+from spacedengue import SpaceMinigame
 
-minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
+minigames = [SpaceMinigame]
 
 modo = titulo.Titulo()
 delta = 1 / 60

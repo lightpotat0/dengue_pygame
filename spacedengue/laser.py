@@ -1,5 +1,5 @@
 import pygame
-from pygame.sprite import _Group
+from pygame.sprite import Group
 
 class Laser(pygame.sprite.Sprite):
     def __init__(self,pos,speed,screen_height):
