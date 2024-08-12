@@ -13,8 +13,9 @@ import tabuleiro
 from pingominigame import PingoMinigame
 from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
+from fnaf_minigame import Cenario
 
-minigames = [SpaceMinigame]
+minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, Cenario]
 
 modo = titulo.Titulo()
 delta = 1 / 60
@@ -59,6 +60,14 @@ while True:
 			casas = modo.casas
 		case "minigame":
 			modo = random.choice(minigames)()
+		case "minigame0":
+			modo = minigames[0]()
+		case "minigame1":
+			modo = minigames[1]()
+		case "minigame2":
+			modo = minigames[2]()
+		case "minigame3":
+			modo = minigames[3]()
 		case "ganhou":
 			jogo.receber_moedas(10)
 			jogo.passar_vez()
