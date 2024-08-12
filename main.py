@@ -13,6 +13,7 @@ import tabuleiro
 import pingominigame
 import walkminigame
 import spacedengue
+import fnaf_minigame
 
 
 minigames = [pingominigame.PingoMinigame, walkminigame.WalkMinigame]
