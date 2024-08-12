@@ -67,9 +67,7 @@ class WalkMinigame:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 self.trigger = True
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+
 
         if self.spawn:
             for i in range(30):
@@ -89,7 +87,7 @@ class WalkMinigame:
 
         if self.kills >= 30:
             return "ganhou"
-
+'''
 def main():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
@@ -99,6 +97,10 @@ def main():
     running = True
 
     while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
         delta = clock.tick(60) / 1000
         result = jogo.frame(screen, delta)
 
@@ -112,3 +114,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
