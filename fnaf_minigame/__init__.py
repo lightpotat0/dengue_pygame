@@ -13,7 +13,7 @@ class Cenario:
         #self.mosquito_die1 = pygame.image.load('fnaf_minigame/sprites/')
         #self.mosquito_die2 = pygame.image.load('fnaf_minigame/sprites/')
         self.cont = 0
- #estou fazendo ainda, tenha calma, vou dar commit completo só quando eu tiver todos os sprites de mosquito.
+ 
     def frame(self, screen, delta, jogo):
         if self.cont < 2:
             self.cont += delta
