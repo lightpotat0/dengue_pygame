@@ -17,7 +17,7 @@ class SpaceMinigame:
 		self.blocks = pygame.sprite.Group()
 		self.obstacle_amount = 4
 		self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
-		self.create_multiple_obstacles(*self.obstacle_x_positions, x_start = screen_width / 15, y_start = 480)
+		self.create_multiple_obstacles(screen_width / 15, 480, *self.obstacle_x_positions)
 
 		self.tela = pygame.Surface((screen_width, screen_height))
 
