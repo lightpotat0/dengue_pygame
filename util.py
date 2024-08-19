@@ -10,7 +10,7 @@ def clamp(v, x, y):
 def scaleblit(screen, altura_esperada, obj, pos, area = None, escala = 1):
 	scale = screen.get_height() / altura_esperada
 	if area != None:
-		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), pygame.rect.Rect(area[0] * escala, area[1] * escala, area[2] * escala, area[3] * escala))
+		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), pygame.rect.Rect(area[0] * escala * scale, area[1] * escala * scale, area[2] * escala * scale, area[3] * escala * scale))
 	else:
 		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), None)
 

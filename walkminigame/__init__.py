@@ -29,7 +29,7 @@ class Obstacle(pygame.sprite.Sprite):
 		}
 
 		self.image = pygame.image.load(object_images[object]).convert_alpha()
-		self.rect = self.image.get_rect(midbottom=(300 + self.index*200, 474))
+		self.rect = self.image.get_rect(midbottom=(600 + self.index*200, 474))
 
 	def update(self):
 		if not self.minigame.trigger:
@@ -38,7 +38,7 @@ class Obstacle(pygame.sprite.Sprite):
 		keys = pygame.key.get_pressed()
 		direction_key = self.directions[self.object]
 
-		if keys[direction_key] and self.index == self.minigame.kills:
+		if keys[direction_key] and self.index == self.minigame.kills and self.rect.x <= 420:
 			self.kill()
 			self.minigame.kills += 1
 			self.minigame.trigger = False
@@ -49,6 +49,8 @@ class WalkMinigame:
 		self.screen = pygame.Surface((1280, 720))
 		self.spawn = True
 		self.trigger = False
+		self.posicao = 0.0
+		self.fonte = pygame.font.Font(None, 64)
 
 		self.player = pygame.sprite.GroupSingle(Player())
 		self.obstacles = pygame.sprite.Group()
@@ -72,19 +74,39 @@ class WalkMinigame:
 			for i in range(30):
 				self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self, i))
 			self.spawn = False
+		self.posicao += 320 * delta
+		object = "none"
+		for sprite in self.obstacles.sprites():
+			sprite.rect = sprite.image.get_rect(midbottom=(600 + sprite.index*200 - self.posicao, 474))
+			if object == "none":
+				if sprite.rect.x <= 160:
+					return "perdeu"
+				elif sprite.rect.x <= 420:
+					object = sprite.object
 
 		self.screen.fill('#87CEEB')
-		self.screen.blit(self.clouds, self.clouds_rect)
-		self.screen.blit(self.background, self.background_rect)
-		self.screen.blit(self.ground, self.ground_rect)
+		width = self.screen.get_width()
+		self.screen.blit(self.clouds, self.clouds_rect.move(-self.posicao * 0.5 % width - width, 0))
+		self.screen.blit(self.background, self.background_rect.move(-self.posicao * 0.75 % width - width, 0))
+		self.screen.blit(self.ground, self.ground_rect.move(-self.posicao % width - width, 0))
+		self.screen.blit(self.clouds, self.clouds_rect.move(-self.posicao * 0.5 % width, 0))
+		self.screen.blit(self.background, self.background_rect.move(-self.posicao * 0.75 % width, 0))
+		self.screen.blit(self.ground, self.ground_rect.move(-self.posicao % width, 0))
 
 		self.player.draw(self.screen)
-		self.obstacles.draw(self.screen)
 		self.obstacles.update()
+		self.obstacles.draw(self.screen)
+		match object:
+			case "up":
+				self.screen.blit(self.fonte.render(f"^", True, "black"), (120, 320))
+			case "down":
+				self.screen.blit(self.fonte.render(f"\\/", True, "black"), (120, 320))
+			case "right":
+				self.screen.blit(self.fonte.render(f"->", True, "black"), (120, 320))
 
 		screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
 
-		if self.kills >= 30:
+		if self.kills >= 20:
 			return "ganhou"
 '''
 def main():
