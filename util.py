@@ -29,6 +29,9 @@ def blitanimado(screen, obj, pos, tempo, fps):
 	frame_atual = int(tempo * fps) % len(obj)
 	screen.blit(obj[frame_atual], pos)
 
+def lerp(x, y, t):
+	return x + (y - x) * t
+
 def colide_com_rect(rect, obj, pos):
 	return rect.colliderect(obj.get_rect().move(pos[0], pos[1]))
 

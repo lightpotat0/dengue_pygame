@@ -4,6 +4,7 @@ import random
 import math
 
 #pingando
+import pingominigame.gerarnivel
 
 class Balde:
 	def __init__(self, pos):
@@ -17,7 +18,8 @@ class PingoMinigame:
 		self.morreu = False
 		self.jumpscare_tempo = 0
 		self.tempo = 0
-		self.bg = pygame.image.load("pingominigame/w.png")
+		nivel = gerarnivel.gerar()
+		self.bg = nivel[0]
 		self.vc = pygame.image.load("pingominigame/obj/vc.png")
 		self.estalactite = [pygame.image.load(f"pingominigame/obj/estalactite{i}.png") for i in range(1, 10)]
 		self.balde = pygame.image.load("pingominigame/obj/balde.png")
@@ -26,12 +28,12 @@ class PingoMinigame:
 		self.balde_todo = pygame.image.load("pingominigame/obj/balde_todo.png")
 		self.balde_fechado = pygame.image.load("pingominigame/obj/balde_fechado.png")
 		self.mosquito = pygame.image.load("pingominigame/mosquito.png")
-		self.vc_pos = (428 / 2 - self.vc.get_width() / 2, 240 / 2 - self.vc.get_height() / 2)
+		self.vc_pos = (428 / 2 - 32, 240 / 2 - 32)
 		self.baldes = [
-			Balde((24, 219)),
-			Balde((338, 217)),
-			Balde((394, 39)),
-			Balde((142, 113))
+			Balde(nivel[1][0]),
+			Balde(nivel[1][1]),
+			Balde(nivel[1][2]),
+			Balde(nivel[1][3])
 		]
 		self.tela = pygame.Surface((428, 240))
 
