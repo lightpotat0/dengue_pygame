@@ -1,6 +1,7 @@
 import pygame
 from random import choice
 from random import randint
+import util
 
 # Player Class
 class Player(pygame.sprite.Sprite):
@@ -38,12 +39,21 @@ class Obstacle(pygame.sprite.Sprite):
 			return
 
 		keys = pygame.key.get_pressed()
-		direction_key = self.directions[self.object]
 
-		if keys[direction_key] and self.index == self.minigame.kills and self.rect.x <= 500:
-			self.kill()
-			self.minigame.kills += 1
-			self.minigame.trigger = False
+		if self.index == self.minigame.kills and self.rect.x <= 500 and self.minigame.stun_timer == 0.0:
+			direction_pressed = "none"
+			if keys[self.directions["up"]]:
+				direction_pressed = "up"
+			elif keys[self.directions["right"]]:
+				direction_pressed = "right"
+			elif keys[self.directions["down"]]:
+				direction_pressed = "down"
+			if direction_pressed == self.object:
+				self.kill()
+				self.minigame.kills += 1
+				self.minigame.trigger = False
+			elif direction_pressed != "none":
+				self.minigame.stun_timer = 1.0
 
 def parallax_blit(screen, obj, camera, factor, width):
 	screen.blit(obj, (-camera * factor % width, 0))
@@ -58,7 +68,7 @@ class WalkMinigame:
 		self.posicao = 0.0
 		self.fonte = pygame.font.Font(None, 64)
 
-		self.player = pygame.sprite.GroupSingle(Player())
+		self.player = Player()
 		self.obstacles = pygame.sprite.Group()
 		self.kills = 0
 
@@ -71,12 +81,19 @@ class WalkMinigame:
 		self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert_alpha()
 		self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
 		self.velocidade = 320
+		self.stun_timer = 0.0
 
 	def event(self, event):
 		if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
 			self.trigger = True
 
 	def frame(self, screen, delta, jogo):
+		red_tint = 0.0
+		if self.stun_timer > 0.0:
+			red_tint = min((1 - abs(self.stun_timer * 2 - 1)) * 2, 1)
+			self.stun_timer -= delta * 4
+			if self.stun_timer < 0.0:
+				self.stun_timer = 0.0
 		if self.spawn:
 			posicao_anterior = 600
 			for i in range(20):
@@ -103,7 +120,7 @@ class WalkMinigame:
 		parallax_blit(self.screen, self.background, self.posicao, 0.75, width)
 		parallax_blit(self.screen, self.ground, self.posicao, 1.0, width)
 
-		self.player.draw(self.screen)
+		self.screen.blit(util.tint(self.player.image, (red_tint * 255, 0, 0, 255)), self.player.rect)
 		self.obstacles.update()
 		self.obstacles.draw(self.screen)
 		match object:
