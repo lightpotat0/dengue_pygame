@@ -1,5 +1,6 @@
 import pygame
 from random import choice
+from random import randint
 
 # Player Class
 class Player(pygame.sprite.Sprite):
@@ -16,7 +17,7 @@ class Obstacle(pygame.sprite.Sprite):
 		'right': pygame.K_RIGHT
 	}
 
-	def __init__(self, object, minigame, index):
+	def __init__(self, object, minigame, index, posicao_anterior):
 		super().__init__()
 		self.minigame = minigame
 		self.object = object
@@ -29,7 +30,8 @@ class Obstacle(pygame.sprite.Sprite):
 		}
 
 		self.image = pygame.image.load(object_images[object]).convert_alpha()
-		self.rect = self.image.get_rect(midbottom=(600 + self.index*200, 474))
+		self.posicao_base = posicao_anterior + randint(200, 400)
+		self.rect = self.image.get_rect(midbottom=(self.posicao_base, 474))
 
 	def update(self):
 		if not self.minigame.trigger:
@@ -38,10 +40,14 @@ class Obstacle(pygame.sprite.Sprite):
 		keys = pygame.key.get_pressed()
 		direction_key = self.directions[self.object]
 
-		if keys[direction_key] and self.index == self.minigame.kills and self.rect.x <= 420:
+		if keys[direction_key] and self.index == self.minigame.kills and self.rect.x <= 500:
 			self.kill()
 			self.minigame.kills += 1
 			self.minigame.trigger = False
+
+def parallax_blit(screen, obj, camera, factor, width):
+	screen.blit(obj, (-camera * factor % width, 0))
+	screen.blit(obj, (-camera * factor % width - width, 0))
 
 # Main Game Class
 class WalkMinigame:
@@ -64,6 +70,7 @@ class WalkMinigame:
 
 		self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert_alpha()
 		self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
+		self.velocidade = 320
 
 	def event(self, event):
 		if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
@@ -71,27 +78,30 @@ class WalkMinigame:
 
 	def frame(self, screen, delta, jogo):
 		if self.spawn:
-			for i in range(30):
-				self.obstacles.add(Obstacle(choice(['up', 'down', 'right']), self, i))
+			posicao_anterior = 600
+			for i in range(20):
+				obstacle = Obstacle(choice(['up', 'down', 'right']), self, i, posicao_anterior)
+				self.obstacles.add(obstacle)
+				posicao_anterior = obstacle.posicao_base
 			self.spawn = False
-		self.posicao += 320 * delta
+		self.velocidade = self.velocidade + 40 * delta
+		if self.velocidade > 540:
+			self.velocidade = 540
+		self.posicao += self.velocidade * delta
 		object = "none"
 		for sprite in self.obstacles.sprites():
-			sprite.rect = sprite.image.get_rect(midbottom=(600 + sprite.index*200 - self.posicao, 474))
+			sprite.rect = sprite.image.get_rect(midbottom=(sprite.posicao_base - self.posicao, 474))
 			if object == "none":
 				if sprite.rect.x <= 160:
 					return "perdeu"
-				elif sprite.rect.x <= 420:
+				elif sprite.rect.x <= 500:
 					object = sprite.object
 
 		self.screen.fill('#87CEEB')
 		width = self.screen.get_width()
-		self.screen.blit(self.clouds, self.clouds_rect.move(-self.posicao * 0.5 % width - width, 0))
-		self.screen.blit(self.background, self.background_rect.move(-self.posicao * 0.75 % width - width, 0))
-		self.screen.blit(self.ground, self.ground_rect.move(-self.posicao % width - width, 0))
-		self.screen.blit(self.clouds, self.clouds_rect.move(-self.posicao * 0.5 % width, 0))
-		self.screen.blit(self.background, self.background_rect.move(-self.posicao * 0.75 % width, 0))
-		self.screen.blit(self.ground, self.ground_rect.move(-self.posicao % width, 0))
+		parallax_blit(self.screen, self.clouds, self.posicao, 0.5, width)
+		parallax_blit(self.screen, self.background, self.posicao, 0.75, width)
+		parallax_blit(self.screen, self.ground, self.posicao, 1.0, width)
 
 		self.player.draw(self.screen)
 		self.obstacles.update()
