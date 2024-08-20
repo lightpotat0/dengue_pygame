@@ -108,7 +108,7 @@ class WalkMinigame:
 		self.obstacles.draw(self.screen)
 		match object:
 			case "up":
-				self.screen.blit(self.fonte.render(f"^", True, "black"), (120, 320))
+				self.screen.blit(self.fonte.render(f"/\\", True, "black"), (120, 320))
 			case "down":
 				self.screen.blit(self.fonte.render(f"\\/", True, "black"), (120, 320))
 			case "right":
