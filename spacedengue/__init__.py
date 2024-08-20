@@ -1,6 +1,8 @@
 import pygame, sys
 from spacedengue.player import Player
 import spacedengue.obstacle
+from spacedengue.mosquitalien import Mosquito
+
 
 screen_width = 1280
 screen_height = 720
@@ -21,6 +23,11 @@ class SpaceMinigame:
 
 		self.tela = pygame.Surface((screen_width, screen_height))
 
+		#Mosquito setup
+		self.mosquitos = pygame.sprite.Group()
+		self.mosquito_setup(rows = 6, cols = 8)
+
+
 	def create_obstacle(self, x_start, y_start, offset_x):
 		for row_index, row in enumerate(self.shape):
 			for col_index,col in enumerate(row):
@@ -34,6 +41,18 @@ class SpaceMinigame:
 		for offset_x in offset:
 			self.create_obstacle(x_start, y_start, offset_x)
 
+	def mosquito_setup(self,rows,cols,x_distance = 60,y_distance = 48, x_offset = 70, y_offset = 100):
+		for row_index, row in enumerate(range(rows)):
+			for col_index, col in enumerate(range(cols)):
+				x = col_index * x_distance + x_offset
+				y = row_index * y_distance + y_offset
+
+				if row_index == 0: mosquito_sprite = Mosquito("yellow",x,y)
+				elif 1 <= row_index <= 2: mosquito_sprite = Mosquito("green",x,y)
+				else: mosquito_sprite = Mosquito("red",x,y)
+				self.mosquitAlien.add(mosquito_sprite)
+
+
 	def frame(self, screen, delta, jogo):
 		self.player.update()
 
@@ -43,5 +62,5 @@ class SpaceMinigame:
 		self.player.draw(self.tela)
 
 		self.blocks.draw(self.tela)
-
+		self.mosquitos.draw(screen)
 		screen.blit(pygame.transform.scale(self.tela, screen.get_size()), (0, 0))
