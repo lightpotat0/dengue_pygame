@@ -82,6 +82,9 @@ class WalkMinigame:
 		self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
 		self.velocidade = 320
 		self.stun_timer = 0.0
+		self.upkey = pygame.image.load("walkminigame/Sprites/upkey.png").convert_alpha()
+		self.downkey = pygame.image.load("walkminigame/Sprites/downkey.png").convert_alpha()
+		self.rightkey = pygame.image.load("walkminigame/Sprites/rightkey.png").convert_alpha()
 
 	def event(self, event):
 		if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
@@ -105,14 +108,6 @@ class WalkMinigame:
 		if self.velocidade > 540:
 			self.velocidade = 540
 		self.posicao += self.velocidade * delta
-		object = "none"
-		for sprite in self.obstacles.sprites():
-			sprite.rect = sprite.image.get_rect(midbottom=(sprite.posicao_base - self.posicao, 474))
-			if object == "none":
-				if sprite.rect.x <= 160:
-					return "perdeu"
-				elif sprite.rect.x <= 500:
-					object = sprite.object
 
 		self.screen.fill('#87CEEB')
 		width = self.screen.get_width()
@@ -123,13 +118,21 @@ class WalkMinigame:
 		self.screen.blit(util.tint(self.player.image, (red_tint * 255, 0, 0, 255)), self.player.rect)
 		self.obstacles.update()
 		self.obstacles.draw(self.screen)
+		object = "none"
+		for sprite in self.obstacles.sprites():
+			sprite.rect = sprite.image.get_rect(midbottom=(sprite.posicao_base - self.posicao, 474))
+			if object == "none":
+				if sprite.rect.x <= 160:
+					return "perdeu"
+				elif sprite.rect.x <= 500:
+					object = sprite.object
 		match object:
 			case "up":
-				self.screen.blit(self.fonte.render(f"/\\", True, "black"), (120, 320))
+				self.screen.blit(self.upkey, self.upkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 			case "down":
-				self.screen.blit(self.fonte.render(f"\\/", True, "black"), (120, 320))
+				self.screen.blit(self.downkey, self.downkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 			case "right":
-				self.screen.blit(self.fonte.render(f"->", True, "black"), (120, 320))
+				self.screen.blit(self.rightkey, self.rightkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 
 		screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
 
