@@ -32,7 +32,7 @@ def blitanimado(screen, obj, pos, tempo, fps):
 def lerp(x, y, t):
 	return x + (y - x) * t
 
-def colide_com_rect(rect, obj, pos):
+def imagem_colide_com_rect(rect, obj, pos):
 	return rect.colliderect(obj.get_rect().move(pos[0], pos[1]))
 
 def colide_com_imagem(img, obj, pos):

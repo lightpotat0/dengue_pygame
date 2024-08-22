@@ -11,7 +11,7 @@ class Balde:
 		self.pos = pos
 		self.cheio = 0
 		self.fechado = False
-		self.velocidade = random.uniform(1.2, 2.0)
+		self.velocidade = random.uniform(2.0, 2.6)
 
 class PingoMinigame:
 	def __init__(self):
@@ -46,7 +46,7 @@ class PingoMinigame:
 		self.tela.blit(self.bg, (0, 0))
 		for balde in self.baldes:
 			balde_img = self.balde
-			if util.colide_com_rect(pygame.Rect((balde.pos[0], balde.pos[1] - 20, self.balde.get_width(), self.balde.get_height() + 20)), self.vc, self.vc_pos) and not balde.fechado:
+			if util.imagem_colide_com_rect(pygame.Rect((balde.pos[0], balde.pos[1] - 20, self.balde.get_width(), self.balde.get_height() + 20)), self.vc, self.vc_pos) and not balde.fechado:
 				balde.fechado = True
 				jogo.receber_moedas(3)
 			if balde.fechado:

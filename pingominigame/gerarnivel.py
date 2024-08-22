@@ -20,8 +20,11 @@ def gerar():
 	snake_posicoes = []
 	tombos = [[random.choice([False, False, False, False, True]) for x in range(WIDTH + 2)] for y in range(HEIGHT + 2)]
 	tombos[CENTRO[1]][CENTRO[0] + 1] = True
-	for i in range(0, 64):
-		snake_posicoes.append(snake_pos)
+	i = 0
+	while i < 64 or (len(snake_posicoes) >= 4 and i < 512):
+		i += 1
+		if abs(snake_pos[0] - CENTRO[0]) >= 1 and mapa[snake_pos[1]][snake_pos[0]]:
+			snake_posicoes.append(snake_pos)
 		mapa[snake_pos[1]][snake_pos[0]] = False
 		direcoes = []
 		if snake_pos[0] > 1 and snake_pos[0] <= prev_snake_pos[0]:
@@ -47,7 +50,11 @@ def gerar():
 		direcao = (0, 0) if len(direcoes) == 0 else random.choice(direcoes)
 		prev_snake_pos = snake_pos
 		snake_pos = (snake_pos[0] + direcao[0], snake_pos[1] + direcao[1])
-	baldes = [random.choice(snake_posicoes), random.choice(snake_posicoes), random.choice(snake_posicoes), snake_posicoes[len(snake_posicoes) - 1]]
+	shuffled = snake_posicoes[:-1]
+	while len(shuffled) < 3:
+		shuffled.append(random.choice(shuffled))
+	random.shuffle(shuffled)
+	baldes = [shuffled[0], shuffled[1], shuffled[2], snake_posicoes[len(snake_posicoes) - 1]]
 	for i in range(len(baldes)):
 		baldes[i] = (baldes[i][0] * CELL, baldes[i][1] * CELL)
 	data = bytearray()
