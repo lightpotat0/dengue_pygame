@@ -13,9 +13,9 @@ import tabuleiro
 from pingominigame import PingoMinigame
 from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
-from fnaf_minigame import Pistol_mosquito
+from fnaf_minigame import Cenario
 
-minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, Pistol_mosquito]
+minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, Cenario]
 
 modo = titulo.Titulo()
 delta = 1 / 60
