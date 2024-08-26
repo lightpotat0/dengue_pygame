@@ -21,14 +21,14 @@ class SpaceMinigame:
 		self.blocks = pygame.sprite.Group()
 		self.obstacle_amount = 4
 		self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
-		self.create_multiple_obstacles(*self.obstacle_x_positions, screen_width / 15, 480)
+		self.create_multiple_obstacles(screen_width / 15, 480, *self.obstacle_x_positions)
 
 		self.tela = pygame.Surface((screen_width, screen_height))
 
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
 		self.mosquito_lasers = pygame.sprite.Group()
-		self.mosquito_setup(rows = 4, cols = 3)
+		self.mosquito_setup(rows = 4, cols = 5)
 		self.mosquito_direction = 1
 		self.mosquito_downs = 0
 
