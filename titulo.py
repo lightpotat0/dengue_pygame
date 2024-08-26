@@ -20,7 +20,7 @@ class Titulo:
 		texto_formatado1 = fonte1.render(mensagem1, True, (000,000,000))
 		util.scaleblit(screen, 600, texto_formatado, (200, 480))
 		util.scaleblit(screen, 600, texto_formatado1, (370, 530))
-		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Fnaf, M: Aleatório", True, (0, 0, 0)), (0, 0))
+		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Pistol, M: Aleatório", True, (0, 0, 0)), (0, 0))
 		if self.comecar:
 			if util.pressionado_agora[pygame.K_1]:
 				return "minigame0"
