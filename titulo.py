@@ -5,7 +5,8 @@ fonte = pygame.font.SysFont('arial', 40, True, True)
 fonte1 = pygame.font.SysFont('arial', 25, True, True)
 class Titulo:
 	def __init__(self):
-		self.bg = pygame.image.load("titulo/titulo.jpeg")
+		self.logo = pygame.image.load("titulo/logo.svg")
+		self.bg = pygame.image.load("titulo/titulobq.png")
 		self.comecar = False
 
 	def event(self, event):
@@ -14,6 +15,7 @@ class Titulo:
 
 	def frame(self, screen, delta, jogo):
 		screen.blit(pygame.transform.scale(self.bg, screen.get_size()), (0, 0))
+		screen.blit(pygame.transform.scale(self.logo, screen.get_size()), (640, 0))
 		mensagem = 'Pressione qualquer tecla para iniciar'
 		mensagem1 = 'Ou pressione esc para sair'
 		texto_formatado = fonte.render(mensagem, True, (000,000,000))
