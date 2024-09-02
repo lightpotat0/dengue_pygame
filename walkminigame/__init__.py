@@ -37,7 +37,6 @@ class Obstacle(pygame.sprite.Sprite):
 	def update(self):
 		if not self.minigame.trigger:
 			return
-
 		keys = pygame.key.get_pressed()
 
 		if self.index == self.minigame.kills and self.rect.x <= 500 and self.minigame.stun_timer == 0.0:
@@ -55,6 +54,7 @@ class Obstacle(pygame.sprite.Sprite):
 			elif direction_pressed != "none":
 				self.minigame.stun_timer = 1.0
 
+# Object Move
 def parallax_blit(screen, obj, camera, factor, width):
 	screen.blit(obj, (-camera * factor % width, 0))
 	screen.blit(obj, (-camera * factor % width - width, 0))
@@ -63,15 +63,21 @@ def parallax_blit(screen, obj, camera, factor, width):
 class WalkMinigame:
 	def __init__(self):
 		self.screen = pygame.Surface((1280, 720))
+		self.fonte = pygame.font.Font(None, 64)
+
+		# Variaveis
 		self.spawn = True
 		self.trigger = False
 		self.posicao = 0.0
-		self.fonte = pygame.font.Font(None, 64)
-
-		self.player = Player()
-		self.obstacles = pygame.sprite.Group()
+		self.velocidade = 320
+		self.stun_timer = 0.0
 		self.kills = 0
 
+		# Jogador
+		self.player = Player()
+		self.obstacles = pygame.sprite.Group()
+
+		# Sprites do Cenário
 		self.clouds = pygame.image.load('walkminigame/Sprites/cloudsbackground.png').convert_alpha()
 		self.clouds_rect = self.clouds.get_rect(topleft=(0, 0))
 
@@ -80,8 +86,8 @@ class WalkMinigame:
 
 		self.ground = pygame.image.load('walkminigame/Sprites/ground.png').convert_alpha()
 		self.ground_rect = self.ground.get_rect(bottomleft=(0, 720))
-		self.velocidade = 320
-		self.stun_timer = 0.0
+
+		# Sprites das Setas
 		self.upkey = pygame.image.load("walkminigame/Sprites/upkey.png").convert_alpha()
 		self.downkey = pygame.image.load("walkminigame/Sprites/downkey.png").convert_alpha()
 		self.rightkey = pygame.image.load("walkminigame/Sprites/rightkey.png").convert_alpha()
@@ -92,11 +98,14 @@ class WalkMinigame:
 
 	def frame(self, screen, delta, jogo):
 		red_tint = 0.0
+
 		if self.stun_timer > 0.0:
 			red_tint = min((1 - abs(self.stun_timer * 2 - 1)) * 2, 1)
 			self.stun_timer -= delta * 4
+
 			if self.stun_timer < 0.0:
 				self.stun_timer = 0.0
+
 		if self.spawn:
 			posicao_anterior = 600
 			for i in range(20):
@@ -104,13 +113,16 @@ class WalkMinigame:
 				self.obstacles.add(obstacle)
 				posicao_anterior = obstacle.posicao_base
 			self.spawn = False
+
 		self.velocidade = self.velocidade + 40 * delta
+
 		if self.velocidade > 540:
 			self.velocidade = 540
 		self.posicao += self.velocidade * delta
 
 		self.screen.fill('#87CEEB')
 		width = self.screen.get_width()
+
 		parallax_blit(self.screen, self.clouds, self.posicao, 0.5, width)
 		parallax_blit(self.screen, self.background, self.posicao, 0.75, width)
 		parallax_blit(self.screen, self.ground, self.posicao, 1.0, width)
@@ -119,6 +131,7 @@ class WalkMinigame:
 		self.obstacles.update()
 		self.obstacles.draw(self.screen)
 		object = "none"
+
 		for sprite in self.obstacles.sprites():
 			sprite.rect = sprite.image.get_rect(midbottom=(sprite.posicao_base - self.posicao, 474))
 			if object == "none":
@@ -126,6 +139,7 @@ class WalkMinigame:
 					return "perdeu"
 				elif sprite.rect.x <= 500:
 					object = sprite.object
+
 		match object:
 			case "up":
 				self.screen.blit(self.upkey, self.upkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
@@ -138,6 +152,7 @@ class WalkMinigame:
 
 		if self.kills >= 20:
 			return "ganhou"
+
 '''
 def main():
 	pygame.init()
