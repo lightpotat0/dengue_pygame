@@ -95,7 +95,10 @@ while True:
 		sys.exit()
 	resultado = modo.frame(tela_minigame or screen, delta, jogo)
 	if tela_minigame:
-		screen.blit(pygame.transform.scale(tela_minigame, screen.get_size()), (0, 0))
+		if getattr(modo, "smooth", False):
+			screen.blit(pygame.transform.smoothscale(tela_minigame, screen.get_size()), (0, 0))
+		else:
+			screen.blit(pygame.transform.scale(tela_minigame, screen.get_size()), (0, 0))
 		if getattr(modo, "get_tempo_da_perdicao", None):
 			tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)
 			t = 1 - (pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame)

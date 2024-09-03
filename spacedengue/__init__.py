@@ -88,9 +88,6 @@ class SpaceMinigame:
 		if self.extra_spawn_time <= 0:
 			self.extra.add(Extra(choice(['right','left']),screen_width))
 
-	def get_tempo_da_perdicao(self, tempo_inicio):
-		return tempo_inicio + 10000
-
 	def frame(self, screen, delta, jogo):
 		self.player.update()
 		self.mosquitos.update(self.mosquito_direction)

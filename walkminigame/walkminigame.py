@@ -49,6 +49,7 @@ class Obstacle(pygame.sprite.Sprite):
 # Main Game Class
 class WalkMinigame:
     tamanho = (1280, 720)
+    smooth = True
     def __init__(self):
         #Main Vars
         self.spawn = True

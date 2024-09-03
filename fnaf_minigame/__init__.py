@@ -70,6 +70,9 @@ class PistolMosquito:
 				if mosquito.active and mosquito.mosquito_rect.collidepoint(mouse_pos):
 					mosquito.deactivate()
 
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		return tempo_inicio + 10000
+
 	def frame(self, screen, delta, jogo):
 		elapsed_time = time.time() - self.start_time
 		screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
