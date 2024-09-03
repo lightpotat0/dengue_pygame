@@ -41,7 +41,6 @@ class Tabuleiro:
 		self.dado_tempo = 0
 		self.tempo = 0
 		self.casa = pygame.image.load("tabuleiro/casa.png")
-		self.vc = pygame.image.load("pingominigame/obj/vc.png")
 		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png")
 		self.mapa = [
 			"               ",
@@ -59,8 +58,8 @@ class Tabuleiro:
 		else:
 			self.casas = []
 			casa_inicial = None
-			for x in range(0, len(self.mapa[0])):
-				for y in range(0, len(self.mapa)):
+			for x in range(len(self.mapa[0])):
+				for y in range(len(self.mapa)):
 					if self.mapa[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -76,6 +75,25 @@ class Tabuleiro:
 				return casa
 		return None
 
+	def proxima_casa_e_direcao(self, jogador):
+		direcoes = [
+			(jogador.direcao[0], jogador.direcao[1]),
+			(jogador.direcao[1], jogador.direcao[0]),
+			(-jogador.direcao[1], -jogador.direcao[0]),
+			(-jogador.direcao[0], -jogador.direcao[1])
+		]
+		for direcao in direcoes:
+			nova_casa = (jogador.casa[0] + direcao[0], jogador.casa[1] + direcao[1])
+			casa = self.encontrar_casa(nova_casa)
+			if casa != None:
+				return (nova_casa, direcao)
+		return (jogador.casa, jogador.direcao)
+
+	animacoes = [(None, 0, None) for _ in range(4)]
+	def animar(self, animacao, numero_jogador, param = None):
+		if self.animacoes[numero_jogador][0] != animacao or self.animacoes[numero_jogador][2] != param:
+			self.animacoes[numero_jogador] = (animacao, pygame.time.get_ticks(), param)
+
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill("black")
@@ -88,10 +106,20 @@ class Tabuleiro:
 				case _:
 					util.scaleblit(screen, 600, self.casa, casa.pos)
 					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), casa.pos)
-		for i in range(0, len(jogo.jogadores)):
+		tempo = pygame.time.get_ticks()
+		for i in range(len(jogo.jogadores)):
 			jogador = jogo.jogadores[i]
 			pos = casa_id_para_pos(jogador.casa)
-			util.scaleblit(screen, 600, pygame.transform.scale(util.tint(self.vc, CORES[i]), (60, 60)), (pos[0] + 2, pos[1] + 2))
+			animacao = self.animacoes[i]
+			sprite = jogador.get_andamento(jogador.direcao, True)
+			match animacao:
+				case ("andando", tempo_inicio, (pos_inicio, direcao)):
+					if tempo >= tempo_inicio + 500:
+						self.animar(None, jogador.numero)
+					sprite = jogador.get_andamento(direcao)
+					andado = (tempo - tempo_inicio) / 500 * 72
+					pos = (pos_inicio[0] + andado * direcao[0], pos_inicio[1] + andado * direcao[1])
+			util.scaleblit(screen, 600, pygame.transform.scale(sprite, (60, 60)), (pos[0] + 2, pos[1] + 2))
 		jogador = jogo.jogadores[jogo.jogador_atual]
 		if self.modo == "dado":
 			self.dado_tempo += delta
@@ -101,40 +129,27 @@ class Tabuleiro:
 			if util.pressionado_agora[pygame.K_SPACE] or util.pressionado_agora[pygame.K_RETURN]:
 				self.dado_tempo = 0
 				self.modo = "andando"
+
+		cor = "white"
 		if len(jogo.jogadores) >= 1:
-			cor = CORES[0]
-			if jogo.jogador_atual == 0:
-				texto = self.font_dado.render("Jogador 1 < Vez", True, cor)
-			else:
-				texto = self.font_dado.render("Jogador 1", True, cor)
+			texto = self.font_dado.render("Jogador 1", True, "green" if jogo.jogador_atual == 0 else cor)
 			util.scaleblit(screen, 600, texto, (0, 0))
 			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[0].moedas}", True, cor), (0, texto.get_height()))
 		if len(jogo.jogadores) >= 2:
-			cor = CORES[1]
-			if jogo.jogador_atual == 1:
-				texto = self.font_dado.render("Vez > Jogador 2", True, cor)
-			else:
-				texto = self.font_dado.render("Jogador 2", True, cor)
+			texto = self.font_dado.render("Jogador 2", True, "green" if jogo.jogador_atual == 1 else cor)
 			util.scaleblit(screen, 600, texto, (1066 - texto.get_width(), 0))
 			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[1].moedas}", True, cor), (1066 - texto.get_width(), texto.get_height()))
 		if len(jogo.jogadores) >= 3:
-			cor = CORES[2]
-			if jogo.jogador_atual == 2:
-				texto = self.font_dado.render("Jogador 3 < Vez", True, cor)
-			else:
-				texto = self.font_dado.render("Jogador 3", True, cor)
+			texto = self.font_dado.render("Jogador 3", True, "green" if jogo.jogador_atual == 2 else cor)
 			util.scaleblit(screen, 600, texto, (0, 600 - texto.get_height() * 2))
 			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[2].moedas}", True, cor), (0, 600 - texto.get_height()))
 		if len(jogo.jogadores) >= 4:
-			cor = CORES[3]
-			if jogo.jogador_atual == 3:
-				texto = self.font_dado.render("Vez > Jogador 4", True, cor)
-			else:
-				texto = self.font_dado.render("Jogador 4", True, cor)
+			texto = self.font_dado.render("Jogador 4", True, "green" if jogo.jogador_atual == 3 else cor)
 			util.scaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2))
 			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[3].moedas}", True, cor), (1066 - texto.get_width(), 600 - texto.get_height()))
 
 		util.scaleblit(screen, 600, self.font_dado.render(str(self.dado_numero), True, "red"), (533 - 32, 300 - 32))
+
 		if self.modo == "andando":
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.5:
@@ -159,16 +174,9 @@ class Tabuleiro:
 				else:
 					self.dado_numero -= 1
 					self.dado_tempo = 0
-					direcoes = [
-						(jogador.direcao[0], jogador.direcao[1]),
-						(jogador.direcao[1], jogador.direcao[0]),
-						(-jogador.direcao[1], -jogador.direcao[0]),
-						(-jogador.direcao[0], -jogador.direcao[1])
-					]
-					for direcao in direcoes:
-						nova_casa = (jogador.casa[0] + direcao[0], jogador.casa[1] + direcao[1])
-						casa = self.encontrar_casa(nova_casa)
-						if casa != None:
-							jogador.casa = nova_casa
-							jogador.direcao = direcao
-							break
+					(casa, direcao) = self.proxima_casa_e_direcao(jogador)
+					jogador.casa = casa
+					jogador.direcao = direcao
+			if self.dado_tempo < 0.5 and self.dado_numero > 0:
+				(casa, direcao) = self.proxima_casa_e_direcao(jogador)
+				self.animar("andando", jogador.numero, (casa_id_para_pos(jogador.casa), direcao))

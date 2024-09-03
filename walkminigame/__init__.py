@@ -61,8 +61,8 @@ def parallax_blit(screen, obj, camera, factor, width):
 
 # Main Game Class
 class WalkMinigame:
+	tamanho = (1280, 720)
 	def __init__(self):
-		self.screen = pygame.Surface((1280, 720))
 		self.fonte = pygame.font.Font(None, 64)
 
 		# Variaveis
@@ -120,16 +120,16 @@ class WalkMinigame:
 			self.velocidade = 540
 		self.posicao += self.velocidade * delta
 
-		self.screen.fill('#87CEEB')
-		width = self.screen.get_width()
+		screen.fill('#87CEEB')
+		width = screen.get_width()
 
-		parallax_blit(self.screen, self.clouds, self.posicao, 0.5, width)
-		parallax_blit(self.screen, self.background, self.posicao, 0.75, width)
-		parallax_blit(self.screen, self.ground, self.posicao, 1.0, width)
+		parallax_blit(screen, self.clouds, self.posicao, 0.5, width)
+		parallax_blit(screen, self.background, self.posicao, 0.75, width)
+		parallax_blit(screen, self.ground, self.posicao, 1.0, width)
 
-		self.screen.blit(util.tint(self.player.image, (red_tint * 255, 0, 0, 255)), self.player.rect)
+		screen.blit(util.tint(self.player.image, (red_tint * 255, 0, 0, 255)), self.player.rect)
 		self.obstacles.update()
-		self.obstacles.draw(self.screen)
+		self.obstacles.draw(screen)
 		object = "none"
 
 		for sprite in self.obstacles.sprites():
@@ -142,13 +142,11 @@ class WalkMinigame:
 
 		match object:
 			case "up":
-				self.screen.blit(self.upkey, self.upkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
+				screen.blit(self.upkey, self.upkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 			case "down":
-				self.screen.blit(self.downkey, self.downkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
+				screen.blit(self.downkey, self.downkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 			case "right":
-				self.screen.blit(self.rightkey, self.rightkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
-
-		screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
+				screen.blit(self.rightkey, self.rightkey.get_rect(midbottom=self.obstacles.sprites()[0].rect.midtop))
 
 		if self.kills >= 20:
 			return "ganhou"

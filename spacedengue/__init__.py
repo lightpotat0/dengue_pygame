@@ -10,6 +10,7 @@ screen_width = 1280
 screen_height = 720
 
 class SpaceMinigame:
+	tamanho = (screen_width, screen_height)
 	def __init__(self):
 		# Player Setup
 		player_sprite = Player((screen_width / 2,screen_height),screen_width,5)
@@ -22,8 +23,6 @@ class SpaceMinigame:
 		self.obstacle_amount = 4
 		self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
 		self.create_multiple_obstacles(screen_width / 15, 480, *self.obstacle_x_positions)
-
-		self.tela = pygame.Surface((screen_width, screen_height))
 
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
@@ -89,6 +88,9 @@ class SpaceMinigame:
 		if self.extra_spawn_time <= 0:
 			self.extra.add(Extra(choice(['right','left']),screen_width))
 
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		return tempo_inicio + 10000
+
 	def frame(self, screen, delta, jogo):
 		self.player.update()
 		self.mosquitos.update(self.mosquito_direction)
@@ -100,10 +102,10 @@ class SpaceMinigame:
 		if self.mosquito_downs >= 2:
 			return "perdeu"
 		elif self.mosquito_downs >= 1:
-			self.tela.fill((63, 0, 0, 255))
+			screen.fill((63, 0, 0, 255))
 		else:
-			self.tela.fill("black")
-		self.player.sprite.lasers.draw(self.tela)
+			screen.fill("black")
+		self.player.sprite.lasers.draw(screen)
 		for laser in self.player.sprite.lasers.sprites():
 			for obstacle in self.blocks.sprites():
 				if obstacle.rect.colliderect(laser.rect):
@@ -121,12 +123,10 @@ class SpaceMinigame:
 				return "perdeu"
 		if len(self.mosquitos.sprites()) == 0:
 			return "ganhou"
-		self.player.draw(self.tela)
-
-		self.blocks.draw(self.tela)
-		self.mosquitos.draw(self.tela)
-		self.mosquito_lasers.draw(self.tela)
-		screen.blit(pygame.transform.scale(self.tela, screen.get_size()), (0, 0))
+		self.player.draw(screen)
+		self.blocks.draw(screen)
+		self.mosquitos.draw(screen)
+		self.mosquito_lasers.draw(screen)
 		self.extra.draw(screen)
 
 if __name__ == '__main__':

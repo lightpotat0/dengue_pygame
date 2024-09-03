@@ -48,9 +48,9 @@ class Obstacle(pygame.sprite.Sprite):
 
 # Main Game Class
 class WalkMinigame:
+    tamanho = (1280, 720)
     def __init__(self):
         #Main Vars
-        self.screen = pygame.Surface((1280, 720))
         self.spawn = True
         self.trigger = False
         self.kills = 0
@@ -82,19 +82,17 @@ class WalkMinigame:
             self.spawn = False
 
         #Scenario
-        self.screen.fill('#87CEEB')
-        self.screen.blit(self.clouds, self.clouds_rect)
-        self.screen.blit(self.background, self.background_rect)
-        self.screen.blit(self.ground, self.ground_rect)
+        screen.fill('#87CEEB')
+        screen.blit(self.clouds, self.clouds_rect)
+        screen.blit(self.background, self.background_rect)
+        screen.blit(self.ground, self.ground_rect)
 
         #Player
-        self.player.draw(self.screen)
+        self.player.draw(screen)
 
         #Obstcles
-        self.obstacles.draw(self.screen)
+        self.obstacles.draw(screen)
         self.obstacles.update()
-
-        screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))
 
         #Win Check
         if self.kills >= 30:
