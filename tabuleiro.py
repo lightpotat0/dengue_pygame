@@ -3,7 +3,9 @@ import util
 import random
 import math
 
-CENTRO = (1066 / 2 - (72 * 15 + 72 - 64) / 2, 600 / 2 - (72 * 9 + 72 - 64) / 2)
+CASA_SIZE = 56
+CASA_STRIDE = 64
+CENTRO = (1066 / 2 - (CASA_STRIDE * 15 + CASA_STRIDE - 64) / 2, 600 / 2 - (CASA_STRIDE * 9 + CASA_STRIDE - 64) / 2)
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
@@ -16,15 +18,9 @@ TIPOS = [
 	#"loja",
 	#"sorte"
 ]
-CORES = [
-    "red",
-	"blue",
-	"green",
-	"yellow"
-]
 
 def casa_id_para_pos(id):
-    return (CENTRO[0] + id[0] * 72, CENTRO[1] + id[1] * 72)
+    return (CENTRO[0] + id[0] * CASA_STRIDE, CENTRO[1] + id[1] * CASA_STRIDE)
 
 class Casa:
 	def __init__(self, x, y, tipo):
@@ -42,6 +38,10 @@ class Tabuleiro:
 		self.tempo = 0
 		self.casa = pygame.image.load("tabuleiro/casa.png")
 		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png")
+		self.cinero = pygame.image.load("tabuleiro/cinero.png")
+		self.lixo = pygame.image.load("tabuleiro/lixo.png")
+		self.dado = pygame.image.load("tabuleiro/dado.png")
+		self.minigame = pygame.image.load("tabuleiro/minigame.png")
 		self.mapa = [
 			"               ",
 			"    XXX XXX    ",
@@ -89,10 +89,18 @@ class Tabuleiro:
 				return (nova_casa, direcao)
 		return (jogador.casa, jogador.direcao)
 
+	alphas = [1, 0, 0, 0]
 	animacoes = [(None, 0, None) for _ in range(4)]
 	def animar(self, animacao, numero_jogador, param = None):
 		if self.animacoes[numero_jogador][0] != animacao or self.animacoes[numero_jogador][2] != param:
 			self.animacoes[numero_jogador] = (animacao, pygame.time.get_ticks(), param)
+
+	def outros_jogadores_em_casa(self, casa, jogo, exceto_numero):
+		conta = 0
+		for j in jogo.jogadores:
+			if j.numero != exceto_numero and j.casa == casa and self.animacoes[j.numero][0] == None:
+				conta += 1
+		return conta
 
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
@@ -100,26 +108,80 @@ class Tabuleiro:
 		for casa in self.casas:
 			match casa.tipo:
 				case "teleporte":
-					util.scaleblit(screen, 600, self.nether_portal, casa.pos, pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), 4)
+					util.scaleblit(screen, 600, self.nether_portal, casa.pos, pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
+				case "+R$5":
+					util.scaleblit(screen, 600, self.cinero, casa.pos, None, CASA_SIZE / 128)
+				case "-R$2":
+					util.scaleblit(screen, 600, self.lixo, casa.pos, None, CASA_SIZE / 128)
+				case "dado":
+					util.scaleblit(screen, 600, self.dado, casa.pos, None, CASA_SIZE / 128)
+				case "minigame":
+					util.scaleblit(screen, 600, self.minigame, casa.pos, None, CASA_SIZE / 128)
 				case "vazio":
-					util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), casa.pos)
+					util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), casa.pos, None, CASA_SIZE / 64)
 				case _:
-					util.scaleblit(screen, 600, self.casa, casa.pos)
-					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), casa.pos)
+					util.scaleblit(screen, 600, self.casa, casa.pos, None, CASA_SIZE / 64)
+					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), casa.pos, None, CASA_SIZE / 64)
 		tempo = pygame.time.get_ticks()
-		for i in range(len(jogo.jogadores)):
-			jogador = jogo.jogadores[i]
+		for numero in [0 if jogo.jogador_atual > 0 else 1, 1 if jogo.jogador_atual > 1 else 2, 2 if jogo.jogador_atual > 2 else 3, jogo.jogador_atual]:
+			if numero >= len(jogo.jogadores):
+				continue
+			jogador = jogo.jogadores[numero]
+			outros_jogadores_em_casa = self.outros_jogadores_em_casa(jogador.casa, jogo, numero)
 			pos = casa_id_para_pos(jogador.casa)
-			animacao = self.animacoes[i]
+			animacao = self.animacoes[numero]
 			sprite = jogador.get_andamento(jogador.direcao, True)
 			match animacao:
 				case ("andando", tempo_inicio, (pos_inicio, direcao)):
 					if tempo >= tempo_inicio + 500:
-						self.animar(None, jogador.numero)
+						self.animar(None, numero)
 					sprite = jogador.get_andamento(direcao)
-					andado = (tempo - tempo_inicio) / 500 * 72
+					andado = (tempo - tempo_inicio) / 500 * CASA_STRIDE
 					pos = (pos_inicio[0] + andado * direcao[0], pos_inicio[1] + andado * direcao[1])
-			util.scaleblit(screen, 600, pygame.transform.scale(sprite, (60, 60)), (pos[0] + 2, pos[1] + 2))
+				case ("riqueza", tempo_inicio, _):
+					if tempo >= tempo_inicio + 1000:
+						jogo.passar_vez()
+						self.modo = "dado"
+						self.dado_numero = random.randint(1, 6)
+						self.animar(None, numero)
+					x = (tempo - tempo_inicio) / 250 * math.pi
+					if x % math.tau > math.pi:
+						x -= math.pi
+					pos = (pos[0], pos[1] - 24 * math.sin(x))
+					sprite = jogador.get_andamento("down", True)
+				case ("pobreza", tempo_inicio, _):
+					if tempo >= tempo_inicio + 1000:
+						jogo.passar_vez()
+						self.modo = "dado"
+						self.dado_numero = random.randint(1, 6)
+						self.animar(None, numero)
+					x = (tempo - tempo_inicio) / 250 * math.pi
+					if x % math.tau > math.pi:
+						x -= math.pi
+					t = 1 - math.sin(x)
+					sprite = util.tint_mult(sprite, (255, 255 * t, 255 * t))
+				case ("teleporte", tempo_inicio, _):
+					if tempo >= tempo_inicio + 1000:
+						jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
+						while not self.encontrar_casa(jogador.casa):
+							jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
+						jogo.passar_vez()
+						self.modo = "dado"
+						self.dado_numero = random.randint(1, 6)
+						self.animar(None, numero)
+					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
+			sprite_tamanho = (48, 48)
+			if jogo.jogador_atual != numero:
+				self.alphas[numero] = util.lerp(self.alphas[numero], 0.5, 8 * delta)
+			else:
+				self.alphas[numero] = util.lerp(self.alphas[numero], 1, 8 * delta)
+			if jogo.jogador_atual != numero and outros_jogadores_em_casa > 0:
+				pos = (pos[0] - 4, pos[1] - 2)
+				sprite_tamanho = (24, 24)
+			else:
+				pos = (pos[0] + 4, pos[1] + 4)
+			claridade = 255 * self.alphas[numero]
+			util.scaleblit(screen, 600, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), pos)
 		jogador = jogo.jogadores[jogo.jogador_atual]
 		if self.modo == "dado":
 			self.dado_tempo += delta
@@ -154,29 +216,44 @@ class Tabuleiro:
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.5:
 				if self.dado_numero == 0:
+					self.dado_numero = 0
 					casa = self.encontrar_casa(jogador.casa)
 					match casa.tipo:
 						case "minigame":
-							return "minigame"
+							if self.dado_tempo >= 1:
+								return "minigame"
+						case "dado":
+							if self.dado_tempo >= 1:
+								self.modo = "dado"
+								self.dado_numero = random.randint(1, 6)
+								self.dado_tempo = 0
+							self.animar(None, jogador.numero)
 						case "+R$5":
+							self.animar("riqueza", jogador.numero)
 							jogador.moedas += 5
-							jogo.passar_vez()
+							self.modo = "animando"
+							self.dado_tempo = 0
 						case "-R$2":
+							self.animar("pobreza", jogador.numero)
 							jogador.moedas -= 2
-							jogo.passar_vez()
+							self.modo = "animando"
+							self.dado_tempo = 0
 						case "teleporte":
-							jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
-							while not self.encontrar_casa(jogador.casa):
-								jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
-							jogo.passar_vez()
-					self.modo = "dado"
-					self.dado_numero = random.randint(1, 6)
+							self.animar("teleporte", jogador.numero)
+							self.modo = "animando"
+							self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
-					self.dado_tempo = 0
+					if self.dado_numero > 0:
+						self.dado_tempo = 0
 					(casa, direcao) = self.proxima_casa_e_direcao(jogador)
 					jogador.casa = casa
 					jogador.direcao = direcao
 			if self.dado_tempo < 0.5 and self.dado_numero > 0:
 				(casa, direcao) = self.proxima_casa_e_direcao(jogador)
 				self.animar("andando", jogador.numero, (casa_id_para_pos(jogador.casa), direcao))
+		if self.modo != "andando" and self.modo != "animando":
+			self.animar(None, 0)
+			self.animar(None, 1)
+			self.animar(None, 2)
+			self.animar(None, 3)

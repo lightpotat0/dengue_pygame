@@ -10,16 +10,18 @@ class Player(pygame.sprite.Sprite):
 		self.max_x_constraint = constraint
 		self.ready = True
 		self.laser_time = 0
-		self.laser_cooldown = 320
-
+		self.laser_cooldown = 300
+		self.x = self.rect.x
 		self.lasers = pygame.sprite.Group()
-	def get_input(self):
+
+	def get_input(self, delta):
 		keys = pygame.key.get_pressed()
 
 		if keys[pygame.K_RIGHT]:
-			self.rect.x += self.speed
+			self.x += self.speed * 200 * delta
 		elif keys[pygame.K_LEFT]:
-			self.rect.x -= self.speed
+			self.x -= self.speed * 200 * delta
+		self.rect.x = self.x
 
 		#if keys[pygame.K_SPACE] and self.ready:
 		if self.ready:
@@ -43,7 +45,7 @@ class Player(pygame.sprite.Sprite):
 		self.lasers.add(Laser(self.rect.center,-20,self.rect.bottom))
 
 	def update(self, delta):
-		self.get_input()
+		self.get_input(delta)
 		self.constraint()
 		self.recharge()
 		self.lasers.update(delta)

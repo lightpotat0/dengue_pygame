@@ -84,7 +84,7 @@ casas = None
 while True:
 	util.mouse_pos = pygame.mouse.get_pos()
 	if tela_minigame != None:
-		event.pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
+		util.mouse_pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
 	for event in pygame.event.get():
 		if getattr(modo, "event", None) != None:
 			if event.type == pygame.MOUSEBUTTONDOWN:

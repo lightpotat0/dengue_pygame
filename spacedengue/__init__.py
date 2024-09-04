@@ -90,7 +90,7 @@ class SpaceMinigame:
 
 	def frame(self, screen, delta, jogo):
 		self.player.update(delta)
-		self.mosquitos.update(self.mosquito_direction)
+		self.mosquitos.update(self.mosquito_direction, delta)
 		self.mosquito_position_checker()
 		self.mosquito_lasers.update(delta)
 		self.extra_mosquito_timer(delta)
