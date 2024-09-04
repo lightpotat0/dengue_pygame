@@ -3,9 +3,9 @@ import util
 import random
 import math
 
-CASA_SIZE = 56
-CASA_STRIDE = 64
-CENTRO = (1066 / 2 - (CASA_STRIDE * 15 + CASA_STRIDE - 64) / 2, 600 / 2 - (CASA_STRIDE * 9 + CASA_STRIDE - 64) / 2)
+CASA_SIZE = 80
+CASA_STRIDE = CASA_SIZE + 8
+CENTRO = (1066 / 2 - (CASA_STRIDE * 15 - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * 9 - (CASA_STRIDE - CASA_SIZE)) / 2)
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
@@ -44,13 +44,13 @@ class Tabuleiro:
 		self.minigame = pygame.image.load("tabuleiro/minigame.png")
 		self.mapa = [
 			"               ",
-			"    XXX XXX    ",
+			"               ",
+			"   XXXX XXXX   ",
+			"   X  XXX  X   ",
+			"   XX     XX   ",
 			"    X XXX X    ",
-			"    XX   XX    ",
-			"     X   X     ",
-			"    XX   XX    ",
-			"    X XXX X    ",
 			"    XXX XXX    ",
+			"               ",
 			"               "
 		]
 		if casas != None:
@@ -170,16 +170,16 @@ class Tabuleiro:
 						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
-			sprite_tamanho = (48, 48)
+			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
 				self.alphas[numero] = util.lerp(self.alphas[numero], 0.5, 8 * delta)
 			else:
 				self.alphas[numero] = util.lerp(self.alphas[numero], 1, 8 * delta)
 			if jogo.jogador_atual != numero and outros_jogadores_em_casa > 0:
-				pos = (pos[0] - 4, pos[1] - 2)
+				pos = (pos[0] - 6, pos[1] - 4)
 				sprite_tamanho = (24, 24)
 			else:
-				pos = (pos[0] + 4, pos[1] + 4)
+				pos = (pos[0] + 6, pos[1] + 6)
 			claridade = 255 * self.alphas[numero]
 			util.scaleblit(screen, 600, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), pos)
 		jogador = jogo.jogadores[jogo.jogador_atual]
