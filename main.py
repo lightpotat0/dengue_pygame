@@ -22,6 +22,9 @@ tela_minigame = None
 tempo_inicio_minigame = 0
 delta = 1 / 60
 
+mosquiton = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-export.png")
+barra = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-exportq.png")
+
 andamentos = [
 	pygame.image.load("assets/characterswalk1.png"),
 	pygame.image.load("assets/characterswalk2.png"),
@@ -79,8 +82,13 @@ jogo = Jogo()
 casas = None
 
 while True:
+	util.mouse_pos = pygame.mouse.get_pos()
+	if tela_minigame != None:
+		event.pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
 	for event in pygame.event.get():
 		if getattr(modo, "event", None) != None:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				event.pos = util.mouse_pos
 			modo.event(event)
 		if event.type == pygame.QUIT:
 			pygame.quit()
@@ -101,8 +109,18 @@ while True:
 			screen.blit(pygame.transform.scale(tela_minigame, screen.get_size()), (0, 0))
 		if getattr(modo, "get_tempo_da_perdicao", None):
 			tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)
-			t = 1 - (pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame)
-			screen.fill("red", pygame.Rect(0, screen.get_height() * 0.95, screen.get_width() * t, screen.get_height() * 0.05))
+			t = min((pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame), 1)
+			if t < 0:
+				t = 1
+			size = 0.2
+			height = screen.get_height() * size
+			mosquito_width = height * mosquiton.get_width() / mosquiton.get_height()
+			screen.blit(pygame.transform.scale(mosquiton, (mosquito_width, height)), pygame.Rect(0, screen.get_height() - height, mosquito_width, height))
+			char_size = height
+			barra_width = (screen.get_width() - mosquito_width - char_size) * t
+			screen.blit(pygame.transform.scale(barra, (barra_width, height)), pygame.Rect(mosquito_width, screen.get_height() - height, barra_width, height))
+			screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
+			#screen.fill("red", pygame.Rect(0, screen.get_height() * 0.95, screen.get_width() * t, screen.get_height() * 0.05))
 	match resultado:
 		case "novo jogo":
 			jogo = Jogo()

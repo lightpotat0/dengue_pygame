@@ -27,7 +27,7 @@ class SpaceMinigame:
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
 		self.mosquito_lasers = pygame.sprite.Group()
-		self.mosquito_setup(rows = 4, cols = 5)
+		self.mosquito_setup(rows = 4, cols = 4)
 		self.mosquito_direction = 1
 		self.mosquito_downs = 0
 
@@ -83,17 +83,17 @@ class SpaceMinigame:
 			laser_sprite = Laser(random_mosquito.rect.center,6,screen_height)
 			self.mosquito_lasers.add(laser_sprite)
 
-	def extra_mosquito_timer(self):
-		self.extra_spawn_time -= 1
+	def extra_mosquito_timer(self, delta):
+		self.extra_spawn_time -= delta * 60
 		if self.extra_spawn_time <= 0:
 			self.extra.add(Extra(choice(['right','left']),screen_width))
 
 	def frame(self, screen, delta, jogo):
-		self.player.update()
+		self.player.update(delta)
 		self.mosquitos.update(self.mosquito_direction)
 		self.mosquito_position_checker()
-		self.mosquito_lasers.update()
-		self.extra_mosquito_timer()
+		self.mosquito_lasers.update(delta)
+		self.extra_mosquito_timer(delta)
 		self.extra.update()
 		# render
 		if self.mosquito_downs >= 2:

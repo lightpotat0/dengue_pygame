@@ -3,6 +3,7 @@ import math
 
 pressionado = pygame.key.get_pressed()
 pressionado_agora = pressionado
+mouse_pos = (0, 0)
 
 def clamp(v, x, y):
 	return max(min(v, y), x)

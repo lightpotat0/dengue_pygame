@@ -42,6 +42,8 @@ class PingoMinigame:
 		for balde in self.baldes:
 			if not balde.fechado and balde.cheio < 20:
 				menor = min(menor, (20 - balde.cheio) / balde.velocidade * 1000)
+		if self.morreu:
+			return 0
 		return pygame.time.get_ticks() + menor
 
 	def frame(self, screen, delta, jogo):

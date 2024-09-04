@@ -60,20 +60,23 @@ class PistolMosquito:
 		self.mosquitos = [Mosquito() for _ in range(15)]
 		# timer
 		self.start_time = time.time()
-		self.timer_duration = 10
+		self.timer_duration = 5
 		self.clock = pygame.time.Clock()
 
 	def event(self, event):
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			mouse_pos = pygame.mouse.get_pos()
-			for mosquito in self.mosquitos:
-				if mosquito.active and mosquito.mosquito_rect.collidepoint(mouse_pos):
-					mosquito.deactivate()
+			self.atirar()
+
+	def atirar(self):
+		for mosquito in self.mosquitos:
+			if mosquito.active and mosquito.mosquito_rect.collidepoint(util.mouse_pos):
+				mosquito.deactivate()
 
 	def get_tempo_da_perdicao(self, tempo_inicio):
-		return tempo_inicio + 10000
+		return tempo_inicio + 5000
 
 	def frame(self, screen, delta, jogo):
+		self.atirar()
 		elapsed_time = time.time() - self.start_time
 		screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
 		screen.blit(pygame.transform.scale_by(cisterna, 4), (82, 30))
