@@ -27,7 +27,7 @@ class SpaceMinigame:
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
 		self.mosquito_lasers = pygame.sprite.Group()
-		self.mosquito_setup(rows = 4, cols = 4)
+		self.mosquito_setup(rows = 4, cols = 6)
 		self.mosquito_direction = 1
 		self.mosquito_downs = 0
 
