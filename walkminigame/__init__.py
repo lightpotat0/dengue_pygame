@@ -2,6 +2,7 @@ import pygame
 from random import choice
 from random import randint
 import util
+import math
 
 # Player Class
 class Player(pygame.sprite.Sprite):
@@ -92,6 +93,14 @@ class WalkMinigame:
 		self.downkey = pygame.image.load("walkminigame/Sprites/downkey.png").convert_alpha()
 		self.rightkey = pygame.image.load("walkminigame/Sprites/rightkey.png").convert_alpha()
 
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		if len(self.obstacles) == 0:
+			return 0
+		distancia = self.obstacles.sprites()[-1].rect.x - 160
+		# equação de torricelli
+		velocidade_final = math.sqrt(self.velocidade * self.velocidade + 2 * 40 * distancia)
+		return pygame.time.get_ticks() + distancia / ((velocidade_final + self.velocidade) / 2) * 1000
+
 	def event(self, event):
 		if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
 			self.trigger = True
@@ -115,9 +124,6 @@ class WalkMinigame:
 			self.spawn = False
 
 		self.velocidade = self.velocidade + 40 * delta
-
-		if self.velocidade > 540:
-			self.velocidade = 540
 		self.posicao += self.velocidade * delta
 
 		screen.fill('#87CEEB')

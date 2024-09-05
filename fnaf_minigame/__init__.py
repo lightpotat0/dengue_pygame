@@ -60,7 +60,7 @@ class PistolMosquito:
 		self.mosquitos = [Mosquito() for _ in range(15)]
 		# timer
 		self.start_time = time.time()
-		self.timer_duration = 5
+		self.timer_duration = 4
 		self.clock = pygame.time.Clock()
 
 	def event(self, event):
@@ -73,7 +73,7 @@ class PistolMosquito:
 				mosquito.deactivate()
 
 	def get_tempo_da_perdicao(self, tempo_inicio):
-		return tempo_inicio + 5000
+		return tempo_inicio + self.timer_duration * 1000
 
 	def frame(self, screen, delta, jogo):
 		self.atirar()

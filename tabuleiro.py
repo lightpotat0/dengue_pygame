@@ -176,7 +176,15 @@ class Tabuleiro:
 			else:
 				self.alphas[numero] = util.lerp(self.alphas[numero], 1, 8 * delta)
 			if jogo.jogador_atual != numero and outros_jogadores_em_casa > 0:
-				pos = (pos[0] - 6, pos[1] - 4)
+				match numero:
+					case 0:
+						pos = (pos[0] - 2, pos[1] + 4)
+					case 1:
+						pos = (pos[0] + 58, pos[1] + 4)
+					case 2:
+						pos = (pos[0] - 2, pos[1] + 52)
+					case 3:
+						pos = (pos[0] + 58, pos[1] + 52)
 				sprite_tamanho = (24, 24)
 			else:
 				pos = (pos[0] + 6, pos[1] + 6)

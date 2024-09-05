@@ -2,6 +2,8 @@ from typing import Any
 import pygame
 from pygame.sprite import Group
 
+MOSQUITO_SPEED = 120
+
 class Mosquito(pygame.sprite.Sprite):
 	def __init__(self,color,x,y):
 		super().__init__()
@@ -11,7 +13,7 @@ class Mosquito(pygame.sprite.Sprite):
 		self.x = x
 
 	def update(self, direction, delta):
-		self.x += direction * 140 * delta
+		self.x += direction * MOSQUITO_SPEED * delta
 		self.rect.x = self.x
 
 

@@ -1,7 +1,7 @@
 import pygame, sys
 from spacedengue.player import Player
 import spacedengue.obstacle
-from spacedengue.mosquitalien import Mosquito, Extra
+from spacedengue.mosquitalien import Mosquito, Extra, MOSQUITO_SPEED
 from random import choice
 from spacedengue.laser import Laser
 from random import randint
@@ -34,6 +34,21 @@ class SpaceMinigame:
 		#Extra Setup
 		self.extra = pygame.sprite.GroupSingle()
 		self.extra_spawn_time = randint(400,800)
+
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		segundos_restantes = 0
+		mosquito_mais_esquerdo = screen_width
+		for mosquito in self.mosquitos:
+			mosquito_mais_esquerdo = min(mosquito_mais_esquerdo, mosquito.rect.left)
+		if self.mosquito_direction == 1:
+			mosquito_mais_direito = 0
+			for mosquito in self.mosquitos:
+				mosquito_mais_direito = max(mosquito_mais_direito, mosquito.rect.right)
+			distancia_ate_direita = screen_width - mosquito_mais_direito
+			segundos_restantes = distancia_ate_direita / MOSQUITO_SPEED
+			mosquito_mais_esquerdo += distancia_ate_direita
+		segundos_restantes += mosquito_mais_esquerdo / MOSQUITO_SPEED
+		return pygame.time.get_ticks() + segundos_restantes * 1000
 
 	def create_obstacle(self, x_start, y_start, offset_x):
 		for row_index, row in enumerate(self.shape):
