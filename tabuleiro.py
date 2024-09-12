@@ -5,7 +5,6 @@ import math
 
 CASA_SIZE = 80
 CASA_STRIDE = CASA_SIZE + 8
-CENTRO = (1066 / 2 - (CASA_STRIDE * 15 - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * 9 - (CASA_STRIDE - CASA_SIZE)) / 2)
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
@@ -18,6 +17,20 @@ TIPOS = [
 	#"loja",
 	#"sorte"
 ]
+MAPA = [
+	"               ",
+	" XXXXX   XXXXX ",
+	" X   X   X   X ",
+	" XXXXXXXXXXXXX ",
+	"     X   X     ",
+	"     X   X     ",
+	"     X   X     ",
+	" XXXXXXXXXXXXX ",
+	" X   X   X   X ",
+	" XXXXX   XXXXX ",
+	"               "
+]
+CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
 
 def casa_id_para_pos(id):
     return (CENTRO[0] + id[0] * CASA_STRIDE, CENTRO[1] + id[1] * CASA_STRIDE)
@@ -42,29 +55,18 @@ class Tabuleiro:
 		self.lixo = pygame.image.load("tabuleiro/lixo.png")
 		self.dado = pygame.image.load("tabuleiro/dado.png")
 		self.minigame = pygame.image.load("tabuleiro/minigame.png")
-		self.mapa = [
-			"               ",
-			"               ",
-			"   XXXX XXXX   ",
-			"   X  XXX  X   ",
-			"   XX     XX   ",
-			"    X XXX X    ",
-			"    XXX XXX    ",
-			"               ",
-			"               "
-		]
 		if casas != None:
 			self.casas = casas
 		else:
 			self.casas = []
 			casa_inicial = None
-			for x in range(len(self.mapa[0])):
-				for y in range(len(self.mapa)):
-					if self.mapa[y][x] == "X":
+			for x in range(len(MAPA[0])):
+				for y in range(len(MAPA)):
+					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
-					elif self.mapa[y][x] == " ":
+					elif MAPA[y][x] == " ":
 						self.casas.append(Casa(x, y, "vazio"))
 			for jogador in jogo.jogadores:
 				jogador.casa = casa_inicial
@@ -102,27 +104,33 @@ class Tabuleiro:
 				conta += 1
 		return conta
 
+	cam_pos = (0, 0)
+
+	def camerado(self, pos):
+		return (pos[0] - self.cam_pos[0] + 1066 / 2, pos[1] - self.cam_pos[1] + 600 / 2)
+
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill("black")
 		for casa in self.casas:
 			match casa.tipo:
 				case "teleporte":
-					util.scaleblit(screen, 600, self.nether_portal, casa.pos, pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
+					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
 				case "+R$5":
-					util.scaleblit(screen, 600, self.cinero, casa.pos, None, CASA_SIZE / 128)
+					util.scaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "-R$2":
-					util.scaleblit(screen, 600, self.lixo, casa.pos, None, CASA_SIZE / 128)
+					util.scaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "dado":
-					util.scaleblit(screen, 600, self.dado, casa.pos, None, CASA_SIZE / 128)
+					util.scaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "minigame":
-					util.scaleblit(screen, 600, self.minigame, casa.pos, None, CASA_SIZE / 128)
+					util.scaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "vazio":
-					util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), casa.pos, None, CASA_SIZE / 64)
+					util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
 				case _:
-					util.scaleblit(screen, 600, self.casa, casa.pos, None, CASA_SIZE / 64)
-					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), casa.pos, None, CASA_SIZE / 64)
+					util.scaleblit(screen, 600, self.casa, self.camerado(casa.pos), None, CASA_SIZE / 64)
+					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), self.camerado(casa.pos), None, CASA_SIZE / 64)
 		tempo = pygame.time.get_ticks()
+		jogador_atual_offset = (0, 0)
 		for numero in [0 if jogo.jogador_atual > 0 else 1, 1 if jogo.jogador_atual > 1 else 2, 2 if jogo.jogador_atual > 2 else 3, jogo.jogador_atual]:
 			if numero >= len(jogo.jogadores):
 				continue
@@ -138,6 +146,8 @@ class Tabuleiro:
 					sprite = jogador.get_andamento(direcao)
 					andado = (tempo - tempo_inicio) / 500 * CASA_STRIDE
 					pos = (pos_inicio[0] + andado * direcao[0], pos_inicio[1] + andado * direcao[1])
+					if jogador.numero == jogo.jogador_atual:
+						jogador_atual_offset = (andado * direcao[0], andado * direcao[1])
 				case ("riqueza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
@@ -162,9 +172,9 @@ class Tabuleiro:
 					sprite = util.tint_mult(sprite, (255, 255 * t, 255 * t))
 				case ("teleporte", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
-						jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
+						jogador.casa = (random.randint(0, len(MAPA)), random.randint(0, len(MAPA[0])))
 						while not self.encontrar_casa(jogador.casa):
-							jogador.casa = (random.randint(0, len(self.mapa)), random.randint(0, len(self.mapa[0])))
+							jogador.casa = (random.randint(0, len(MAPA)), random.randint(0, len(MAPA[0])))
 						jogo.passar_vez()
 						self.modo = "dado"
 						self.dado_numero = random.randint(1, 6)
@@ -189,7 +199,7 @@ class Tabuleiro:
 			else:
 				pos = (pos[0] + 6, pos[1] + 6)
 			claridade = 255 * self.alphas[numero]
-			util.scaleblit(screen, 600, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), pos)
+			util.scaleblit(screen, 600, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), self.camerado(pos))
 		jogador = jogo.jogadores[jogo.jogador_atual]
 		if self.modo == "dado":
 			self.dado_tempo += delta
@@ -199,6 +209,10 @@ class Tabuleiro:
 			if util.pressionado_agora[pygame.K_SPACE] or util.pressionado_agora[pygame.K_RETURN]:
 				self.dado_tempo = 0
 				self.modo = "andando"
+
+		proxima_cam_pos = casa_id_para_pos(jogo.jogadores[jogo.jogador_atual].casa)
+		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
+		self.cam_pos = (util.lerp(self.cam_pos[0], proxima_cam_pos[0], 2 * delta), util.lerp(self.cam_pos[1], proxima_cam_pos[1], 2 * delta))
 
 		cor = "white"
 		if len(jogo.jogadores) >= 1:
