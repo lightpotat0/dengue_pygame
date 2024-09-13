@@ -15,6 +15,13 @@ def scaleblit(screen, altura_esperada, obj, pos, area = None, escala = 1):
 	else:
 		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), None)
 
+def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala = 1):
+	scale = screen.get_height() / altura_esperada
+	if area != None:
+		screen.blit(pygame.transform.smoothscale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), pygame.rect.Rect(area[0] * escala * scale, area[1] * escala * scale, area[2] * escala * scale, area[3] * escala * scale))
+	else:
+		screen.blit(pygame.transform.smoothscale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), None)
+
 def tint(obj, cor):
 	obj = obj.copy()
 	obj.fill((191, 191, 191, 255), None, pygame.BLEND_RGBA_MULT)
@@ -22,8 +29,9 @@ def tint(obj, cor):
 	return obj
 
 def tint_mult(obj, cor):
-	obj = obj.copy()
-	obj.fill(cor, None, pygame.BLEND_RGBA_MULT)
+	if cor != (255, 255, 255, 255):
+		obj = obj.copy()
+		obj.fill(cor, None, pygame.BLEND_RGBA_MULT)
 	return obj
 
 def blitanimado(screen, obj, pos, tempo, fps):

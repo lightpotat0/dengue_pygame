@@ -18,22 +18,29 @@ TIPOS = [
 	#"sorte"
 ]
 MAPA = [
-	"               ",
-	" XXXXX   XXXXX ",
-	" X   X   X   X ",
-	" XXXXXXXXXXXXX ",
-	"     X   X     ",
-	"     X   X     ",
-	"     X   X     ",
-	" XXXXXXXXXXXXX ",
-	" X   X   X   X ",
-	" XXXXX   XXXXX ",
-	"               "
+	"                  ",
+	"                  ",
+	"                  ",
+	"                  ",
+	"    XXXXX   XXXXX ",
+	"    X   X   X   X ",
+	"    X   X   X   X ",
+	"    X   X   X   X ",
+	"    XXXXXXXXXXXXX ",
+	"        X   X     ",
+	"        X   X     ",
+	"        X   X     ",
+	"    XXXXXXXXXXXXX ",
+	"    X   X   X   X ",
+	"    X   X   X   X ",
+	"    X   X   X   X ",
+	"    XXXXX   XXXXX ",
+	"                  "
 ]
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
 
 def casa_id_para_pos(id):
-    return (CENTRO[0] + id[0] * CASA_STRIDE, CENTRO[1] + id[1] * CASA_STRIDE)
+    return (id[0] * CASA_STRIDE, id[1] * CASA_STRIDE)
 
 class Casa:
 	def __init__(self, x, y, tipo):
@@ -55,6 +62,7 @@ class Tabuleiro:
 		self.lixo = pygame.image.load("tabuleiro/lixo.png")
 		self.dado = pygame.image.load("tabuleiro/dado.png")
 		self.minigame = pygame.image.load("tabuleiro/minigame.png")
+		self.fundo = pygame.image.load("tabuleiro/fundo.png")
 		if casas != None:
 			self.casas = casas
 		else:
@@ -112,6 +120,7 @@ class Tabuleiro:
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill("black")
+		util.smoothscaleblit(screen, 600, self.fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		for casa in self.casas:
 			match casa.tipo:
 				case "teleporte":
@@ -125,7 +134,8 @@ class Tabuleiro:
 				case "minigame":
 					util.scaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "vazio":
-					util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
+					pass
+					#util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
 				case _:
 					util.scaleblit(screen, 600, self.casa, self.camerado(casa.pos), None, CASA_SIZE / 64)
 					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), self.camerado(casa.pos), None, CASA_SIZE / 64)
@@ -198,7 +208,7 @@ class Tabuleiro:
 				sprite_tamanho = (24, 24)
 			else:
 				pos = (pos[0] + 6, pos[1] + 6)
-			claridade = 255 * self.alphas[numero]
+			claridade = util.clamp(255 * self.alphas[numero], 0, 255)
 			util.scaleblit(screen, 600, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), self.camerado(pos))
 		jogador = jogo.jogadores[jogo.jogador_atual]
 		if self.modo == "dado":

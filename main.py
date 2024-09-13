@@ -8,8 +8,8 @@ pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
 
 import util
-import titulo
 import tabuleiro
+import titulo
 from pingominigame import PingoMinigame
 from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame

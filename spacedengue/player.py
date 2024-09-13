@@ -17,9 +17,9 @@ class Player(pygame.sprite.Sprite):
 	def get_input(self, delta):
 		keys = pygame.key.get_pressed()
 
-		if keys[pygame.K_RIGHT]:
+		if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
 			self.x += self.speed * 200 * delta
-		elif keys[pygame.K_LEFT]:
+		elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
 			self.x -= self.speed * 200 * delta
 		self.rect.x = self.x
 

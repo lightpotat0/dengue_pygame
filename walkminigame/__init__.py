@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
 # Obstacle Class
 class Obstacle(pygame.sprite.Sprite):
 	directions = {
-		'down': pygame.K_DOWN,
-		'up': pygame.K_UP,
-		'right': pygame.K_RIGHT
+		'down': [pygame.K_DOWN, pygame.K_s],
+		'up': [pygame.K_UP, pygame.K_w],
+		'right': [pygame.K_RIGHT, pygame.K_d]
 	}
 
 	def __init__(self, object, minigame, index, posicao_anterior):
@@ -40,13 +40,13 @@ class Obstacle(pygame.sprite.Sprite):
 			return
 		keys = pygame.key.get_pressed()
 
-		if self.index == self.minigame.kills and self.rect.x <= 500 and self.minigame.stun_timer == 0.0:
+		if self.index == self.minigame.kills and self.rect.x <= 600 and self.minigame.stun_timer == 0.0:
 			direction_pressed = "none"
-			if keys[self.directions["up"]]:
+			if keys[self.directions["up"][0]] or keys[self.directions["up"][1]]:
 				direction_pressed = "up"
-			elif keys[self.directions["right"]]:
+			elif keys[self.directions["right"][0]] or keys[self.directions["right"][1]]:
 				direction_pressed = "right"
-			elif keys[self.directions["down"]]:
+			elif keys[self.directions["down"][0]] or keys[self.directions["down"][1]]:
 				direction_pressed = "down"
 			if direction_pressed == self.object:
 				self.kill()
@@ -143,7 +143,7 @@ class WalkMinigame:
 			if object == "none":
 				if sprite.rect.x <= 160:
 					return "perdeu"
-				elif sprite.rect.x <= 500:
+				elif sprite.rect.x <= 600:
 					object = sprite.object
 
 		match object:
