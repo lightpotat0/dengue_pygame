@@ -5,8 +5,8 @@ fonte = pygame.font.SysFont('arial', 40, True, True)
 fonte1 = pygame.font.SysFont('arial', 25, True, True)
 class Titulo:
 	def __init__(self):
-		self.logo = pygame.image.load("titulo/logo.svg")
-		self.bg = pygame.image.load("titulo/titulobq.png")
+		self.logo = pygame.image.load("titulo/logo.svg").convert_alpha()
+		self.bg = pygame.image.load("titulo/titulobq.png").convert_alpha()
 		self.comecar = False
 
 	def event(self, event):

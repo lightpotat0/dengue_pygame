@@ -4,12 +4,12 @@ import random
 import time
 
 #coisas
-mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png')
-bg = pygame.image.load('fnaf_minigame/sprites/cenario.png')
-cisterna = pygame.image.load('fnaf_minigame/sprites/cisterna.png')
-bain = pygame.image.load('fnaf_minigame/sprites/bain.png')
-tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png')
-mira = pygame.image.load('fnaf_minigame/sprites/mira.png')
+mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png').convert_alpha()
+bg = pygame.image.load('fnaf_minigame/sprites/cenario.png').convert_alpha()
+cisterna = pygame.image.load('fnaf_minigame/sprites/cisterna.png').convert_alpha()
+bain = pygame.image.load('fnaf_minigame/sprites/bain.png').convert_alpha()
+tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png').convert_alpha()
+mira = pygame.image.load('fnaf_minigame/sprites/mira.png').convert_alpha()
 screen_width = 1066
 screen_height = 600
 font = pygame.font.Font(None, 74)
@@ -60,7 +60,7 @@ class PistolMosquito:
 		self.mosquitos = [Mosquito() for _ in range(15)]
 		# timer
 		self.start_time = time.time()
-		self.timer_duration = 4
+		self.timer_duration = 5
 		self.clock = pygame.time.Clock()
 
 	def event(self, event):

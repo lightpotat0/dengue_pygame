@@ -56,13 +56,13 @@ class Tabuleiro:
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
-		self.casa = pygame.image.load("tabuleiro/casa.png")
-		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png")
-		self.cinero = pygame.image.load("tabuleiro/cinero.png")
-		self.lixo = pygame.image.load("tabuleiro/lixo.png")
-		self.dado = pygame.image.load("tabuleiro/dado.png")
-		self.minigame = pygame.image.load("tabuleiro/minigame.png")
-		self.fundo = pygame.image.load("tabuleiro/fundo.png")
+		self.casa = pygame.image.load("tabuleiro/casa.png").convert_alpha()
+		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png").convert_alpha()
+		self.cinero = pygame.image.load("tabuleiro/cinero.png").convert_alpha()
+		self.lixo = pygame.image.load("tabuleiro/lixo.png").convert_alpha()
+		self.dado = pygame.image.load("tabuleiro/dado.png").convert_alpha()
+		self.minigame = pygame.image.load("tabuleiro/minigame.png").convert_alpha()
+		self.fundo = pygame.image.load("tabuleiro/fundo.png").convert_alpha()
 		if casas != None:
 			self.casas = casas
 		else:
