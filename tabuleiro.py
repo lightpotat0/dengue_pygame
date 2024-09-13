@@ -99,7 +99,7 @@ class Tabuleiro:
 				return (nova_casa, direcao)
 		return (jogador.casa, jogador.direcao)
 
-	alphas = [1, 0, 0, 0]
+	alphas = [0, 0, 0, 0]
 	animacoes = [(None, 0, None) for _ in range(4)]
 	def animar(self, animacao, numero_jogador, param = None):
 		if self.animacoes[numero_jogador][0] != animacao or self.animacoes[numero_jogador][2] != param:
@@ -192,9 +192,15 @@ class Tabuleiro:
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
-				self.alphas[numero] = util.lerp(self.alphas[numero], 0.5, 8 * delta)
+				if self.alphas[numero] == 0:
+					self.alphas[numero] = 0.5
+				else:
+					self.alphas[numero] = util.lerp(self.alphas[numero], 0.5, 8 * delta)
 			else:
-				self.alphas[numero] = util.lerp(self.alphas[numero], 1, 8 * delta)
+				if self.alphas[numero] == 0:
+					self.alphas[numero] = 1
+				else:
+					self.alphas[numero] = util.lerp(self.alphas[numero], 1, 8 * delta)
 			if jogo.jogador_atual != numero and outros_jogadores_em_casa > 0:
 				match numero:
 					case 0:
@@ -222,7 +228,10 @@ class Tabuleiro:
 
 		proxima_cam_pos = casa_id_para_pos(jogo.jogadores[jogo.jogador_atual].casa)
 		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
-		self.cam_pos = (util.lerp(self.cam_pos[0], proxima_cam_pos[0], 2 * delta), util.lerp(self.cam_pos[1], proxima_cam_pos[1], 2 * delta))
+		if self.cam_pos == (0, 0):
+			self.cam_pos = proxima_cam_pos
+		else:
+			self.cam_pos = (util.lerp(self.cam_pos[0], proxima_cam_pos[0], 4 * delta), util.lerp(self.cam_pos[1], proxima_cam_pos[1], 4 * delta))
 
 		cor = "white"
 		if len(jogo.jogadores) >= 1:
