@@ -2,7 +2,7 @@ from typing import Any
 import pygame
 from pygame.sprite import Group
 
-MOSQUITO_SPEED = 120
+MOSQUITO_SPEED = 110
 
 class Mosquito(pygame.sprite.Sprite):
 	def __init__(self,color,x,y):

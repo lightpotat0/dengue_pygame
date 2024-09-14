@@ -11,6 +11,12 @@ class Player(pygame.sprite.Sprite):
 		self.image = pygame.image.load('walkminigame/Sprites/player.png').convert_alpha()
 		self.rect = self.image.get_rect(midbottom=(120, 474))
 
+object_images = {
+	'down': pygame.image.load('walkminigame/Sprites/bucketdown.png').convert_alpha(),
+	'up': pygame.image.load('walkminigame/Sprites/trashup.png').convert_alpha(),
+	'right': pygame.image.load('walkminigame/Sprites/tireright.png').convert_alpha()
+}
+
 # Obstacle Class
 class Obstacle(pygame.sprite.Sprite):
 	directions = {
@@ -25,14 +31,8 @@ class Obstacle(pygame.sprite.Sprite):
 		self.object = object
 		self.index = index
 
-		object_images = {
-			'down': 'walkminigame/Sprites/bucketdown.png',
-			'up': 'walkminigame/Sprites/trashup.png',
-			'right': 'walkminigame/Sprites/tireright.png'
-		}
-
-		self.image = pygame.image.load(object_images[object]).convert_alpha()
-		self.posicao_base = posicao_anterior + randint(200, 400)
+		self.image = object_images[object]
+		self.posicao_base = posicao_anterior + randint(200, 400) + index * 8
 		self.rect = self.image.get_rect(midbottom=(self.posicao_base, 474))
 
 	def update(self):
@@ -40,7 +40,7 @@ class Obstacle(pygame.sprite.Sprite):
 			return
 		keys = pygame.key.get_pressed()
 
-		if self.index == self.minigame.kills and self.rect.x <= 600 and self.minigame.stun_timer == 0.0:
+		if self.index == self.minigame.kills and self.rect.x <= 720 and self.minigame.stun_timer == 0.0:
 			direction_pressed = "none"
 			if keys[self.directions["up"][0]] or keys[self.directions["up"][1]]:
 				direction_pressed = "up"
@@ -98,7 +98,7 @@ class WalkMinigame:
 			return 0
 		distancia = self.obstacles.sprites()[-1].rect.x - 160
 		# equação de torricelli
-		velocidade_final = math.sqrt(self.velocidade * self.velocidade + 2 * 40 * distancia)
+		velocidade_final = math.sqrt(self.velocidade * self.velocidade + 2 * 42 * distancia)
 		return pygame.time.get_ticks() + distancia / ((velocidade_final + self.velocidade) / 2) * 1000
 
 	def event(self, event):
@@ -123,7 +123,7 @@ class WalkMinigame:
 				posicao_anterior = obstacle.posicao_base
 			self.spawn = False
 
-		self.velocidade = self.velocidade + 40 * delta
+		self.velocidade = self.velocidade + 42 * delta
 		self.posicao += self.velocidade * delta
 
 		screen.fill('#87CEEB')
@@ -143,7 +143,7 @@ class WalkMinigame:
 			if object == "none":
 				if sprite.rect.x <= 160:
 					return "perdeu"
-				elif sprite.rect.x <= 600:
+				elif sprite.rect.x <= 720:
 					object = sprite.object
 
 		match object:
