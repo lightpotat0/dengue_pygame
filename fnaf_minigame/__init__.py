@@ -4,12 +4,12 @@ import random
 import time
 
 #coisas
-mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png')
-bg = pygame.image.load('fnaf_minigame/sprites/cenario.png')
-cisterna = pygame.image.load('fnaf_minigame/sprites/cisterna.png')
-bain = pygame.image.load('fnaf_minigame/sprites/bain.png')
-tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png')
-mira = pygame.image.load('fnaf_minigame/sprites/mira.png')
+mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png').convert_alpha()
+bg = pygame.image.load('fnaf_minigame/sprites/cenario.png').convert_alpha()
+cisterna = pygame.image.load('fnaf_minigame/sprites/cisterna.png').convert_alpha()
+bain = pygame.image.load('fnaf_minigame/sprites/bain.png').convert_alpha()
+tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png').convert_alpha()
+mira = pygame.image.load('fnaf_minigame/sprites/mira.png').convert_alpha()
 screen_width = 1066
 screen_height = 600
 font = pygame.font.Font(None, 74)
@@ -54,8 +54,8 @@ class Mosquito:
 		self.atirou = time.time()
 
 class PistolMosquito:
+	tamanho = (screen_width, screen_height)
 	def __init__(self):
-		self.screen = pygame.Surface((1066, 600))
 		# quantidade de mosquito
 		self.mosquitos = [Mosquito() for _ in range(15)]
 		# timer
@@ -65,19 +65,25 @@ class PistolMosquito:
 
 	def event(self, event):
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			mouse_pos = pygame.mouse.get_pos()
-			for mosquito in self.mosquitos:
-				if mosquito.active and mosquito.mosquito_rect.collidepoint(mouse_pos):
-					mosquito.deactivate()
+			self.atirar()
+
+	def atirar(self):
+		for mosquito in self.mosquitos:
+			if mosquito.active and mosquito.mosquito_rect.collidepoint(util.mouse_pos):
+				mosquito.deactivate()
+
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		return tempo_inicio + self.timer_duration * 1000
 
 	def frame(self, screen, delta, jogo):
+		self.atirar()
 		elapsed_time = time.time() - self.start_time
-		self.screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
-		util.scaleblit(self.screen, 150, cisterna, (82, 30))
+		screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
+		screen.blit(pygame.transform.scale_by(cisterna, 4), (82, 30))
 		if elapsed_time < self.timer_duration:
 			for mosquito in self.mosquitos:
 				mosquito.move()
-				mosquito.draw(self.screen)
+				mosquito.draw(screen)
 			for mosquito in self.mosquitos:
 				if mosquito.active:
 					break
@@ -87,8 +93,6 @@ class PistolMosquito:
 			for mosquito in self.mosquitos:
 				mosquito.deactivate()
 			text = font.render("Você perdeu", True, (255, 0, 0))
-			self.screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 1))
+			screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 1))
 			if elapsed_time >= self.timer_duration + 2:
 				return "perdeu"
-			util.scaleblit(self.screen, 150, bain, (82, 30))
-		screen.blit(pygame.transform.scale(self.screen, screen.get_size()), (0, 0))

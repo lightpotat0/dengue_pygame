@@ -3,16 +3,37 @@ import math
 
 pressionado = pygame.key.get_pressed()
 pressionado_agora = pressionado
+mouse_pos = (0, 0)
+
 
 def clamp(v, x, y):
 	return max(min(v, y), x)
 
-def scaleblit(screen, altura_esperada, obj, pos, area = None, escala = 1):
-	scale = screen.get_height() / altura_esperada
+scalecache = {}
+def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+	escala_tela = screen.get_height() / altura_esperada
+	escala_total = escala_tela * escala_extra
+	escalado = scalecache.get((obj, escala_total))
+	if escalado == None:
+		escalado = pygame.transform.scale_by(obj, escala_total)
+		scalecache[(obj, escala_total)] = escalado
 	if area != None:
-		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), pygame.rect.Rect(area[0] * escala * scale, area[1] * escala * scale, area[2] * escala * scale, area[3] * escala * scale))
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
 	else:
-		screen.blit(pygame.transform.scale_by(obj, scale * escala), (pos[0] * scale, pos[1] * scale), None)
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
+
+smoothscalecache = {}
+def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+	escala_tela = screen.get_height() / altura_esperada
+	escala_total = escala_tela * escala_extra
+	escalado = smoothscalecache.get((obj, escala_total))
+	if escalado == None:
+		escalado = pygame.transform.smoothscale_by(obj, escala_total)
+		smoothscalecache[(obj, escala_total)] = escalado
+	if area != None:
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
+	else:
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
 
 def tint(obj, cor):
 	obj = obj.copy()
@@ -21,8 +42,9 @@ def tint(obj, cor):
 	return obj
 
 def tint_mult(obj, cor):
-	obj = obj.copy()
-	obj.fill(cor, None, pygame.BLEND_RGBA_MULT)
+	if cor != (255, 255, 255, 255) and cor != (255, 255, 255) and cor != "white":
+		obj = obj.copy()
+		obj.fill(cor, None, pygame.BLEND_RGBA_MULT)
 	return obj
 
 def blitanimado(screen, obj, pos, tempo, fps):

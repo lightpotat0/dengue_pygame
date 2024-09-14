@@ -14,6 +14,7 @@ class Balde:
 		self.velocidade = random.uniform(2.0, 2.6)
 
 class PingoMinigame:
+	tamanho = (428, 240)
 	def __init__(self):
 		self.morreu = False
 		self.jumpscare_tempo = 0
@@ -35,15 +36,23 @@ class PingoMinigame:
 			Balde(nivel[1][2]),
 			Balde(nivel[1][3])
 		]
-		self.tela = pygame.Surface((428, 240))
+
+	def get_tempo_da_perdicao(self, tempo_inicio):
+		menor = 1000000
+		for balde in self.baldes:
+			if not balde.fechado and balde.cheio < 20:
+				menor = min(menor, (20 - balde.cheio) / balde.velocidade * 1000)
+		if self.morreu:
+			return 0
+		return pygame.time.get_ticks() + menor
 
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
-		self.tela.fill("black")
+		screen.fill("black")
 		if not self.morreu:
 			self.vc_pos = util.deslize(self.bg, self.vc, self.vc_pos, util.movimento(75, delta))
 			self.vc_pos = (util.clamp(self.vc_pos[0], 0, 428 - self.vc.get_width()), util.clamp(self.vc_pos[1], 0, 240 - self.vc.get_height()))
-		self.tela.blit(self.bg, (0, 0))
+		screen.blit(self.bg, (0, 0))
 		for balde in self.baldes:
 			balde_img = self.balde
 			if util.imagem_colide_com_rect(pygame.Rect((balde.pos[0], balde.pos[1] - 20, self.balde.get_width(), self.balde.get_height() + 20)), self.vc, self.vc_pos) and not balde.fechado:
@@ -63,17 +72,16 @@ class PingoMinigame:
 					balde_img = self.balde_meio
 				else:
 					balde_img = self.balde
-			self.tela.blit(balde_img, balde.pos)
-			util.blitanimado(self.tela, self.estalactite, (balde.pos[0], balde.pos[1] - 20), self.tempo, 10)
-		self.tela.blit(self.vc, self.vc_pos)
+			screen.blit(balde_img, balde.pos)
+			util.blitanimado(screen, self.estalactite, (balde.pos[0], balde.pos[1] - 20), self.tempo, 10)
+		screen.blit(self.vc, self.vc_pos)
 		fechar = False
 		if self.morreu:
 			self.jumpscare_tempo += delta
 			aumentado = pygame.transform.scale_by(self.mosquito, self.jumpscare_tempo * 2)
-			self.tela.blit(aumentado, (428 / 2 - aumentado.get_width() / 2, 240 / 2 - aumentado.get_height() / 2))
+			screen.blit(aumentado, (428 / 2 - aumentado.get_width() / 2, 240 / 2 - aumentado.get_height() / 2))
 			if self.jumpscare_tempo >= 1:
 				fechar = True
-		screen.blit(pygame.transform.scale(self.tela, screen.get_size()), (0, 0))
 		if fechar:
 			return "perdeu"
 		for balde in self.baldes:
