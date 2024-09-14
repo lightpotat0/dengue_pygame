@@ -60,7 +60,7 @@ class PistolMosquito:
 		self.mosquitos = [Mosquito() for _ in range(15)]
 		# timer
 		self.start_time = time.time()
-		self.timer_duration = 10
+		self.timer_duration = 5
 		self.clock = pygame.time.Clock()
 
 	def event(self, event):
