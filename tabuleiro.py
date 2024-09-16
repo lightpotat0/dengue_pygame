@@ -52,7 +52,7 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
-		self.font_dado = pygame.font.Font(None, 64)
+		self.font_dado = pygame.font.Font(None, 128)
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
@@ -126,19 +126,19 @@ class Tabuleiro:
 				case "teleporte":
 					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
 				case "+R$5":
-					util.scaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "-R$2":
-					util.scaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "dado":
-					util.scaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "minigame":
-					util.scaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "vazio":
 					pass
 					#util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
 				case _:
 					util.scaleblit(screen, 600, self.casa, self.camerado(casa.pos), None, CASA_SIZE / 64)
-					util.scaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), self.camerado(casa.pos), None, CASA_SIZE / 64)
+					util.smoothscaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), self.camerado(casa.pos), None, CASA_SIZE / 64)
 		tempo = pygame.time.get_ticks()
 		jogador_atual_offset = (0, 0)
 		for numero in [0 if jogo.jogador_atual > 0 else 1, 1 if jogo.jogador_atual > 1 else 2, 2 if jogo.jogador_atual > 2 else 3, jogo.jogador_atual]:
@@ -236,22 +236,22 @@ class Tabuleiro:
 		cor = "white"
 		if len(jogo.jogadores) >= 1:
 			texto = self.font_dado.render("Jogador 1", True, "green" if jogo.jogador_atual == 0 else cor)
-			util.scaleblit(screen, 600, texto, (0, 0))
-			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[0].moedas}", True, cor), (0, texto.get_height()))
+			util.smoothscaleblit(screen, 600, texto, (0, 0), None, 0.5)
+			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[0].moedas}", True, cor), (0, texto.get_height() / 2), None, 0.5)
 		if len(jogo.jogadores) >= 2:
 			texto = self.font_dado.render("Jogador 2", True, "green" if jogo.jogador_atual == 1 else cor)
-			util.scaleblit(screen, 600, texto, (1066 - texto.get_width(), 0))
-			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[1].moedas}", True, cor), (1066 - texto.get_width(), texto.get_height()))
+			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 0), None, 0.5)
+			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[1].moedas}", True, cor), (1066 - texto.get_width() / 2, texto.get_height() / 2), None, 0.5)
 		if len(jogo.jogadores) >= 3:
 			texto = self.font_dado.render("Jogador 3", True, "green" if jogo.jogador_atual == 2 else cor)
-			util.scaleblit(screen, 600, texto, (0, 600 - texto.get_height() * 2))
-			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[2].moedas}", True, cor), (0, 600 - texto.get_height()))
+			util.smoothscaleblit(screen, 600, texto, (0, 600 - texto.get_height() * 2), None, 0.5)
+			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[2].moedas}", True, cor), (0, 600 - texto.get_height() / 2), None, 0.5)
 		if len(jogo.jogadores) >= 4:
 			texto = self.font_dado.render("Jogador 4", True, "green" if jogo.jogador_atual == 3 else cor)
-			util.scaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2))
-			util.scaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[3].moedas}", True, cor), (1066 - texto.get_width(), 600 - texto.get_height()))
+			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2), None, 0.5)
+			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[3].moedas}", True, cor), (1066 - texto.get_width() / 2, 600 - texto.get_height() / 2), None, 0.5)
 
-		util.scaleblit(screen, 600, self.font_dado.render(str(self.dado_numero), True, "red"), (533 - 32, 300 - 32))
+		util.smoothscaleblit(screen, 600, self.font_dado.render(str(self.dado_numero), True, "red"), (533 - 32, 300 - 32))
 
 		if self.modo == "andando":
 			self.dado_tempo += delta
