@@ -6,7 +6,6 @@ import time
 #coisas
 mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png').convert_alpha()
 bg = pygame.image.load('fnaf_minigame/sprites/cenario.png').convert_alpha()
-cisterna = pygame.image.load('fnaf_minigame/sprites/cisterna.png').convert_alpha()
 bain = pygame.image.load('fnaf_minigame/sprites/bain.png').convert_alpha()
 tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png').convert_alpha()
 mira = pygame.image.load('fnaf_minigame/sprites/mira.png').convert_alpha()
@@ -79,7 +78,6 @@ class PistolMosquito:
 		self.atirar()
 		elapsed_time = time.time() - self.start_time
 		screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
-		screen.blit(pygame.transform.scale_by(cisterna, 4), (82, 30))
 		if elapsed_time < self.timer_duration:
 			for mosquito in self.mosquitos:
 				mosquito.move()
