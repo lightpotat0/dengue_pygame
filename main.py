@@ -15,7 +15,7 @@ from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
 from fnaf_minigame import PistolMosquito
 
-minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, PistolMosquito]
+minigames = [PingoMinigame, SpaceMinigame ,WalkMinigame, PistolMosquito]
 
 modo = titulo.Titulo()
 tela_minigame = None
@@ -31,12 +31,14 @@ andamentos = [
 	pygame.image.load("assets/characterswalk3.png"),
 	pygame.image.load("assets/characterswalk4.png")
 ]
+
 icones = [
 	pygame.image.load("assets/2.png"),
 	pygame.image.load("assets/4.png"),
 	pygame.image.load("assets/1.png"),
 	pygame.image.load("assets/3.png")
 ]
+
 class Jogador:
 	numero = 0
 	moedas = 50
