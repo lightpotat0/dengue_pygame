@@ -15,7 +15,7 @@ from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
 from fnaf_minigame import PistolMosquito
 
-minigames = [PingoMinigame, SpaceMinigame ,WalkMinigame, PistolMosquito]
+minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, PistolMosquito]
 
 modo = titulo.Titulo()
 tela_minigame = None
