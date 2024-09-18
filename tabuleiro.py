@@ -119,7 +119,7 @@ class Tabuleiro:
 
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
-		screen.fill("black")
+		screen.fill(0xb4df5d)
 		util.smoothscaleblit(screen, 600, self.fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		for casa in self.casas:
 			match casa.tipo:
