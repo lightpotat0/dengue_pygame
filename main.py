@@ -59,17 +59,16 @@ while True:
 		size = 0.2
 		height = screen.get_height() * size
 		char_size = height
-		if getattr(modo, "get_tempo_da_perdicao", None):
-			tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)
-			t = min((pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame), 1)
-			if t < 0:
-				t = 1
-			mosquito_width = height * mosquiton.get_width() / mosquiton.get_height()
-			screen.blit(pygame.transform.scale(mosquiton, (mosquito_width, height)), pygame.Rect(0, screen.get_height() - height, mosquito_width, height))
-			barra_width = (screen.get_width() - mosquito_width - char_size) * t
-			screen.blit(pygame.transform.scale(barra, (barra_width, height)), pygame.Rect(mosquito_width, screen.get_height() - height, barra_width, height))
 		screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
-			#screen.fill("red", pygame.Rect(0, screen.get_height() * 0.95, screen.get_width() * t, screen.get_height() * 0.05))
+	if getattr(modo, "get_tempo_da_perdicao", None):
+		tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)
+		t = min((pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame), 1)
+		if t < 0:
+			t = 1
+		mosquito_width = height * mosquiton.get_width() / mosquiton.get_height()
+		screen.blit(pygame.transform.scale(mosquiton, (mosquito_width, height)), pygame.Rect(0, screen.get_height() - height, mosquito_width, height))
+		barra_width = (screen.get_width() - mosquito_width - char_size) * t
+		screen.blit(pygame.transform.scale(barra, (barra_width, height)), pygame.Rect(mosquito_width, screen.get_height() - height, barra_width, height))
 	match resultado:
 		case "selecion":
 			jogo = Jogo()
