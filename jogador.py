@@ -35,6 +35,7 @@ class Jogo:
 	jogadores = [Jogador()]
 	for i in range(len(jogadores)):
 		jogadores[i].numero = i
+	jogadores[0].personagem = 0
 	jogador_atual = 0
 	def passar_vez(self):
 		self.jogador_atual += 1

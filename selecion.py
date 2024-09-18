@@ -45,10 +45,10 @@ class Selecion:
 		self.jogadores = 0
 		self.fundo = pygame.image.load("selecion/fundo.png").convert_alpha()
 		self.portratos = [
-			pygame.image.load("selecion/ana_leticia.jpg").convert_alpha(),
-			pygame.image.load("selecion/helena_karan.jpg").convert_alpha(),
-			pygame.image.load("selecion/joao_maria.jpg").convert_alpha(),
-			pygame.image.load("selecion/enzo_gabriel.jpg").convert_alpha()
+			pygame.image.load("Biblioteca de Assets/Players/2 Full Art.png").convert_alpha(),
+			pygame.image.load("Biblioteca de Assets/Players/4 Full Art.png").convert_alpha(),
+			pygame.image.load("Biblioteca de Assets/Players/1 Full Art.png").convert_alpha(),
+			pygame.image.load("Biblioteca de Assets/Players/3 Full Art.png").convert_alpha()
 		]
 		self.ninguem = pygame.Surface((200, 300))
 		self.start = pygame.image.load("selecion/start.png").convert_alpha()
