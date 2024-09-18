@@ -3,8 +3,11 @@ import util
 import random
 import math
 
+#detalhe das casa do mapa
 CASA_SIZE = 80
 CASA_STRIDE = CASA_SIZE + 8
+
+#mapeamento
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
@@ -39,15 +42,18 @@ MAPA = [
 ]
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
 
+#cordenadas pra posição
 def casa_id_para_pos(id):
     return (id[0] * CASA_STRIDE, id[1] * CASA_STRIDE)
 
+#casa do tabuleiro
 class Casa:
 	def __init__(self, x, y, tipo):
 		self.id = (x, y)
 		self.pos = casa_id_para_pos(self.id)
 		self.tipo = tipo
 
+#o tabuleiro
 class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
@@ -79,12 +85,14 @@ class Tabuleiro:
 			for jogador in jogo.jogadores:
 				jogador.casa = casa_inicial
 
+	#encontrar id da casa
 	def encontrar_casa(self, id):
 		for casa in self.casas:
 			if casa.id == id and casa.tipo != "vazio":
 				return casa
 		return None
 
+	#próxima casa e direção
 	def proxima_casa_e_direcao(self, jogador):
 		direcoes = [
 			(jogador.direcao[0], jogador.direcao[1]),
@@ -99,7 +107,8 @@ class Tabuleiro:
 				return (nova_casa, direcao)
 		return (jogador.casa, jogador.direcao)
 
-	alphas = [0, 0, 0, 0]
+	#animações
+	alphas = [0, 0, 0, 0] #transparencia dos sprites
 	animacoes = [(None, 0, None) for _ in range(4)]
 	def animar(self, animacao, numero_jogador, param = None):
 		if self.animacoes[numero_jogador][0] != animacao or self.animacoes[numero_jogador][2] != param:
