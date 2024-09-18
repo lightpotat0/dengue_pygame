@@ -44,7 +44,7 @@ CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 
 
 #cordenadas pra posição
 def casa_id_para_pos(id):
-    return (id[0] * CASA_STRIDE, id[1] * CASA_STRIDE)
+    return (id[0] * CASA_STRIDE + 8, id[1] * CASA_STRIDE)
 
 #casa do tabuleiro
 class Casa:
@@ -64,18 +64,25 @@ class Tabuleiro:
 		self.tempo = 0
 		self.casa = pygame.image.load("tabuleiro/casa.png").convert_alpha()
 		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png").convert_alpha()
-		self.cinero = pygame.image.load("tabuleiro/cinero.png").convert_alpha()
-		self.lixo = pygame.image.load("tabuleiro/lixo.png").convert_alpha()
-		self.dado = pygame.image.load("tabuleiro/dado.png").convert_alpha()
+		self.cinero = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Moeda.png").convert_alpha(), (128, 128))
+		self.lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").convert_alpha(), (128, 128))
+		self.dado = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Dados.png").convert_alpha(), (128, 128))
 		self.minigame = pygame.image.load("tabuleiro/minigame.png").convert_alpha()
-		self.fundo = pygame.image.load("tabuleiro/fundo.png").convert_alpha()
+		self.fundo = pygame.image.load("Biblioteca de Assets/Chao Mapa.png").convert_alpha()
+		self.objetos = [
+			pygame.image.load("tabuleiro/mapa_objetos_0.png").convert_alpha(),
+			pygame.image.load("tabuleiro/mapa_objetos_1.png").convert_alpha(),
+			pygame.image.load("tabuleiro/mapa_objetos_2.png").convert_alpha(),
+			pygame.image.load("tabuleiro/mapa_objetos_3.png").convert_alpha(),
+			pygame.image.load("tabuleiro/mapa_objetos_4.png").convert_alpha()
+		]
 		if casas != None:
 			self.casas = casas
 		else:
 			self.casas = []
 			casa_inicial = None
-			for x in range(len(MAPA[0])):
-				for y in range(len(MAPA)):
+			for y in range(len(MAPA)):
+				for x in range(len(MAPA[0])):
 					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -130,16 +137,26 @@ class Tabuleiro:
 		self.tempo += delta
 		screen.fill(0xb4df5d)
 		util.smoothscaleblit(screen, 600, self.fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
+		util.smoothscaleblit(screen, 600, self.objetos[0], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		for casa in self.casas:
+			if casa.id[0] == 0:
+				if casa.id[1] == 8:
+					util.smoothscaleblit(screen, 600, self.objetos[1], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+				elif casa.id[1] == 12:
+					util.smoothscaleblit(screen, 600, self.objetos[2], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+				elif casa.id[1] == 16:
+					util.smoothscaleblit(screen, 600, self.objetos[3], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+				elif casa.id[1] == 17:
+					util.smoothscaleblit(screen, 600, self.objetos[4], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 			match casa.tipo:
 				case "teleporte":
 					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
 				case "+R$5":
-					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / self.cinero.get_height())
 				case "-R$2":
-					util.smoothscaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / self.lixo.get_height())
 				case "dado":
-					util.smoothscaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / self.dado.get_height())
 				case "minigame":
 					util.smoothscaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
 				case "vazio":
