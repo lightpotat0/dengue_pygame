@@ -16,6 +16,7 @@ from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
 from fnaf_minigame import PistolMosquito
 
+#minigames
 minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, PistolMosquito]
 
 modo = titulo.Titulo()
@@ -30,10 +31,13 @@ from jogador import Jogo
 jogo = Jogo()
 casas = None
 
+#posicion de lo mouse
 while True:
 	util.mouse_pos = pygame.mouse.get_pos()
 	if tela_minigame != None:
 		util.mouse_pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
+
+	#eventos
 	for event in pygame.event.get():
 		if getattr(modo, "event", None) != None:
 			if event.type == pygame.MOUSEBUTTONDOWN:
@@ -42,33 +46,50 @@ while True:
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
+
+	#atualizando tecla
 	pressionado_novo = pygame.key.get_pressed()
 	util.pressionado_agora = []
 	for i in range(len(pressionado_novo)):
 		util.pressionado_agora.append(pressionado_novo[i] and not util.pressionado[i])
 	util.pressionado = pressionado_novo
+
+	#fechar o jogo
 	if util.pressionado_agora[pygame.K_ESCAPE]:
 		pygame.quit()
 		sys.exit()
+
+	#processando framesssssss
 	resultado = modo.frame(tela_minigame or screen, delta, jogo)
+
+	#redimensionamento do minigame
 	if tela_minigame:
 		if getattr(modo, "smooth", False):
 			screen.blit(pygame.transform.smoothscale(tela_minigame, screen.get_size()), (0, 0))
 		else:
 			screen.blit(pygame.transform.scale(tela_minigame, screen.get_size()), (0, 0))
+
+	#tamanho da barra
 		size = 0.2
 		height = screen.get_height() * size
 		char_size = height
+	#rg do personagem
 		screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
+	
+	#tempo da PERDIÇÃO
 	if getattr(modo, "get_tempo_da_perdicao", None):
 		tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)
 		t = min((pygame.time.get_ticks() - tempo_inicio_minigame) / (tempo_da_perdicao - tempo_inicio_minigame), 1)
 		if t < 0:
 			t = 1
+
+		#mosquito no fundo e a barra
 		mosquito_width = height * mosquiton.get_width() / mosquiton.get_height()
 		screen.blit(pygame.transform.scale(mosquiton, (mosquito_width, height)), pygame.Rect(0, screen.get_height() - height, mosquito_width, height))
 		barra_width = (screen.get_width() - mosquito_width - char_size) * t
 		screen.blit(pygame.transform.scale(barra, (barra_width, height)), pygame.Rect(mosquito_width, screen.get_height() - height, barra_width, height))
+
+	#timeline do game
 	match resultado:
 		case "selecion":
 			jogo = Jogo()
