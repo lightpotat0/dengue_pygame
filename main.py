@@ -3,7 +3,8 @@ import sys
 import random
 
 pygame.init()
-screen = pygame.display.set_mode((1066, 600), pygame.RESIZABLE)
+screen = pygame.display.set_mode((1066, 600), pygame.RESIZABLE | pygame.DOUBLEBUF)
+screen.set_alpha(None)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
 
@@ -75,7 +76,7 @@ while True:
 		char_size = height
 	#rg do personagem
 		screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
-	
+
 	#tempo da PERDIÇÃO
 	if getattr(modo, "get_tempo_da_perdicao", None):
 		tempo_da_perdicao = modo.get_tempo_da_perdicao(tempo_inicio_minigame)

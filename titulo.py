@@ -18,7 +18,7 @@ class Titulo:
 
 	def frame(self, screen, delta, jogo):
 		screen.blit(pygame.transform.smoothscale(self.bg, screen.get_size()), (0, 0))
-		logo_scaled = pygame.transform.smoothscale_by(self.logo, screen.get_height() / 1080)
+		logo_scaled = pygame.transform.smoothscale_by(self.logo, screen.get_height() / 1200)
 		screen.blit(logo_scaled, logo_scaled.get_rect(center=screen.get_rect().center).move(0, -screen.get_height() / 8))
 		mensagem = 'Pressione qualquer tecla para iniciar'
 		mensagem1 = 'Ou pressione esc para sair'
