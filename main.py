@@ -10,6 +10,7 @@ clock = pygame.time.Clock()
 import util
 import tabuleiro
 import titulo
+import selecion
 from pingominigame import PingoMinigame
 from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
@@ -39,6 +40,7 @@ icones = [
 ]
 class Jogador:
 	numero = 0
+	personagem = 0
 	moedas = 50
 	casa = (0, 0)
 	direcao = (1, 0)
@@ -57,13 +59,13 @@ class Jogador:
 				direcao = "down"
 		match direcao:
 			case "down":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.numero * 24, 0 * 26 + 1, 24, 24))
+				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
 			case "up":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.numero * 24, 1 * 26 + 1, 24, 24))
+				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 1 * 26 + 1, 24, 24))
 			case "right":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.numero * 24, 2 * 26 + 1, 24, 24))
+				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 2 * 26 + 1, 24, 24))
 			case "left":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.numero * 24, 3 * 26 + 1, 24, 24))
+				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 3 * 26 + 1, 24, 24))
 		return out
 
 class Jogo:
@@ -122,8 +124,11 @@ while True:
 		screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
 			#screen.fill("red", pygame.Rect(0, screen.get_height() * 0.95, screen.get_width() * t, screen.get_height() * 0.05))
 	match resultado:
-		case "novo jogo":
+		case "selecion":
 			jogo = Jogo()
+			modo = selecion.Selecion(None, jogo)
+			tela_minigame = None
+		case "iniciar jogo":
 			modo = tabuleiro.Tabuleiro(None, jogo)
 			casas = modo.casas
 			tela_minigame = None

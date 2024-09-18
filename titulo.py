@@ -39,4 +39,4 @@ class Titulo:
 			elif util.pressionado_agora[pygame.K_m]:
 				return "minigame"
 			else:
-				return "novo jogo"
+				return "selecion"
