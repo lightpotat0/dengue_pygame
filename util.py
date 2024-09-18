@@ -26,27 +26,19 @@ def scaledrawrect(screen, altura_esperada, color, rect, border_radius = -1):
 	escala = screen.get_height() / altura_esperada
 	pygame.draw.rect(screen, color, (rect[0] * escala, rect[1] * escala, rect[2] * escala, rect[3] * escala), border_radius = border_radius)
 
-scalecache = {}
 def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
-	escalado = scalecache.get((obj, escala_total))
-	if escalado == None:
-		escalado = pygame.transform.scale_by(obj, escala_total)
-		scalecache[(obj, escala_total)] = escalado
+	escalado = pygame.transform.scale_by(obj, escala_total)
 	if area != None:
 		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
 	else:
 		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
 
-smoothscalecache = {}
 def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
-	escalado = smoothscalecache.get((obj, escala_total))
-	if escalado == None:
-		escalado = pygame.transform.smoothscale_by(obj, escala_total)
-		smoothscalecache[(obj, escala_total)] = escalado
+	escalado = pygame.transform.smoothscale_by(obj, escala_total)
 	if area != None:
 		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
 	else:
