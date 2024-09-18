@@ -110,7 +110,7 @@ class Selecion:
 			else:
 				jogador.personagem = None
 			if jogador.personagem != None:
-				util.scaleblit(screen, 600, jogador.get_andamento("down"), (65, 380), None, 4)
+				util.scaleblit(screen, 400, jogador.get_andamento("down"), (50, 270), None, 4)
 				if pygame.mouse.get_pressed()[0]:
 					if not self.pressed:
 						self.jogadores += 1
