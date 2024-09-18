@@ -5,9 +5,26 @@ pressionado = pygame.key.get_pressed()
 pressionado_agora = pressionado
 mouse_pos = (0, 0)
 
+andamentos = [
+	pygame.image.load("assets/characterswalk1.png"),
+	pygame.image.load("assets/characterswalk2.png"),
+	pygame.image.load("assets/characterswalk3.png"),
+	pygame.image.load("assets/characterswalk4.png")
+]
+
+icones = [
+	pygame.image.load("assets/2.png"),
+	pygame.image.load("assets/4.png"),
+	pygame.image.load("assets/1.png"),
+	pygame.image.load("assets/3.png")
+]
 
 def clamp(v, x, y):
 	return max(min(v, y), x)
+
+def scaledrawrect(screen, altura_esperada, color, rect, border_radius = -1):
+	escala = screen.get_height() / altura_esperada
+	pygame.draw.rect(screen, color, (rect[0] * escala, rect[1] * escala, rect[2] * escala, rect[3] * escala), border_radius = border_radius)
 
 scalecache = {}
 def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):

@@ -26,20 +26,6 @@ delta = 1 / 60
 mosquiton = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-export.png")
 barra = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-exportq.png")
 
-andamentos = [
-	pygame.image.load("assets/characterswalk1.png"),
-	pygame.image.load("assets/characterswalk2.png"),
-	pygame.image.load("assets/characterswalk3.png"),
-	pygame.image.load("assets/characterswalk4.png")
-]
-
-icones = [
-	pygame.image.load("assets/2.png"),
-	pygame.image.load("assets/4.png"),
-	pygame.image.load("assets/1.png"),
-	pygame.image.load("assets/3.png")
-]
-
 class Jogador:
 	numero = 0
 	personagem = 0
@@ -47,7 +33,7 @@ class Jogador:
 	casa = (0, 0)
 	direcao = (1, 0)
 	def get_icone(self):
-		return icones[self.numero]
+		return util.icones[self.numero]
 	def get_andamento(self, direcao, parado = False):
 		out = pygame.Surface((24, 24), pygame.SRCALPHA)
 		if not isinstance(direcao, str):
@@ -61,13 +47,13 @@ class Jogador:
 				direcao = "down"
 		match direcao:
 			case "down":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
 			case "up":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 1 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 1 * 26 + 1, 24, 24))
 			case "right":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 2 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 2 * 26 + 1, 24, 24))
 			case "left":
-				out.blit(andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 3 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 3 * 26 + 1, 24, 24))
 		return out
 
 class Jogo:
