@@ -22,6 +22,7 @@ size1 = (200, 300)
 size2 = (100, 100)
 size3 = (50, 50)
 
+#desenho das imagens com borda
 def draw_image_with_border(screen, image, pos, width, border_color, border_size, border_radius):
 	image_rect = image.get_rect(topleft=pos)
 	image_rect.height *= width / image_rect.width
@@ -98,7 +99,7 @@ class Selecion:
 				if pygame.mouse.get_pressed()[0]:
 					jogo.jogadores = jogo.jogadores[:self.jogadores]
 					return "iniciar jogo"
-
+		
 		if self.jogadores < 4:
 			jogador = jogo.jogadores[self.jogadores]
 			aceitaveis = [None, jogador.numero]
