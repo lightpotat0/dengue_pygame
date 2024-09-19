@@ -21,23 +21,15 @@ class Titulo:
 		screen.blit(pygame.transform.smoothscale(self.bg, screen.get_size()), (0, 0))
 
 		#escala da logo
-		max_logo_height = screen.get_height() * 0.8
 		max_logo_width = screen.get_width() * 0.8
+		max_logo_height = screen.get_height() * 0.8
 
-		logo_ratio = self.logo.get_width() / self.logo.get_height()
+		logo_rect = self.logo.get_rect()
+		logo_scaled_rect = logo_rect.scale_by(max_logo_height / logo_rect.height)
+		if logo_scaled_rect.width > max_logo_width:
+			logo_scaled_rect = logo_rect.scale_by(max_logo_width / logo_rect.width)
 
-		if self.logo.get_height() > max_logo_height:
-			logo_scaled_height = max_logo_height
-			logo_scaled_width = logo_scaled_height * logo_ratio
-		else:
-			logo_scaled_width = self.logo.get_width()
-			logo_scaled_height = self.logo.get_height()
-
-		if logo_scaled_width > max_logo_width:
-			logo_scaled_width = max_logo_width
-			logo_scaled_height = logo_scaled_width / logo_ratio
-
-		logo_scaled = pygame.transform.smoothscale_by(self.logo, logo_scaled_height / self.logo.get_height())
+		logo_scaled = pygame.transform.smoothscale(self.logo, logo_scaled_rect.size)
 		logo_rect = logo_scaled.get_rect(center=screen.get_rect().center)
 		logo_rect.centery = screen.get_rect().centery - screen.get_height() // 15
 		screen.blit(logo_scaled, logo_rect)
