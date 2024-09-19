@@ -2,6 +2,7 @@ import pygame
 import util
 from jogador import Jogador
 
+#bordas das imagens
 border_color_nenhum = (63, 63, 63)
 border_colors = [
     (255, 0, 0),
@@ -10,11 +11,13 @@ border_colors = [
 	(255, 196, 0)
 ]
 
+#escala das bordas
 border_size = 10
 border_size1 = 5
 border_radius = 10
 font = pygame.font.Font(None, 24)
 
+#escalas
 size1 = (200, 300)
 size2 = (100, 100)
 size3 = (50, 50)
@@ -61,7 +64,7 @@ class Selecion:
 		self.pressed = True
 
 	def frame(self, screen, delta, jogo):
-		screen.blit(pygame.transform.scale(self.fundo, screen.get_size()), (0, 0))
+		screen.blit(pygame.transform.scale(self.fundo, screen.get_size()), (0, 0)) #background
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[0].personagem] if jogo.jogadores[0].personagem != None else self.ninguem, (50, 50), 200, border_colors[0], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[1].personagem] if jogo.jogadores[1].personagem != None else self.ninguem, (305, 50), 200, border_colors[1], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[2].personagem] if jogo.jogadores[2].personagem != None else self.ninguem, (560, 50), 200, border_colors[2], border_size, border_radius)
