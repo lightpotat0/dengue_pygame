@@ -17,9 +17,32 @@ class Titulo:
 			self.comecar = True
 
 	def frame(self, screen, delta, jogo):
+		#background
 		screen.blit(pygame.transform.smoothscale(self.bg, screen.get_size()), (0, 0))
-		logo_scaled = pygame.transform.smoothscale_by(self.logo, screen.get_height() / 1200)
-		screen.blit(logo_scaled, logo_scaled.get_rect(center=screen.get_rect().center).move(0, -screen.get_height() / 8))
+
+		#escala da logo
+		max_logo_height = screen.get_height() * 0.8
+		max_logo_width = screen.get_width() * 0.8
+
+		logo_ratio = self.logo.get_width() / self.logo.get_height()
+
+		if self.logo.get_height() > max_logo_height:
+			logo_scaled_height = max_logo_height
+			logo_scaled_width = logo_scaled_height * logo_ratio
+		else:
+			logo_scaled_width = self.logo.get_width()
+			logo_scaled_height = self.logo.get_height()
+
+		if logo_scaled_width > max_logo_width:
+			logo_scaled_width = max_logo_width
+			logo_scaled_height = logo_scaled_width / logo_ratio
+
+		logo_scaled = pygame.transform.smoothscale_by(self.logo, logo_scaled_height / self.logo.get_height())
+		logo_rect = logo_scaled.get_rect(center=screen.get_rect().center)
+		logo_rect.centery = screen.get_rect().centery - screen.get_height() // 15
+		screen.blit(logo_scaled, logo_rect)
+
+		#mensagens
 		mensagem = 'Pressione qualquer tecla para iniciar'
 		mensagem1 = 'Ou pressione esc para sair'
 		texto_formatado = fonte.render(mensagem, True, (000,000,000))
@@ -27,6 +50,8 @@ class Titulo:
 		util.scaleblit(screen, 600, texto_formatado, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado.get_width() / 2, 480))
 		util.scaleblit(screen, 600, texto_formatado1, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado1.get_width() / 2, 530))
 		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Pistol, M: Aleatório", True, (0, 0, 0)), (0, 0))
+
+		#verificação de seleção
 		if self.comecar:
 			if util.pressionado_agora[pygame.K_1]:
 				return "minigame0"
