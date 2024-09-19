@@ -38,11 +38,13 @@ def draw_image_with_border(screen, image, pos, width, border_color, border_size,
 	util.smoothscaleblit(screen, 600, image, pos, None, width / image.get_width())
 	return image_rect
 
+#função do evento de hover
 def is_mouse_over(image_rect):
 	return image_rect.collidepoint(util.mouse_pos)
 
 class Selecion:
 	def __init__(self, casas, jogo):
+		#variaveis da classe
 		jogo.jogadores = [Jogador(), Jogador(), Jogador(), Jogador()]
 		for i in range(4):
 			jogo.jogadores[i].numero = i
@@ -66,11 +68,13 @@ class Selecion:
 
 	def frame(self, screen, delta, jogo):
 		screen.blit(pygame.transform.scale(self.fundo, screen.get_size()), (0, 0)) #background
+		#personagens para seleção editados
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[0].personagem] if jogo.jogadores[0].personagem != None else self.ninguem, (50, 50), 200, border_colors[0], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[1].personagem] if jogo.jogadores[1].personagem != None else self.ninguem, (305, 50), 200, border_colors[1], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[2].personagem] if jogo.jogadores[2].personagem != None else self.ninguem, (560, 50), 200, border_colors[2], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[3].personagem] if jogo.jogadores[3].personagem != None else self.ninguem, (820, 50), 200, border_colors[3], border_size, border_radius)
-
+		
+		#evento da seleção do jogador
 		jogador_que_escolheu = [None, None, None, None]
 		for jogador in jogo.jogadores:
 			if jogador.personagem != None:
@@ -85,11 +89,13 @@ class Selecion:
 		an_rect = draw_image_with_border(screen, util.icones[3], (660, 420), 100, cor_do_jogador_que_escolheu[3], border_size1, border_radius)
 		iniciar_rect = None
 
+		#impressão da figura dos números
 		util.scaleblit(screen, 600, self.number1, (52, 55), None, 4)
 		util.scaleblit(screen, 600, self.number2, (308, 55), None, 4)
 		util.scaleblit(screen, 600, self.number3, (563, 55), None, 4)
 		util.scaleblit(screen, 600, self.number4, (823, 55), None, 4)
 
+		#condição que a partir seleção
 		if self.jogadores >= 2:
 			iniciar_rect = draw_image_with_border(screen, self.start, (780, 420), 100, (91, 191, 91), border_size1, border_radius)
 			iniciar_texto_rect = iniciar_rect.copy()
