@@ -28,7 +28,8 @@ class Mosquito:
 
     def move(self):
         if not self.active and self.falling:
-            self.y += 5  # mosquito caindo
+            self.y *= 0.5   # mosquito caindo
+            self.y *= 0.5
 
             # mosquito parar de cair
             if self.y >= screen_height - mosquito_image.get_height():
@@ -40,10 +41,10 @@ class Mosquito:
             self.x += self.speed_x
             self.y += self.speed_y
 
-            #atualiza o mosquito 
+            # atualiza o mosquito 
             self.mosquito_rect.topleft = (self.x, self.y)
 
-            # Inverte a direção do mosquito se ele bater nas bordas da tela
+            # inverte a direção do mosquito se ele bater nas bordas da tela
             if self.x <= 0 or self.x >= screen_width - mosquito_image.get_width():
                 self.speed_x = -self.speed_x
 
@@ -70,25 +71,28 @@ class Mosquito:
         self.active = False  # O mosquito é desativado
         self.atirou = time.time()  # Marca o tempo do tiro
         self.falling = True
+
 class Veia:
     def __init__(self, image_path, scale_factor=2):
-        tamanho = (int(vea.get_width() * scale_factor), int(vea.get_height() * scale_factor))
-        self.image = pygame.transform.scale(vea, tamanho)
+        tamanho = (int(vea.get_width() * scale_factor), int(vea.get_height() * scale_factor)) #tamanho da vea
+        self.image = pygame.transform.scale(vea, tamanho) 
         self.rect = self.image.get_rect()
-        self.rect.centery = screen_height * 0.85
+        self.rect.centery = screen_height * 0.85 #coordenada da vea
 
     def update(self):
-        mouse_x, _ = pygame.mouse.get_pos()
-        self.rect.centerx = mouse_x
+        mouse_x, _ = pygame.mouse.get_pos() #pega a posição do mouse
+        self.rect.centerx = mouse_x #faz com que a posição da vea siga o mouse horizontalmente
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.image, self.rect) 
+
 class PistolMosquito:
+
     tamanho = (screen_width, screen_height)  
     
     def __init__(self):
         # quantidade de mosquitos
-        self.mosquitos = [Mosquito() for _ in range(15)]
+        self.mosquitos = [Mosquito() for _ in range(10)]
         self.start_time = time.time()
         self.timer_duration = 5  # tempo pra atirar
         self.clock = pygame.time.Clock()  
