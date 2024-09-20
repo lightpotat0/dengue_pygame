@@ -27,7 +27,7 @@ class SpaceMinigame:
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
 		self.mosquito_lasers = pygame.sprite.Group()
-		self.mosquito_setup(rows = 4, cols = 6)
+		self.mosquito_setup(rows = 4, cols = 6, x_distance = 96, y_distance = 72, y_offset = 64)
 		self.mosquito_direction = 1
 		self.mosquito_downs = 0
 
@@ -56,7 +56,7 @@ class SpaceMinigame:
 				if col == 'x':
 					x = x_start + col_index * self.block_size + offset_x
 					y = y_start + row_index * self.block_size
-					block = obstacle.Block(self.block_size,(241,79,80),x,y)
+					block = obstacle.Block(self.block_size,(241,79,80),x,y, row_index, col_index)
 					self.blocks.add(block)
 
 	def create_multiple_obstacles(self, x_start, y_start, *offset):

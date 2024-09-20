@@ -20,6 +20,7 @@ class Jogador:
 				direcao = "up"
 			else:
 				direcao = "down"
+		#animação dos sprites no hover
 		match direcao:
 			case "down":
 				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
@@ -35,6 +36,7 @@ class Jogo:
 	jogadores = [Jogador()]
 	for i in range(len(jogadores)):
 		jogadores[i].numero = i
+	jogadores[0].personagem = 0
 	jogador_atual = 0
 	def passar_vez(self):
 		self.jogador_atual += 1

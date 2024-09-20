@@ -35,14 +35,22 @@ def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	else:
 		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
 
+# escala um objeto com smoothscale
 def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+	# calcular a escala
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
-	escalado = pygame.transform.smoothscale_by(obj, escala_total)
-	if area != None:
-		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
-	else:
-		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
+
+	if area == None: # area padrão do objeto
+		area = obj.get_rect()
+	# reduzir à área visível na tela, melhora o desempenho com o fundo do mapa que é muito grande
+	limite = screen.get_rect().scale_by(1.0 / escala_total)
+	area = area.clip(limite.move(-pos[0], -pos[1]))
+	if area.width <= 0 or area.height <= 0:
+		return
+
+	escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
+	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 def tint(obj, cor):
 	obj = obj.copy()
