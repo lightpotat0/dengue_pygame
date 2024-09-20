@@ -29,7 +29,6 @@ class Mosquito:
     def move(self):
         if not self.active and self.falling:
             self.y *= 0.5   # mosquito caindo
-            self.y *= 0.5
 
             # mosquito parar de cair
             if self.y >= screen_height - mosquito_image.get_height():
