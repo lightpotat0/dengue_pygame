@@ -63,7 +63,7 @@ class Tabuleiro:
 		self.dado_tempo = 0
 		self.tempo = 0
 		self.casa = pygame.image.load("tabuleiro/casa.png").convert_alpha()
-		self.nether_portal = pygame.image.load("tabuleiro/nether_portal.png").convert_alpha()
+		self.nether_portal = pygame.image.load("tabuleiro/portal.png").convert_alpha()
 		self.cinero = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Moeda.png").convert_alpha(), (128, 128))
 		self.lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").convert_alpha(), (128, 128))
 		self.dado = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Dados.png").convert_alpha(), (128, 128))
@@ -150,7 +150,7 @@ class Tabuleiro:
 					util.smoothscaleblit(screen, 600, self.objetos[4], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 			match casa.tipo:
 				case "teleporte":
-					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), pygame.Rect(0, 16 * math.floor(self.tempo * 32.0 % 32.0), 16, 16), CASA_SIZE / 16)
+					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), None, CASA_SIZE / 1300)
 				case "+R$5":
 					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / self.cinero.get_height())
 				case "-R$2":

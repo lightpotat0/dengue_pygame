@@ -1,8 +1,9 @@
 import pygame
 import util
 
-fonte = pygame.font.SysFont('arial', 40, True, True)
-fonte1 = pygame.font.SysFont('arial', 25, True, True)
+#fontes
+fonte = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 30)
+fonte1 = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 25)
 class Titulo:
 	def __init__(self):
 		self.logo = pygame.image.load("titulo/logo.svg").convert_alpha()
@@ -37,8 +38,8 @@ class Titulo:
 		#mensagens
 		mensagem = 'Pressione qualquer tecla para iniciar'
 		mensagem1 = 'Ou pressione esc para sair'
-		texto_formatado = fonte.render(mensagem, True, (000,000,000))
-		texto_formatado1 = fonte1.render(mensagem1, True, (000,000,000))
+		texto_formatado = fonte.render(mensagem, True, (255,255,255))
+		texto_formatado1 = fonte1.render(mensagem1, True, (255,255,255))
 		util.scaleblit(screen, 600, texto_formatado, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado.get_width() / 2, 480))
 		util.scaleblit(screen, 600, texto_formatado1, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado1.get_width() / 2, 530))
 		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Pistol, M: Aleatório", True, (0, 0, 0)), (0, 0))

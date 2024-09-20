@@ -20,6 +20,7 @@ class Jogador:
 				direcao = "up"
 			else:
 				direcao = "down"
+		#animação dos sprites no hover
 		match direcao:
 			case "down":
 				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
