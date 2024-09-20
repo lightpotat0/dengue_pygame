@@ -42,6 +42,15 @@ MAPA = [
 ]
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
 
+fundo = pygame.image.load("tabuleiro/ChaoMapa.png").convert_alpha()
+objetos = [
+	pygame.image.load("tabuleiro/mapa_objetos_0.png").convert_alpha(),
+	pygame.image.load("tabuleiro/mapa_objetos_1.png").convert_alpha(),
+	pygame.image.load("tabuleiro/mapa_objetos_2.png").convert_alpha(),
+	pygame.image.load("tabuleiro/mapa_objetos_3.png").convert_alpha(),
+	pygame.image.load("tabuleiro/mapa_objetos_4.png").convert_alpha()
+]
+
 #cordenadas pra posição
 def casa_id_para_pos(id):
     return (id[0] * CASA_STRIDE + 8, id[1] * CASA_STRIDE)
@@ -62,20 +71,11 @@ class Tabuleiro:
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
-		self.casa = pygame.image.load("tabuleiro/casa.png").convert_alpha()
-		self.nether_portal = pygame.image.load("tabuleiro/portal.png").convert_alpha()
-		self.cinero = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Moeda.png").convert_alpha(), (128, 128))
+		self.portal = pygame.transform.smoothscale(pygame.image.load("tabuleiro/portal.png").convert_alpha(), (128, 128))
+		self.cinero = pygame.transform.smoothscale(pygame.image.load("tabuleiro/cinero.png").convert_alpha(), (128, 128))
 		self.lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").convert_alpha(), (128, 128))
-		self.dado = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Casas/Casa Dados.png").convert_alpha(), (128, 128))
-		self.minigame = pygame.image.load("tabuleiro/minigame.png").convert_alpha()
-		self.fundo = pygame.image.load("Biblioteca de Assets/Chao Mapa.png").convert_alpha()
-		self.objetos = [
-			pygame.image.load("tabuleiro/mapa_objetos_0.png").convert_alpha(),
-			pygame.image.load("tabuleiro/mapa_objetos_1.png").convert_alpha(),
-			pygame.image.load("tabuleiro/mapa_objetos_2.png").convert_alpha(),
-			pygame.image.load("tabuleiro/mapa_objetos_3.png").convert_alpha(),
-			pygame.image.load("tabuleiro/mapa_objetos_4.png").convert_alpha()
-		]
+		self.dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (128, 128))
+		self.minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (128, 128))
 		if casas != None:
 			self.casas = casas
 		else:
@@ -136,21 +136,22 @@ class Tabuleiro:
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill(0xb4df5d)
-		util.smoothscaleblit(screen, 600, self.fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
-		util.smoothscaleblit(screen, 600, self.objetos[0], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+		util.smoothscaleblit(screen, 600, fundo, self.camerado((0, 0)), None, )
+		util.smoothscaleblit(screen, 600, objetos[0], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		for casa in self.casas:
 			if casa.id[0] == 0:
 				if casa.id[1] == 8:
-					util.smoothscaleblit(screen, 600, self.objetos[1], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[1], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 12:
-					util.smoothscaleblit(screen, 600, self.objetos[2], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[2], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 16:
-					util.smoothscaleblit(screen, 600, self.objetos[3], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[3], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 17:
-					util.smoothscaleblit(screen, 600, self.objetos[4], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[4], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 			match casa.tipo:
 				case "teleporte":
-					util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), None, CASA_SIZE / 1300)
+					#util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), None, CASA_SIZE / 1300)
+					util.smoothscaleblit(screen, 600, self.portal, self.camerado(casa.pos), None, CASA_SIZE / self.portal.get_height())
 				case "+R$5":
 					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / self.cinero.get_height())
 				case "-R$2":

@@ -7,6 +7,10 @@ screen = pygame.display.set_mode((1066, 600), pygame.RESIZABLE | pygame.DOUBLEBU
 screen.set_alpha(None)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
+if True:
+    loading = pygame.image.load("titulo/loading.jpg")
+    screen.blit(pygame.transform.scale(loading, screen.get_size()), (0, 0))
+    pygame.display.update()
 
 import util
 import tabuleiro
@@ -61,6 +65,7 @@ while True:
 		sys.exit()
 
 	#processando framesssssss
+	util.clear_cache()
 	resultado = modo.frame(tela_minigame or screen, delta, jogo)
 
 	#redimensionamento do minigame

@@ -22,21 +22,19 @@ icones = [
 def clamp(v, x, y):
 	return max(min(v, y), x)
 
+cache_anterior = {}
+cache_atual = {}
+def clear_cache():
+	global cache_anterior, cache_atual
+	cache_anterior.clear()
+	cache_anterior = cache_atual
+	cache_atual = {}
+
 def scaledrawrect(screen, altura_esperada, color, rect, border_radius = -1):
 	escala = screen.get_height() / altura_esperada
 	pygame.draw.rect(screen, color, (rect[0] * escala, rect[1] * escala, rect[2] * escala, rect[3] * escala), border_radius = border_radius)
 
 def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
-	escala_tela = screen.get_height() / altura_esperada
-	escala_total = escala_tela * escala_extra
-	escalado = pygame.transform.scale_by(obj, escala_total)
-	if area != None:
-		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), pygame.rect.Rect(area[0] * escala_total, area[1] * escala_total, area[2] * escala_total, area[3] * escala_total))
-	else:
-		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela), None)
-
-# escala um objeto com smoothscale
-def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	# calcular a escala
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
@@ -46,8 +44,26 @@ def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra
 	else:
 		area = pygame.Rect(area)
 
-	escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
-	escalado = escalado.subsurface(escalado.get_rect().clip(screen.get_rect().move(-pos[0] * escala_tela, -pos[1] * escala_tela)))
+	escalado = pygame.transform.scale_by(obj.subsurface(area), escala_total)
+	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
+
+# escala um objeto com smoothscale
+def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+	escala_tela = screen.get_height() / altura_esperada
+	escala_total = escala_tela * escala_extra
+
+	if area == None: # area padrão do objeto
+		area = obj.get_rect()
+	else:
+		area = pygame.Rect(area)
+
+	key = (obj, area[0], area[1], area[2], area[3], escala_total)
+	escalado = cache_atual.get(key)
+	if escalado == None:
+		escalado = cache_anterior.get(key)
+		if escalado == None:
+			escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
+		cache_atual[key] = escalado
 	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 def tint(obj, cor):

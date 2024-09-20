@@ -105,8 +105,8 @@ class PistolMosquito:
             if mosquito.active and mosquito.mosquito_rect.collidepoint(posicao_click):
                 mosquito.deactivate()  # mata o mosquito
 
-    #def get_tempo_da_perdicao(self, tempo_inicio):
-      #  return tempo_inicio + self.timer_duration * 1000  # bixo que cresce o nariz
+    def get_tempo_da_perdicao(self, tempo_inicio):
+       return tempo_inicio + self.timer_duration * 1000  # bixo que cresce o nariz
 
     def frame(self, screen, delta, jogo):
         elapsed_time = time.time() - self.start_time  
