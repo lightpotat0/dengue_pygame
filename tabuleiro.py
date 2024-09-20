@@ -136,7 +136,7 @@ class Tabuleiro:
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill(0xb4df5d)
-		util.smoothscaleblit(screen, 600, fundo, self.camerado((0, 0)), None, )
+		util.smoothscaleblit(screen, 600, fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		util.smoothscaleblit(screen, 600, objetos[0], self.camerado((0, 0)), None, CASA_STRIDE / 142)
 		for casa in self.casas:
 			if casa.id[0] == 0:
