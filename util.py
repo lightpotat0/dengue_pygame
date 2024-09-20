@@ -43,13 +43,11 @@ def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra
 
 	if area == None: # area padrão do objeto
 		area = obj.get_rect()
-	# reduzir à área visível na tela, melhora o desempenho com o fundo do mapa que é muito grande
-	limite = screen.get_rect().scale_by(1.0 / escala_total)
-	area = area.clip(limite.move(-pos[0], -pos[1]))
-	if area.width <= 0 or area.height <= 0:
-		return
+	else:
+		area = pygame.Rect(area)
 
 	escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
+	escalado = escalado.subsurface(escalado.get_rect().clip(screen.get_rect().move(-pos[0] * escala_tela, -pos[1] * escala_tela)))
 	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 def tint(obj, cor):
