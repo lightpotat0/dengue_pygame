@@ -6,6 +6,7 @@ import time
 mosquito_image = pygame.image.load('fnaf_minigame/sprites/voando.png').convert_alpha()  
 bg = pygame.image.load('fnaf_minigame/sprites/cenario.png').convert_alpha()  
 tiro = pygame.image.load('fnaf_minigame/sprites/tiro.png').convert_alpha() 
+vea = pygame.image.load('fnaf_minigame/sprites/vea.png').convert_alpha() 
 screen_width = 1066  
 screen_height = 600  
 font = pygame.font.Font(None, 74)  
@@ -69,7 +70,19 @@ class Mosquito:
         self.active = False  # O mosquito é desativado
         self.atirou = time.time()  # Marca o tempo do tiro
         self.falling = True
+class Veia:
+    def __init__(self, image_path, scale_factor=2):
+        tamanho = (int(vea.get_width() * scale_factor), int(vea.get_height() * scale_factor))
+        self.image = pygame.transform.scale(vea, tamanho)
+        self.rect = self.image.get_rect()
+        self.rect.centery = screen_height * 0.85
 
+    def update(self):
+        mouse_x, _ = pygame.mouse.get_pos()
+        self.rect.centerx = mouse_x
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
 class PistolMosquito:
     tamanho = (screen_width, screen_height)  
     
@@ -79,6 +92,7 @@ class PistolMosquito:
         self.start_time = time.time()
         self.timer_duration = 5  # tempo pra atirar
         self.clock = pygame.time.Clock()  
+        self.veia = Veia('fnaf_minigame/sprites/vea.png') 
 
     def event(self, event):
         # clicar
@@ -91,12 +105,14 @@ class PistolMosquito:
             if mosquito.active and mosquito.mosquito_rect.collidepoint(posicao_click):
                 mosquito.deactivate()  # mata o mosquito
 
-    def get_tempo_da_perdicao(self, tempo_inicio):
-        return tempo_inicio + self.timer_duration * 1000  # bixo que cresce o nariz
+    #def get_tempo_da_perdicao(self, tempo_inicio):
+      #  return tempo_inicio + self.timer_duration * 1000  # bixo que cresce o nariz
 
     def frame(self, screen, delta, jogo):
         elapsed_time = time.time() - self.start_time  
         screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))  
+
+        self.veia.update()
 
         if elapsed_time < self.timer_duration:
             for mosquito in self.mosquitos:
@@ -115,3 +131,5 @@ class PistolMosquito:
             screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 1))  # Exibe o texto centralizado
             if elapsed_time >= self.timer_duration + 2:  # Dá um intervalo de 2 segundos antes de finalizar
                 return "perdeu"
+            
+        self.veia.draw(screen)

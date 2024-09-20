@@ -2,8 +2,8 @@ import pygame
 import util
 
 #fontes
-fonte = pygame.font.SysFont("Biblioteca de Assets\fontes\tt-milks-casual-pie-base.ttf", 40, True, True)
-fonte1 = pygame.font.SysFont("Biblioteca de Assets\fontes\tt-milks-casual-pie-base.ttf", 25, True, True)
+fonte = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 30)
+fonte1 = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 25)
 class Titulo:
 	def __init__(self):
 		self.logo = pygame.image.load("titulo/logo.svg").convert_alpha()
