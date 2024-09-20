@@ -41,6 +41,7 @@ MAPA = [
 	"                  "
 ]
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
+FUNDO_OFFSET = (-8, -24)
 
 fundo = pygame.image.load("tabuleiro/ChaoMapa.png").convert_alpha()
 objetos = [
@@ -136,18 +137,18 @@ class Tabuleiro:
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill(0xb4df5d)
-		util.smoothscaleblit(screen, 600, fundo, self.camerado((0, 0)), None, CASA_STRIDE / 142)
-		util.smoothscaleblit(screen, 600, objetos[0], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+		util.smoothscaleblit(screen, 600, fundo, self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
+		util.smoothscaleblit(screen, 600, objetos[0], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 		for casa in self.casas:
 			if casa.id[0] == 0:
 				if casa.id[1] == 8:
-					util.smoothscaleblit(screen, 600, objetos[1], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[1], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 12:
-					util.smoothscaleblit(screen, 600, objetos[2], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[2], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 16:
-					util.smoothscaleblit(screen, 600, objetos[3], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[3], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 17:
-					util.smoothscaleblit(screen, 600, objetos[4], self.camerado((0, 0)), None, CASA_STRIDE / 142)
+					util.smoothscaleblit(screen, 600, objetos[4], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 			match casa.tipo:
 				case "teleporte":
 					#util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), None, CASA_SIZE / 1300)
