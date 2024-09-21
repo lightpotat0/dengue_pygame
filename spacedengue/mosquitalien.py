@@ -3,15 +3,19 @@ import pygame
 from pygame.sprite import Group
 import random
 
-MOSQUITO_SPEED = 110
+MOSQUITO_SPEED = 96
+
+cache = {}
 
 class Mosquito(pygame.sprite.Sprite):
 	def __init__(self,color,x,y):
 		super().__init__()
-		file_path = 'spacedengue/graphics/' + color + '.png'
-		self.image1 = pygame.image.load(file_path).convert_alpha()
-		file_path2 = 'spacedengue/graphics/' + color + '_wing_down.png'
-		self.image2 = pygame.image.load(file_path2).convert_alpha()
+		if color not in cache:
+			cache[color] = (
+				pygame.image.load('spacedengue/graphics/' + color + '.png').convert_alpha(),
+				pygame.image.load('spacedengue/graphics/' + color + '_wing_down.png').convert_alpha(),
+			)
+		(self.image1, self.image2) = cache[color]
 		self.image = self.image1
 		self.rect = self.image.get_rect(topleft = (x,y))
 		self.x = x
