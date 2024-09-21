@@ -5,6 +5,10 @@ pressionado = pygame.key.get_pressed()
 pressionado_agora = pressionado
 mouse_pos = (0, 0)
 
+def mouse_pos_para(screen, altura_esperada):
+	escala = altura_esperada / screen.get_height()
+	return (mouse_pos[0] * escala, mouse_pos[1] * escala)
+
 andamentos = [
 	pygame.image.load("assets/characterswalk1.png"),
 	pygame.image.load("assets/characterswalk2.png"),

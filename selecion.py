@@ -39,8 +39,8 @@ def draw_image_with_border(screen, image, pos, width, border_color, border_size,
 	return image_rect
 
 #função do evento de hover
-def is_mouse_over(image_rect):
-	return image_rect.collidepoint(util.mouse_pos)
+def is_mouse_over(screen, image_rect):
+	return image_rect.collidepoint(util.mouse_pos_para(screen, 600))
 
 class Selecion:
 	def __init__(self, casas, jogo):
@@ -73,7 +73,7 @@ class Selecion:
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[1].personagem] if jogo.jogadores[1].personagem != None else self.ninguem, (305, 50), 200, border_colors[1], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[2].personagem] if jogo.jogadores[2].personagem != None else self.ninguem, (560, 50), 200, border_colors[2], border_size, border_radius)
 		draw_image_with_border(screen, self.portratos[jogo.jogadores[3].personagem] if jogo.jogadores[3].personagem != None else self.ninguem, (820, 50), 200, border_colors[3], border_size, border_radius)
-		
+
 		#evento da seleção do jogador
 		jogador_que_escolheu = [None, None, None, None]
 		for jogador in jogo.jogadores:
@@ -100,22 +100,22 @@ class Selecion:
 			iniciar_rect = draw_image_with_border(screen, self.start, (780, 420), 100, (91, 191, 91), border_size1, border_radius)
 			iniciar_texto_rect = iniciar_rect.copy()
 			iniciar_texto_rect.midtop = iniciar_rect.midbottom
-			if is_mouse_over(iniciar_rect):
+			if is_mouse_over(screen, iniciar_rect):
 				iniciar_rect = draw_image_with_border(screen, self.start, (780, 420), 100, (127, 255, 127), border_size1, border_radius)
 				if pygame.mouse.get_pressed()[0]:
 					jogo.jogadores = jogo.jogadores[:self.jogadores]
 					return "iniciar jogo"
-		
+
 		if self.jogadores < 4:
 			jogador = jogo.jogadores[self.jogadores]
 			aceitaveis = [None, jogador.numero]
-			if is_mouse_over(jm_rect) and jogador_que_escolheu[0] in aceitaveis:
+			if is_mouse_over(screen, jm_rect) and jogador_que_escolheu[0] in aceitaveis:
 				jogador.personagem = 0
-			elif is_mouse_over(hk_rect) and jogador_que_escolheu[1] in aceitaveis:
+			elif is_mouse_over(screen, hk_rect) and jogador_que_escolheu[1] in aceitaveis:
 				jogador.personagem = 1
-			elif is_mouse_over(enzo_rect) and jogador_que_escolheu[2] in aceitaveis:
+			elif is_mouse_over(screen, enzo_rect) and jogador_que_escolheu[2] in aceitaveis:
 				jogador.personagem = 2
-			elif is_mouse_over(an_rect) and jogador_que_escolheu[3] in aceitaveis:
+			elif is_mouse_over(screen, an_rect) and jogador_que_escolheu[3] in aceitaveis:
 				jogador.personagem = 3
 			else:
 				jogador.personagem = None

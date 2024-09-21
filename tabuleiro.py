@@ -6,15 +6,15 @@ import math
 #detalhe das casa do mapa
 CASA_SIZE = 80
 CASA_STRIDE = CASA_SIZE + 8
+SOMBRA_SIZE = int(80 * 1600 / 1280)
 
 #mapeamento
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
 	"dado", "dado", "dado",
-	#"pergunta",
+	"carta",
 	"minigame", "minigame", "minigame",
-	#"medalha",
 	"teleporte",
 	#"item",
 	#"loja",
@@ -29,11 +29,11 @@ MAPA = [
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
-	"    XXXXXXXXXXXXX ",
+	"    XXXXXXMXXXXXX ",
 	"        X   X     ",
+	"        M   M     ",
 	"        X   X     ",
-	"        X   X     ",
-	"    XXXXXXXXXXXXX ",
+	"    XXXXXXMXXXXXX ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
@@ -50,6 +50,21 @@ objetos = [
 	pygame.image.load("tabuleiro/mapa_objetos_2.png").convert_alpha(),
 	pygame.image.load("tabuleiro/mapa_objetos_3.png").convert_alpha(),
 	pygame.image.load("tabuleiro/mapa_objetos_4.png").convert_alpha()
+]
+portal = pygame.transform.smoothscale(pygame.image.load("tabuleiro/portal.png").convert_alpha(), (256, 256))
+cinero = pygame.transform.smoothscale(pygame.image.load("tabuleiro/cinero.png").convert_alpha(), (256, 256))
+lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").convert_alpha(), (256, 256))
+dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (256, 256))
+minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (256, 256))
+medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
+carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
+sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
+DADO_SIZE = 96
+dadobgs = [
+	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Vermelho.png").convert_alpha(), (DADO_SIZE, DADO_SIZE)),
+	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Azul.png").convert_alpha(), (DADO_SIZE, DADO_SIZE)),
+	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Verde.png").convert_alpha(), (DADO_SIZE, DADO_SIZE)),
+	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Amarelo.png").convert_alpha(), (DADO_SIZE, DADO_SIZE))
 ]
 
 #cordenadas pra posição
@@ -72,11 +87,6 @@ class Tabuleiro:
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
-		self.portal = pygame.transform.smoothscale(pygame.image.load("tabuleiro/portal.png").convert_alpha(), (128, 128))
-		self.cinero = pygame.transform.smoothscale(pygame.image.load("tabuleiro/cinero.png").convert_alpha(), (128, 128))
-		self.lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").convert_alpha(), (128, 128))
-		self.dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (128, 128))
-		self.minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (128, 128))
 		if casas != None:
 			self.casas = casas
 		else:
@@ -88,12 +98,15 @@ class Tabuleiro:
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
+					elif MAPA[y][x] == "M":
+						if casa_inicial == None:
+							casa_inicial = (x, y)
+						self.casas.append(Casa(x, y, "medalha"))
 					elif MAPA[y][x] == " ":
 						self.casas.append(Casa(x, y, "vazio"))
-						
+
 			for jogador in jogo.jogadores:
 				jogador.casa = casa_inicial
-
 
 	#encontrar id da casa
 	def encontrar_casa(self, id):
@@ -107,7 +120,7 @@ class Tabuleiro:
 		direcoes = [
 			(jogador.direcao[0], jogador.direcao[1]), #frente
 			(jogador.direcao[1], jogador.direcao[0]), #direita
-			(-jogador.direcao[1], -jogador.direcao[0]), #trás 
+			(-jogador.direcao[1], -jogador.direcao[0]), #trás
 			(-jogador.direcao[0], -jogador.direcao[1]) #esquerda
 		]
 
@@ -152,24 +165,32 @@ class Tabuleiro:
 					util.smoothscaleblit(screen, 600, objetos[3], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 				elif casa.id[1] == 17:
 					util.smoothscaleblit(screen, 600, objetos[4], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
+			sombra_pos = (casa.pos[0] - (SOMBRA_SIZE - CASA_SIZE) * 0.5, casa.pos[1] - (SOMBRA_SIZE - CASA_SIZE) * 0.5)
 			match casa.tipo:
 				case "teleporte":
-					#util.scaleblit(screen, 600, self.nether_portal, self.camerado(casa.pos), None, CASA_SIZE / 1300)
-					util.smoothscaleblit(screen, 600, self.portal, self.camerado(casa.pos), None, CASA_SIZE / self.portal.get_height())
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, portal, self.camerado(casa.pos), None, CASA_SIZE / portal.get_height())
 				case "+R$5":
-					util.smoothscaleblit(screen, 600, self.cinero, self.camerado(casa.pos), None, CASA_SIZE / self.cinero.get_height())
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, cinero, self.camerado(casa.pos), None, CASA_SIZE / cinero.get_height())
 				case "-R$2":
-					util.smoothscaleblit(screen, 600, self.lixo, self.camerado(casa.pos), None, CASA_SIZE / self.lixo.get_height())
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, lixo, self.camerado(casa.pos), None, CASA_SIZE / lixo.get_height())
 				case "dado":
-					util.smoothscaleblit(screen, 600, self.dado, self.camerado(casa.pos), None, CASA_SIZE / self.dado.get_height())
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, dado, self.camerado(casa.pos), None, CASA_SIZE / dado.get_height())
 				case "minigame":
-					util.smoothscaleblit(screen, 600, self.minigame, self.camerado(casa.pos), None, CASA_SIZE / 128)
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, minigame, self.camerado(casa.pos), None, CASA_SIZE / minigame.get_height())
+				case "medalha":
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, medalha, self.camerado(casa.pos), None, CASA_SIZE / medalha.get_height())
+				case "carta":
+					util.smoothscaleblit(screen, 600, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
+					util.smoothscaleblit(screen, 600, carta, self.camerado(casa.pos), None, CASA_SIZE / carta.get_height())
 				case "vazio":
 					pass
 					#util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
-				case _:
-					util.scaleblit(screen, 600, self.casa, self.camerado(casa.pos), None, CASA_SIZE / 64)
-					util.smoothscaleblit(screen, 600, self.font.render(casa.tipo, True, "black"), self.camerado(casa.pos), None, CASA_SIZE / 64)
 		tempo = pygame.time.get_ticks()
 		jogador_atual_offset = (0, 0)
 		for numero in [0 if jogo.jogador_atual > 0 else 1, 1 if jogo.jogador_atual > 1 else 2, 2 if jogo.jogador_atual > 2 else 3, jogo.jogador_atual]:
@@ -282,7 +303,22 @@ class Tabuleiro:
 			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2), None, 0.5)
 			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[3].moedas}", True, cor), (1066 - texto.get_width() / 2, 600 - texto.get_height() / 2), None, 0.5)
 
-		util.smoothscaleblit(screen, 600, self.font_dado.render(str(self.dado_numero), True, "red"), (533 - 32, 300 - 32))
+		if self.modo == "andando" or self.modo == "dado":
+			dado_rect = pygame.Rect(0, 0, DADO_SIZE, DADO_SIZE)
+			dado_rect.center = (screen.get_width() * 600 / screen.get_height() * 0.5, 600 * 0.75)
+			util.smoothscaleblit(screen, 600, dadobgs[jogo.jogador_atual], dado_rect.topleft)
+			dado_texto = self.font_dado.render(str(self.dado_numero), True, "black")
+			util.smoothscaleblit(screen, 600, dado_texto, (dado_rect.x + 24, dado_rect.y + 8))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 25, dado_rect.y + 7))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 24, dado_rect.y + 6))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 23, dado_rect.y + 7))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 26, dado_rect.y + 8))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 22, dado_rect.y + 8))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 25, dado_rect.y + 9))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 24, dado_rect.y + 10))
+			util.smoothscaleblit(screen, 600, util.tint_mult(dado_texto, (0, 0, 0, 31)), (dado_rect.x + 23, dado_rect.y + 9))
+		elif self.modo == "carta":
+			pass
 
 		if self.modo == "andando":
 			self.dado_tempo += delta
@@ -292,6 +328,9 @@ class Tabuleiro:
 					casa = self.encontrar_casa(jogador.casa)
 					match casa.tipo:
 						case "minigame":
+							if self.dado_tempo >= 1:
+								return "minigame"
+						case "carta":
 							if self.dado_tempo >= 1:
 								return "minigame"
 						case "dado":
@@ -307,7 +346,7 @@ class Tabuleiro:
 							self.dado_tempo = 0
 						case "-R$2":
 							self.animar("pobreza", jogador.numero)
-							jogador.moedas -= 2
+							jogador.moedas -= 3
 							self.modo = "animando"
 							self.dado_tempo = 0
 						case "teleporte":
