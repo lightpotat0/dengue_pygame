@@ -22,8 +22,8 @@ class Titulo:
 		screen.blit(pygame.transform.smoothscale(self.bg, screen.get_size()), (0, 0))
 
 		#escala da logo
-		max_logo_width = screen.get_width()
-		max_logo_height = screen.get_height()
+		max_logo_width = screen.get_width() * 0.8
+		max_logo_height = screen.get_height() * 0.8
 
 		logo_rect = self.logo.get_rect()
 		logo_scaled_rect = logo_rect.scale_by(max_logo_height / logo_rect.height)
@@ -37,9 +37,9 @@ class Titulo:
 
 		#mensagens
 		mensagem = 'Pressione qualquer tecla para iniciar'
-		mensagem1 = 'Pressione esc para sair'
+		mensagem1 = 'Ou pressione esc para sair'
 		texto_formatado = fonte.render(mensagem, True, (255,255,255))
-		texto_formatado1 = fonte1.render(mensagem1, True, (190,190,200))
+		texto_formatado1 = fonte1.render(mensagem1, True, (255,255,255))
 		util.scaleblit(screen, 600, texto_formatado, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado.get_width() / 2, 480))
 		util.scaleblit(screen, 600, texto_formatado1, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado1.get_width() / 2, 530))
 		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Pistol, M: Aleatório", True, (0, 0, 0)), (0, 0))
