@@ -25,10 +25,13 @@ class Mosquito:
         self.speed_y = random.choice([2, 2])  # velocidade 
         self.falling = False  
         self.inverted = False 
+        self.gravity = 0.1  #força da gravidade
+        self.velocity_y = 0
 
     def move(self):
         if not self.active and self.falling:
-            self.y += 5  # mosquito caindo
+            self.velocity_y += self.gravity
+            self.y += self.velocity_y
 
             # mosquito parar de cair
             if self.y >= screen_height - mosquito_image.get_height():
