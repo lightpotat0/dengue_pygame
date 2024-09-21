@@ -26,7 +26,7 @@ class Mosquito:
         self.falling = False  
         self.inverted = False 
         self.gravity = 0.1  #força da gravidade
-        self.velocity_y = 0
+        self.velocity_y = 0 #velocidade inicial
 
     def move(self):
         if not self.active and self.falling:

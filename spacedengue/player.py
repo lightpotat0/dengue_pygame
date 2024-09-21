@@ -29,6 +29,7 @@ class Player(pygame.sprite.Sprite):
 		elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
 			self.x -= self.speed * 200 * delta
 			self.image = self.andando[int(pygame.time.get_ticks() % 500 / 250)]
+			self.image = pygame.transform.flip(self.image, True, False)
 		self.rect.x = self.x
 
 		#if keys[pygame.K_SPACE] and self.ready:
