@@ -90,8 +90,10 @@ class Tabuleiro:
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
 					elif MAPA[y][x] == " ":
 						self.casas.append(Casa(x, y, "vazio"))
+						
 			for jogador in jogo.jogadores:
 				jogador.casa = casa_inicial
+
 
 	#encontrar id da casa
 	def encontrar_casa(self, id):
@@ -103,11 +105,12 @@ class Tabuleiro:
 	#próxima casa e direção
 	def proxima_casa_e_direcao(self, jogador):
 		direcoes = [
-			(jogador.direcao[0], jogador.direcao[1]),
-			(jogador.direcao[1], jogador.direcao[0]),
-			(-jogador.direcao[1], -jogador.direcao[0]),
-			(-jogador.direcao[0], -jogador.direcao[1])
+			(jogador.direcao[0], jogador.direcao[1]), #frente
+			(jogador.direcao[1], jogador.direcao[0]), #direita
+			(-jogador.direcao[1], -jogador.direcao[0]), #trás 
+			(-jogador.direcao[0], -jogador.direcao[1]) #esquerda
 		]
+
 		for direcao in direcoes:
 			nova_casa = (jogador.casa[0] + direcao[0], jogador.casa[1] + direcao[1])
 			casa = self.encontrar_casa(nova_casa)
