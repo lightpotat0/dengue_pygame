@@ -96,7 +96,7 @@ class PistolMosquito:
         # quantidade de mosquitos
         self.mosquitos = [Mosquito() for _ in range(10)]
         self.start_time = time.time()
-        self.timer_duration = 5  # tempo pra atirar
+        self.timer_duration = 8  # tempo pra atirar
         self.clock = pygame.time.Clock()  
         self.veia = Veia('fnaf_minigame/sprites/vea.png') 
 
