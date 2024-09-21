@@ -37,9 +37,9 @@ class Titulo:
 
 		#mensagens
 		mensagem = 'Pressione qualquer tecla para iniciar'
-		mensagem1 = 'Ou pressione esc para sair'
+		mensagem1 = 'Pressione esc para sair'
 		texto_formatado = fonte.render(mensagem, True, (255,255,255))
-		texto_formatado1 = fonte1.render(mensagem1, True, (255,255,255))
+		texto_formatado1 = fonte1.render(mensagem1, True, (190,190,200))
 		util.scaleblit(screen, 600, texto_formatado, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado.get_width() / 2, 480))
 		util.scaleblit(screen, 600, texto_formatado1, (600 / screen.get_height() * screen.get_width() / 2 - texto_formatado1.get_width() / 2, 530))
 		util.scaleblit(screen, 600, fonte1.render("1: Pingo, 2: Walk, 3: Space, 4: Pistol, M: Aleatório", True, (0, 0, 0)), (0, 0))
