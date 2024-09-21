@@ -36,8 +36,10 @@ from jogador import Jogo
 jogo = Jogo()
 casas = None
 
-#posicion de lo mouse
+pygame.event.clear()
+
 while True:
+    #posicion de lo mouse
 	util.mouse_pos = pygame.mouse.get_pos()
 	if tela_minigame != None:
 		util.mouse_pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
