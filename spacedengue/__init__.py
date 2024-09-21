@@ -6,12 +6,14 @@ from random import choice
 from spacedengue.laser import Laser
 from random import randint
 import util
-screen_width = 1280
-screen_height = 720
+screen_width = 1066
+screen_height = 600
 
 class SpaceMinigame:
 	tamanho = (screen_width, screen_height)
 	def __init__(self):
+		self.bg = pygame.image.load("spacedengue/graphics/background.png").convert_alpha()
+  
 		# Player Setup
 		player_sprite = Player((screen_width / 2,screen_height),screen_width,5)
 		self.player = pygame.sprite.GroupSingle(player_sprite)
@@ -22,12 +24,12 @@ class SpaceMinigame:
 		self.blocks = pygame.sprite.Group()
 		self.obstacle_amount = 4
 		self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
-		self.create_multiple_obstacles(screen_width / 15, 480, *self.obstacle_x_positions)
+		self.create_multiple_obstacles(screen_width / 15, 320, *self.obstacle_x_positions)
 
 		#Mosquito setup
 		self.mosquitos = pygame.sprite.Group()
 		self.mosquito_lasers = pygame.sprite.Group()
-		self.mosquito_setup(rows = 4, cols = 6, x_distance = 96, y_distance = 72, y_offset = 64)
+		self.mosquito_setup(rows = 4, cols = 6, x_distance = 96, y_distance = 72, y_offset = 0)
 		self.mosquito_direction = 1
 		self.mosquito_downs = 0
 
@@ -51,13 +53,14 @@ class SpaceMinigame:
 		return pygame.time.get_ticks() + segundos_restantes * 1000
 
 	def create_obstacle(self, x_start, y_start, offset_x):
-		for row_index, row in enumerate(self.shape):
-			for col_index,col in enumerate(row):
-				if col == 'x':
-					x = x_start + col_index * self.block_size + offset_x
-					y = y_start + row_index * self.block_size
-					block = obstacle.Block(self.block_size,(241,79,80),x,y, row_index, col_index)
-					self.blocks.add(block)
+		self.blocks.add(obstacle.Obstacle((x_start + offset_x, y_start)))
+		#for row_index, row in enumerate(self.shape):
+		#	for col_index,col in enumerate(row):
+		#		if col == 'x':
+		#			x = x_start + col_index * self.block_size + offset_x
+		#			y = y_start + row_index * self.block_size
+		#			block = obstacle.Block(self.block_size,(241,79,80),x,y, row_index, col_index)
+		#			self.blocks.add(block)
 
 	def create_multiple_obstacles(self, x_start, y_start, *offset):
 		for offset_x in offset:
@@ -108,16 +111,11 @@ class SpaceMinigame:
 		self.mosquitos.update(self.mosquito_direction, delta)
 		self.mosquito_position_checker()
 		self.mosquito_lasers.update(delta)
-		self.extra_mosquito_timer(delta)
+		#self.extra_mosquito_timer(delta)
 		self.extra.update()
 		# render
 		if self.mosquito_downs >= 2:
 			return "perdeu"
-		elif self.mosquito_downs >= 1:
-			screen.fill((63, 0, 0, 255))
-		else:
-			screen.fill("black")
-		self.player.sprite.lasers.draw(screen)
 		for laser in self.player.sprite.lasers.sprites():
 			for obstacle in self.blocks.sprites():
 				if obstacle.rect.colliderect(laser.rect):
@@ -135,6 +133,8 @@ class SpaceMinigame:
 				return "perdeu"
 		if len(self.mosquitos.sprites()) == 0:
 			return "ganhou"
+		screen.blit(pygame.transform.scale(self.bg, screen.get_size()), (0, 0))
+		self.player.sprite.lasers.draw(screen)
 		self.player.draw(screen)
 		self.blocks.draw(screen)
 		self.mosquitos.draw(screen)

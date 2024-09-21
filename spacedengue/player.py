@@ -4,7 +4,12 @@ from spacedengue.laser import Laser
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,constraint,speed):
 		super().__init__()
-		self.image = pygame.image.load("spacedengue/graphics/player.png").convert_alpha()
+		self.atirando = pygame.image.load("spacedengue/graphics/player.png").convert_alpha()
+		self.andando = [
+			pygame.image.load("spacedengue/graphics/right_sideA.png").convert_alpha(),
+			pygame.image.load("spacedengue/graphics/right_sideB.png").convert_alpha()
+		]
+		self.image = self.atirando
 		self.rect = self.image.get_rect(midbottom = pos)
 		self.speed = speed
 		self.max_x_constraint = constraint
@@ -13,14 +18,17 @@ class Player(pygame.sprite.Sprite):
 		self.laser_cooldown = 500
 		self.x = self.rect.x
 		self.lasers = pygame.sprite.Group()
+		self.tempo = 0.0
 
 	def get_input(self, delta):
 		keys = pygame.key.get_pressed()
 
 		if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
 			self.x += self.speed * 200 * delta
+			self.image = self.andando[int(pygame.time.get_ticks() % 500 / 250)]
 		elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
 			self.x -= self.speed * 200 * delta
+			self.image = self.andando[int(pygame.time.get_ticks() % 500 / 250)]
 		self.rect.x = self.x
 
 		#if keys[pygame.K_SPACE] and self.ready:
@@ -28,6 +36,7 @@ class Player(pygame.sprite.Sprite):
 			self.shoot_laser()
 			self.ready = False
 			self.laser_time = pygame.time.get_ticks()
+			self.image = self.atirando
 
 	def recharge(self):
 		if not self.ready:
@@ -47,6 +56,7 @@ class Player(pygame.sprite.Sprite):
 		self.lasers.add(Laser(self.rect.center,-20,self.rect.bottom))
 
 	def update(self, delta):
+		self.tempo += delta
 		self.get_input(delta)
 		self.constraint()
 		self.recharge()
