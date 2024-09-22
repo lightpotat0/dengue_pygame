@@ -164,32 +164,36 @@ class Tabuleiro:
 		return (pos[0] - self.cam_pos[0] + 1066 / 2, pos[1] - self.cam_pos[1] + 600 / 2)
 
 	def event(self, ev):
-		if ev.
+		if ev.type == pygame.MOUSEBUTTONDOWN or (ev.type == pygame.KEYDOWN and ev.key in [pygame.K_ESCAPE, pygame.K_RETURN, pygame.K_SPACE]):
+			if self.modo == "camera":
+				self.modo = "dado"
+			return True
 
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill(0xb4df5d)
 
 		# uma matematicazinha complicada pra ganhar fps, renderizando o tabuleiro só se necessário (na primeira vez e se o jogador redimensionar a tela)
-		tabuleiro_size = (fundo.get_width() * CASA_STRIDE / 142 * screen.get_height() // 600, fundo.get_height() * CASA_STRIDE / 142 * screen.get_height() // 600)
+		# nem funcionou bem mas
+		tabuleiro_size = (fundo.get_width() * CASA_STRIDE / 143 * screen.get_height() // 600, fundo.get_height() * CASA_STRIDE / 143 * screen.get_height() // 600)
 		if self.tabuleiro == None or self.tabuleiro.get_size() != tabuleiro_size:
 			self.tabuleiro = pygame.Surface(tabuleiro_size)
-			h = fundo.get_height() * CASA_STRIDE / 142
-			util.smoothscaleblit(self.tabuleiro, h, fundo, (0, 0), None, CASA_STRIDE / 142)
-			util.smoothscaleblit(self.tabuleiro, h, objetos[0], (0, 0), None, CASA_STRIDE / 142)
+			h = fundo.get_height() * CASA_STRIDE / 143
+			util.smoothscaleblit(self.tabuleiro, h, fundo, (0, 0), None, CASA_STRIDE / 143)
+			util.smoothscaleblit(self.tabuleiro, h, objetos[0], (0, 0), None, CASA_STRIDE / 143)
 
 			# mostrar todas as casas
 			for casa in self.casas:
 				if casa.id[0] == 0:
 					# mostrar os objetos de fundo em certos pontos para aparecerem em cima das casas
 					if casa.id[1] == 8:
-						util.smoothscaleblit(self.tabuleiro, h, objetos[1], (0, 0), None, CASA_STRIDE / 142)
+						util.smoothscaleblit(self.tabuleiro, h, objetos[1], (0, 0), None, CASA_STRIDE / 143)
 					elif casa.id[1] == 12:
-						util.smoothscaleblit(self.tabuleiro, h, objetos[2], (0, 0), None, CASA_STRIDE / 142)
+						util.smoothscaleblit(self.tabuleiro, h, objetos[2], (0, 0), None, CASA_STRIDE / 143)
 					elif casa.id[1] == 16:
-						util.smoothscaleblit(self.tabuleiro, h, objetos[3], (0, 0), None, CASA_STRIDE / 142)
+						util.smoothscaleblit(self.tabuleiro, h, objetos[3], (0, 0), None, CASA_STRIDE / 143)
 					elif casa.id[1] == 17:
-						util.smoothscaleblit(self.tabuleiro, h, objetos[4], (0, 0), None, CASA_STRIDE / 142)
+						util.smoothscaleblit(self.tabuleiro, h, objetos[4], (0, 0), None, CASA_STRIDE / 143)
 				sombra_pos = (casa.pos[0] - (SOMBRA_SIZE - CASA_SIZE) * 0.5, casa.pos[1] - (SOMBRA_SIZE - CASA_SIZE) * 0.5)
 				if casa.tipo != "vazio":
 					util.smoothscaleblit(self.tabuleiro, h, sombra, sombra_pos, None, SOMBRA_SIZE / sombra.get_height())
@@ -210,7 +214,11 @@ class Tabuleiro:
 						util.smoothscaleblit(self.tabuleiro, h, carta, casa.pos, None, CASA_SIZE / carta.get_height())
 					case "vazio":
 						pass
-		util.smoothscaleblit(screen, 600 * self.escala_mapa, self.tabuleiro, self.camerado((0, 0)), None, 600 / screen.get_height())
+		if self.escala_mapa >= 1.249:
+			util.smoothscaleblit(screen, 600 * 1.25, self.tabuleiro, self.camerado((0, 0)), None, 600 / screen.get_height())
+		else:
+			util.smoothscaleblit(screen, 600 * 1.25, self.tabuleiro, self.camerado((0, 0)), None, 600 / screen.get_height(), True)
+			util.scaleblit(screen, 600 * self.escala_mapa, self.tabuleiro, self.camerado((0, 0)), None, 600 / screen.get_height())
 
 		# mostrar e animar os jogadores
 		tempo = pygame.time.get_ticks()
@@ -289,6 +297,7 @@ class Tabuleiro:
 			else:
 				pos = (pos[0] + 6, pos[1] + 6)
 			claridade = util.clamp(255 * self.alphas[numero], 0, 255)
+			pos = (pos[0] - 2, pos[1] - 2)
 			util.scaleblit(screen, 600 * self.escala_mapa, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), self.camerado(pos))
 
 		# processar a vez do jogador
@@ -303,10 +312,10 @@ class Tabuleiro:
 		proxima_cam_pos = casa_id_para_pos(jogo.jogadores[jogo.jogador_atual].casa)
 		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
 		if self.modo == "camera":
-			self.escala_mapa = util.lerp(self.escala_mapa, 1.25, 8 * delta)
+			self.escala_mapa = util.lerp(self.escala_mapa, 1.25, 16 * delta)
 			proxima_cam_pos = self.cam_movida
 		else:
-			self.escala_mapa = util.lerp(self.escala_mapa, 1, 8 * delta)
+			self.escala_mapa = util.lerp(self.escala_mapa, 1, 16 * delta)
 			self.cam_movida = self.cam_pos
 		if self.cam_pos == (0, 0):
 			self.cam_pos = proxima_cam_pos
@@ -439,4 +448,5 @@ class Tabuleiro:
 				else:
 					self.pode_entrar_em_camera = True
 			case "camera":
-				self.cam_movida = (self.cam_movida[0] + movimento[0], self.cam_movida[1] + movimento[1])
+				virtual_width = screen.get_width() * 600 / screen.get_height()
+				self.cam_movida = (util.clamp(self.cam_movida[0] + movimento[0], 1066 / 2, fundo.get_width() - 1960 * virtual_width / 1066), util.clamp(self.cam_movida[1] + movimento[1], 600 / 2, fundo.get_height() - 1620))

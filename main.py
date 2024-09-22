@@ -48,8 +48,9 @@ while True:
 		if getattr(modo, "event", None) != None:
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				event.pos = util.mouse_pos
-			modo.event(event)
-		if event.type == pygame.QUIT:
+			if modo.event(event):
+				continue
+		if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 			pygame.quit()
 			sys.exit()
 
@@ -59,11 +60,6 @@ while True:
 	for i in range(len(pressionado_novo)):
 		util.pressionado_agora.append(pressionado_novo[i] and not util.pressionado[i])
 	util.pressionado = pressionado_novo
-
-	#fechar o jogo
-	if util.pressionado_agora[pygame.K_ESCAPE]:
-		pygame.quit()
-		sys.exit()
 
 	#processando framesssssss
 	util.clear_cache()

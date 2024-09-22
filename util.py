@@ -52,7 +52,7 @@ def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 # escala um objeto com smoothscale
-def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1, fake = False):
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
 
@@ -71,7 +71,8 @@ def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra
 			cache_atual[key] = escalado
 		else:
 			escalado = obj
-	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
+	if not fake:
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 def tint(obj, cor):
 	obj = obj.copy()

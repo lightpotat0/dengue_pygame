@@ -4,8 +4,11 @@ from random import randint
 import util
 import math
 
+ANIMATION_SPEED = 0.05
+
 # Player Class
 class Player(pygame.sprite.Sprite):
+
 	def __init__(self):
 		super().__init__()
 		self.images = [
@@ -14,13 +17,13 @@ class Player(pygame.sprite.Sprite):
 			pygame.image.load('walkminigame/Sprites/runboy3.png').convert_alpha(),
 			pygame.image.load('walkminigame/Sprites/runboy4.png').convert_alpha()
 		]
-		self.animation_speed = 0.05
+		self.speed = 1.0
 		self.image_index = 0
-		self.image = self.images[self.image_index]  
+		self.image = self.images[self.image_index]
 		self.rect = self.image.get_rect(midbottom=(120, 474))
 
 	def update(self):
-		self.image_index += self.animation_speed
+		self.image_index += self.speed * ANIMATION_SPEED
 
 		if self.image_index >= len(self.images):
 			self.image_index = 0
@@ -122,7 +125,6 @@ class WalkMinigame:
 			self.trigger = True
 
 	def frame(self, screen, delta, jogo):
-
 		self.player.update()
 
 		red_tint = 0.0
@@ -144,6 +146,7 @@ class WalkMinigame:
 
 		self.velocidade = self.velocidade + 42 * delta
 		self.posicao += self.velocidade * delta
+		self.player.speed = self.velocidade / 500.0
 
 		screen.fill('#87CEEB')
 		width = screen.get_width()
