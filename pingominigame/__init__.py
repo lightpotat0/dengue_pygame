@@ -20,15 +20,20 @@ class PingoMinigame:
 		self.jumpscare_tempo = 0
 		self.tempo = 0
 		nivel = gerarnivel.gerar()
+		self.bg0 = pygame.image.load("pingominigame/bg.png").convert_alpha()
 		self.bg = nivel[0]
-		self.vc = pygame.image.load("pingominigame/obj/vc.png")
-		self.estalactite = [pygame.image.load(f"pingominigame/obj/estalactite{i}.png") for i in range(1, 10)]
-		self.balde = pygame.image.load("pingominigame/obj/balde.png")
-		self.balde_meio = pygame.image.load("pingominigame/obj/balde_meio.png")
-		self.balde_mais = pygame.image.load("pingominigame/obj/balde_mais.png")
-		self.balde_todo = pygame.image.load("pingominigame/obj/balde_todo.png")
-		self.balde_fechado = pygame.image.load("pingominigame/obj/balde_fechado.png")
-		self.mosquito = pygame.image.load("pingominigame/mosquito.png")
+		self.bg.blit(pygame.image.load("pingominigame/agua.png").convert_alpha(), (0, 0), None, pygame.BLEND_RGBA_MULT)
+		self.bg.blit(nivel[2], (0, 0), None) # borda branca
+		self.areia = pygame.image.load("pingominigame/areia.png").convert_alpha()
+		self.areia.blit(nivel[3], (0, 0), None, pygame.BLEND_RGBA_MULT)
+		self.vc = pygame.image.load("pingominigame/obj/vc.png").convert_alpha()
+		self.estalactite = [pygame.image.load(f"pingominigame/obj/estalactite{i}.png").convert_alpha() for i in range(1, 10)]
+		self.balde = pygame.image.load("pingominigame/obj/balde.png").convert_alpha()
+		self.balde_meio = pygame.image.load("pingominigame/obj/balde_meio.png").convert_alpha()
+		self.balde_mais = pygame.image.load("pingominigame/obj/balde_mais.png").convert_alpha()
+		self.balde_todo = pygame.image.load("pingominigame/obj/balde_todo.png").convert_alpha()
+		self.balde_fechado = pygame.image.load("pingominigame/obj/balde_fechado.png").convert_alpha()
+		self.mosquito = pygame.image.load("pingominigame/mosquito.png").convert_alpha()
 		self.vc_pos = (428 / 2 - 32, 240 / 2 - 32)
 		self.baldes = [
 			Balde(nivel[1][0]),
@@ -52,7 +57,9 @@ class PingoMinigame:
 		if not self.morreu:
 			self.vc_pos = util.deslize(self.bg, self.vc, self.vc_pos, util.movimento(75, delta))
 			self.vc_pos = (util.clamp(self.vc_pos[0], 0, 428 - self.vc.get_width()), util.clamp(self.vc_pos[1], 0, 240 - self.vc.get_height()))
+		screen.blit(self.bg0, (0, 0))
 		screen.blit(self.bg, (0, 0))
+		screen.blit(self.areia, (0, 0))
 		for balde in self.baldes:
 			balde_img = self.balde
 			if util.imagem_colide_com_rect(pygame.Rect((balde.pos[0], balde.pos[1] - 20, self.balde.get_width(), self.balde.get_height() + 20)), self.vc, self.vc_pos) and not balde.fechado:
@@ -73,7 +80,7 @@ class PingoMinigame:
 				else:
 					balde_img = self.balde
 			screen.blit(balde_img, balde.pos)
-			util.blitanimado(screen, self.estalactite, (balde.pos[0], balde.pos[1] - 20), self.tempo, 10)
+			util.blitanimado(screen, self.estalactite, (balde.pos[0], balde.pos[1]), self.tempo, 10)
 		screen.blit(self.vc, self.vc_pos)
 		fechar = False
 		if self.morreu:

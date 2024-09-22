@@ -52,7 +52,7 @@ def scaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
 	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 # escala um objeto com smoothscale
-def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1):
+def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra = 1, fake = False):
 	escala_tela = screen.get_height() / altura_esperada
 	escala_total = escala_tela * escala_extra
 
@@ -64,11 +64,15 @@ def smoothscaleblit(screen, altura_esperada, obj, pos, area = None, escala_extra
 	key = (obj, area[0], area[1], area[2], area[3], escala_total)
 	escalado = cache_atual.get(key)
 	if escalado == None:
-		escalado = cache_anterior.get(key)
-		if escalado == None:
-			escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
-		cache_atual[key] = escalado
-	screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
+		if int(obj.get_height() * escala_total) != obj.get_height():
+			escalado = cache_anterior.get(key)
+			if escalado == None:
+				escalado = pygame.transform.smoothscale_by(obj.subsurface(area), escala_total)
+			cache_atual[key] = escalado
+		else:
+			escalado = obj
+	if not fake:
+		screen.blit(escalado, (pos[0] * escala_tela, pos[1] * escala_tela))
 
 def tint(obj, cor):
 	obj = obj.copy()
@@ -87,7 +91,7 @@ def blitanimado(screen, obj, pos, tempo, fps):
 	screen.blit(obj[frame_atual], pos)
 
 def lerp(x, y, t):
-	return x + (y - x) * t
+	return clamp(x + (y - x) * t, min(x, y), max(x, y))
 
 def imagem_colide_com_rect(rect, obj, pos):
 	return rect.colliderect(obj.get_rect().move(pos[0], pos[1]))
