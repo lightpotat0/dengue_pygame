@@ -20,6 +20,7 @@ TIPOS = [
 	#"loja",
 	#"sorte"
 ]
+
 MAPA = [
 	"                  ",
 	"                  ",
