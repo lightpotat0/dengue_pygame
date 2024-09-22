@@ -8,8 +8,24 @@ import math
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		self.image = pygame.image.load('walkminigame/Sprites/player.png').convert_alpha()
+		self.images = [
+			pygame.image.load('walkminigame/Sprites/runboy1.png').convert_alpha(),
+			pygame.image.load('walkminigame/Sprites/runboy2.png').convert_alpha(),
+			pygame.image.load('walkminigame/Sprites/runboy3.png').convert_alpha(),
+			pygame.image.load('walkminigame/Sprites/runboy4.png').convert_alpha()
+		]
+		self.animation_speed = 0.05
+		self.image_index = 0
+		self.image = self.images[self.image_index]  
 		self.rect = self.image.get_rect(midbottom=(120, 474))
+
+	def update(self):
+		self.image_index += self.animation_speed
+
+		if self.image_index >= len(self.images):
+			self.image_index = 0
+
+		self.image = self.images[int(self.image_index)]
 
 object_images = {
 	'down': pygame.image.load('walkminigame/Sprites/bucketdown.png').convert_alpha(),
@@ -106,6 +122,9 @@ class WalkMinigame:
 			self.trigger = True
 
 	def frame(self, screen, delta, jogo):
+
+		self.player.update()
+
 		red_tint = 0.0
 
 		if self.stun_timer > 0.0:
@@ -133,7 +152,8 @@ class WalkMinigame:
 		parallax_blit(screen, self.background, self.posicao, 0.75, width)
 		parallax_blit(screen, self.ground, self.posicao, 1.0, width)
 
-		screen.blit(util.tint(self.player.image, (red_tint * 255, 0, 0, 255)), self.player.rect)
+		screen.blit(self.player.image, self.player.rect)
+
 		self.obstacles.update()
 		self.obstacles.draw(screen)
 		object = "none"
