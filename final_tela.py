@@ -38,10 +38,7 @@ class Tela:
             pygame.image.load("assets/characterswalk2.png").convert_alpha(),
             pygame.image.load("assets/characterswalk3.png").convert_alpha(),
             pygame.image.load("assets/characterswalk4.png").convert_alpha()
-        ]
-
-        self.simbol = pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha()
-        self.simbol = pygame.transform.scale(self.simbol, (50, 50))  
+        ]  
 
         self.confetes = []
         for _ in range(100):
@@ -75,9 +72,6 @@ class Tela:
         scaled_sprite = pygame.transform.scale(self.personagens[self.frame_atual].subsurface((2 * 24, 0 * 26 + 1, 24, 24)), (150, 150))
         sprite_rect = scaled_sprite.get_rect(center=(tela.get_width() // 2, 350))
         tela.blit(scaled_sprite, sprite_rect.topleft)
-
-        simbol_rect = self.simbol.get_rect(center=(tela.get_width() // 2, tela.get_height() * 0.70))  
-        tela.blit(self.simbol, simbol_rect.topleft)
 
         for confete in self.confetes:
             confete.update()
