@@ -58,6 +58,7 @@ def gerar():
 	for i in range(len(baldes)):
 		baldes[i] = (baldes[i][0] * CELL, baldes[i][1] * CELL)
 	data = bytearray()
+	data2 = bytearray()
 	for y in range(240):
 		y_factor = y % CELL / CELL
 		row = mapa[int(y / CELL)]
@@ -66,14 +67,25 @@ def gerar():
 			x_factor = x % CELL / CELL
 			val_top = util.lerp(row[int(x / CELL)], row[int(x / CELL) + 1], x_factor)
 			val_bottom = util.lerp(row2[int(x / CELL)], row2[int(x / CELL) + 1], x_factor)
-			if util.lerp(val_top, val_bottom, y_factor) >= 0.35:
-				data.append(71)
-				data.append(63)
-				data.append(31)
+			data.append(255)
+			data.append(255)
+			data.append(255)
+			val = util.lerp(val_top, val_bottom, y_factor)
+			if val >= 0.35:
 				data.append(255)
+				data2.append(255)
+				data2.append(255)
+				data2.append(255)
+				if val < 0.4:
+					data2.append(255)
+				elif val < 0.45:
+					data2.append(131)
+				else:
+					data2.append(0)
 			else:
 				data.append(0)
-				data.append(0)
-				data.append(0)
-				data.append(0)
-	return (pygame.image.frombytes(bytes(data), (428, 240), "RGBA"), baldes)
+				data2.append(0)
+				data2.append(0)
+				data2.append(0)
+				data2.append(0)
+	return (pygame.image.frombytes(bytes(data), (428, 240), "RGBA"), baldes, pygame.image.frombytes(bytes(data2), (428, 240), "RGBA"))
