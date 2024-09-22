@@ -41,7 +41,7 @@ MAPA = [
 	"                  "
 ]
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
-FUNDO_OFFSET = (-8, -24)
+CASAS_OFFSET = (8, 24)
 
 fundo = pygame.image.load("tabuleiro/ChaoMapa.png").convert_alpha()
 objetos = [
@@ -94,6 +94,7 @@ class Tabuleiro:
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
+		self.pode_entrar_em_camera = False
 		if casas != None:
 			self.casas = casas
 		else:
@@ -154,56 +155,62 @@ class Tabuleiro:
 
 	cam_pos = (0, 0)
 	cam_movida = (0, 0)
-	arrow_offs = [0, 0, 0, 0]
+	setas_mults = [0, 0, 0, 0]
+	setas_direcoes = [-1, -1, -1, -1]
 	escala_mapa = 1
+	tabuleiro = None
 
 	def camerado(self, pos):
 		return (pos[0] - self.cam_pos[0] + 1066 / 2, pos[1] - self.cam_pos[1] + 600 / 2)
 
+	def event(self, ev):
+		if ev.
+
 	def frame(self, screen, delta, jogo):
 		self.tempo += delta
 		screen.fill(0xb4df5d)
-		util.smoothscaleblit(screen, 600 * self.escala_mapa, fundo, self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
-		util.smoothscaleblit(screen, 600 * self.escala_mapa, objetos[0], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
 
-		# mostrar todas as casas
-		for casa in self.casas:
-			if casa.id[0] == 0:
-				# mostrar os objetos de fundo em certos pontos para aparecerem em cima das casas
-				if casa.id[1] == 8:
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, objetos[1], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
-				elif casa.id[1] == 12:
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, objetos[2], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
-				elif casa.id[1] == 16:
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, objetos[3], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
-				elif casa.id[1] == 17:
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, objetos[4], self.camerado(FUNDO_OFFSET), None, CASA_STRIDE / 142)
-			sombra_pos = (casa.pos[0] - (SOMBRA_SIZE - CASA_SIZE) * 0.5, casa.pos[1] - (SOMBRA_SIZE - CASA_SIZE) * 0.5)
-			match casa.tipo:
-				case "teleporte":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, portal, self.camerado(casa.pos), None, CASA_SIZE / portal.get_height())
-				case "+R$5":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, cinero, self.camerado(casa.pos), None, CASA_SIZE / cinero.get_height())
-				case "-R$2":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, lixo, self.camerado(casa.pos), None, CASA_SIZE / lixo.get_height())
-				case "dado":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, dado, self.camerado(casa.pos), None, CASA_SIZE / dado.get_height())
-				case "minigame":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, minigame, self.camerado(casa.pos), None, CASA_SIZE / minigame.get_height())
-				case "medalha":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, medalha, self.camerado(casa.pos), None, CASA_SIZE / medalha.get_height())
-				case "carta":
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, sombra, self.camerado(sombra_pos), None, SOMBRA_SIZE / sombra.get_height())
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, carta, self.camerado(casa.pos), None, CASA_SIZE / carta.get_height())
-				case "vazio":
-					pass
-					#util.scaleblit(screen, 600, util.tint_mult(self.casa, (63, 63, 63)), self.camerado(casa.pos), None, CASA_SIZE / 64)
+		# uma matematicazinha complicada pra ganhar fps, renderizando o tabuleiro só se necessário (na primeira vez e se o jogador redimensionar a tela)
+		tabuleiro_size = (fundo.get_width() * CASA_STRIDE / 142 * screen.get_height() // 600, fundo.get_height() * CASA_STRIDE / 142 * screen.get_height() // 600)
+		if self.tabuleiro == None or self.tabuleiro.get_size() != tabuleiro_size:
+			self.tabuleiro = pygame.Surface(tabuleiro_size)
+			h = fundo.get_height() * CASA_STRIDE / 142
+			util.smoothscaleblit(self.tabuleiro, h, fundo, (0, 0), None, CASA_STRIDE / 142)
+			util.smoothscaleblit(self.tabuleiro, h, objetos[0], (0, 0), None, CASA_STRIDE / 142)
+
+			# mostrar todas as casas
+			for casa in self.casas:
+				if casa.id[0] == 0:
+					# mostrar os objetos de fundo em certos pontos para aparecerem em cima das casas
+					if casa.id[1] == 8:
+						util.smoothscaleblit(self.tabuleiro, h, objetos[1], (0, 0), None, CASA_STRIDE / 142)
+					elif casa.id[1] == 12:
+						util.smoothscaleblit(self.tabuleiro, h, objetos[2], (0, 0), None, CASA_STRIDE / 142)
+					elif casa.id[1] == 16:
+						util.smoothscaleblit(self.tabuleiro, h, objetos[3], (0, 0), None, CASA_STRIDE / 142)
+					elif casa.id[1] == 17:
+						util.smoothscaleblit(self.tabuleiro, h, objetos[4], (0, 0), None, CASA_STRIDE / 142)
+				sombra_pos = (casa.pos[0] - (SOMBRA_SIZE - CASA_SIZE) * 0.5, casa.pos[1] - (SOMBRA_SIZE - CASA_SIZE) * 0.5)
+				if casa.tipo != "vazio":
+					util.smoothscaleblit(self.tabuleiro, h, sombra, sombra_pos, None, SOMBRA_SIZE / sombra.get_height())
+				match casa.tipo:
+					case "teleporte":
+						util.smoothscaleblit(self.tabuleiro, h, portal, casa.pos, None, CASA_SIZE / portal.get_height())
+					case "+R$5":
+						util.smoothscaleblit(self.tabuleiro, h, cinero, casa.pos, None, CASA_SIZE / cinero.get_height())
+					case "-R$2":
+						util.smoothscaleblit(self.tabuleiro, h, lixo, casa.pos, None, CASA_SIZE / lixo.get_height())
+					case "dado":
+						util.smoothscaleblit(self.tabuleiro, h, dado, casa.pos, None, CASA_SIZE / dado.get_height())
+					case "minigame":
+						util.smoothscaleblit(self.tabuleiro, h, minigame, casa.pos, None, CASA_SIZE / minigame.get_height())
+					case "medalha":
+						util.smoothscaleblit(self.tabuleiro, h, medalha, casa.pos, None, CASA_SIZE / medalha.get_height())
+					case "carta":
+						util.smoothscaleblit(self.tabuleiro, h, carta, casa.pos, None, CASA_SIZE / carta.get_height())
+					case "vazio":
+						pass
+		util.smoothscaleblit(screen, 600 * self.escala_mapa, self.tabuleiro, self.camerado((0, 0)), None, 600 / screen.get_height())
 
 		# mostrar e animar os jogadores
 		tempo = pygame.time.get_ticks()
@@ -328,6 +335,7 @@ class Tabuleiro:
 
 		movimento = util.movimento(1024, delta)
 		if self.modo == "andando" or self.modo == "dado":
+			# mostrar o dado
 			dado_rect = pygame.Rect(0, 0, DADO_SIZE, DADO_SIZE)
 			dado_rect.center = (screen.get_width() * 600 / screen.get_height() * 0.5, 600 * 0.75)
 			util.smoothscaleblit(screen, 600, dadobgs[jogo.jogador_atual], dado_rect.topleft)
@@ -345,20 +353,30 @@ class Tabuleiro:
 		elif self.modo == "carta":
 			pass
 		elif self.modo == "camera":
-			onda = tempo % 400 / 200
-			if onda > 1:
-				onda = 2 - onda
-			self.arrow_offs = [
-				util.lerp(self.arrow_offs[0], 1 - abs(min(0, movimento[1])) * onda, 16 * delta),
-				util.lerp(self.arrow_offs[1], 1 - max(0, movimento[1]) * onda, 16 * delta),
-				util.lerp(self.arrow_offs[2], 1 - abs(min(movimento[0], 0)) * onda, 16 * delta),
-				util.lerp(self.arrow_offs[3], 1 - max(movimento[0], 0) * onda, 16 * delta)
+			# mostrar setas do movimento da camera
+			self.setas_mults = [
+				util.clamp(self.setas_mults[0] + self.setas_direcoes[0] * 4 * delta, -1.0, 2.0), # cima
+				util.clamp(self.setas_mults[1] + self.setas_direcoes[1] * 4 * delta, -1.0, 2.0), # baixo
+				util.clamp(self.setas_mults[2] + self.setas_direcoes[2] * 4 * delta, -1.0, 2.0), # esquerda
+				util.clamp(self.setas_mults[3] + self.setas_direcoes[3] * 4 * delta, -1.0, 2.0) # direita
 			]
-			OFF_MULT = 4
-			util.smoothscaleblit(screen, 600, setas[0], (screen.get_width() * 600 / screen.get_height() / 2 - 32, self.arrow_offs[0] * OFF_MULT), None, 0.25)
-			util.smoothscaleblit(screen, 600, setas[1], (screen.get_width() * 600 / screen.get_height() / 2 - 32, 600 - 64 - self.arrow_offs[1] * OFF_MULT), None, 0.25)
-			util.smoothscaleblit(screen, 600, setas[2], (self.arrow_offs[2] * OFF_MULT, 300 - 32), None, 0.25)
-			util.smoothscaleblit(screen, 600, setas[3], (screen.get_width() * 600 / screen.get_height() - 64 - self.arrow_offs[3] * OFF_MULT, 300 - 32), None, 0.25)
+			movendo = [movimento[1] < 0, movimento[1] > 0, movimento[0] < 0, movimento[0] > 0]
+			for i in range(0, 4):
+				if self.setas_mults[i] > 1.0:
+					self.setas_direcoes[i] = -1
+					self.setas_mults[i] = 2.0 - self.setas_mults[i]
+				elif self.setas_mults[i] < 0.0:
+					if movendo[i]:
+						self.setas_direcoes[i] = 1
+						self.setas_mults[i] = -self.setas_mults[i]
+					else:
+						self.setas_mults[i] = 0.0
+				elif movendo[i] and self.setas_direcoes[i] == 0 and self.setas_mults[i] == 0.0:
+					self.setas_direcoes[i] = 1
+			util.smoothscaleblit(screen, 600, setas[0], (screen.get_width() * 600 / screen.get_height() / 2 - 32, (1 - self.setas_mults[0]) * 8), None, 0.25)
+			util.smoothscaleblit(screen, 600, setas[1], (screen.get_width() * 600 / screen.get_height() / 2 - 32, 600 - 64 - (1 - self.setas_mults[1]) * 8), None, 0.25)
+			util.smoothscaleblit(screen, 600, setas[2], ((1 - self.setas_mults[2]) * 8, 300 - 32), None, 0.25)
+			util.smoothscaleblit(screen, 600, setas[3], (screen.get_width() * 600 / screen.get_height() - 64 - (1 - self.setas_mults[3]) * 8, 300 - 32), None, 0.25)
 
 		if self.modo == "andando":
 			self.dado_tempo += delta
@@ -416,6 +434,9 @@ class Tabuleiro:
 					self.dado_tempo = 0
 					self.modo = "andando"
 				elif movimento[0] != 0 or movimento[1] != 0:
-					self.modo = "camera"
+					if self.pode_entrar_em_camera:
+						self.modo = "camera"
+				else:
+					self.pode_entrar_em_camera = True
 			case "camera":
 				self.cam_movida = (self.cam_movida[0] + movimento[0], self.cam_movida[1] + movimento[1])
