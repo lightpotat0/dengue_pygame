@@ -6,7 +6,7 @@ import math
 #detalhe das casa do mapa
 CASA_SIZE = 80
 CASA_STRIDE = CASA_SIZE + 8
-SOMBRA_SIZE = int(60 * 1600 / 1280)
+SOMBRA_SIZE = int(80 * 1600 / 1280)
 
 #mapeamento
 TIPOS = [
