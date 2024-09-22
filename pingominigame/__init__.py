@@ -23,7 +23,9 @@ class PingoMinigame:
 		self.bg0 = pygame.image.load("pingominigame/bg.png").convert_alpha()
 		self.bg = nivel[0]
 		self.bg.blit(pygame.image.load("pingominigame/agua.png").convert_alpha(), (0, 0), None, pygame.BLEND_RGBA_MULT)
-		self.bg.blit(nivel[2], (0, 0), None)
+		self.bg.blit(nivel[2], (0, 0), None) # borda branca
+		self.areia = pygame.image.load("pingominigame/areia.png").convert_alpha()
+		self.areia.blit(nivel[3], (0, 0), None, pygame.BLEND_RGBA_MULT)
 		self.vc = pygame.image.load("pingominigame/obj/vc.png").convert_alpha()
 		self.estalactite = [pygame.image.load(f"pingominigame/obj/estalactite{i}.png").convert_alpha() for i in range(1, 10)]
 		self.balde = pygame.image.load("pingominigame/obj/balde.png").convert_alpha()
@@ -57,6 +59,7 @@ class PingoMinigame:
 			self.vc_pos = (util.clamp(self.vc_pos[0], 0, 428 - self.vc.get_width()), util.clamp(self.vc_pos[1], 0, 240 - self.vc.get_height()))
 		screen.blit(self.bg0, (0, 0))
 		screen.blit(self.bg, (0, 0))
+		screen.blit(self.areia, (0, 0))
 		for balde in self.baldes:
 			balde_img = self.balde
 			if util.imagem_colide_com_rect(pygame.Rect((balde.pos[0], balde.pos[1] - 20, self.balde.get_width(), self.balde.get_height() + 20)), self.vc, self.vc_pos) and not balde.fechado:
@@ -77,7 +80,7 @@ class PingoMinigame:
 				else:
 					balde_img = self.balde
 			screen.blit(balde_img, balde.pos)
-			util.blitanimado(screen, self.estalactite, (balde.pos[0], balde.pos[1] - 20), self.tempo, 10)
+			util.blitanimado(screen, self.estalactite, (balde.pos[0], balde.pos[1]), self.tempo, 10)
 		screen.blit(self.vc, self.vc_pos)
 		fechar = False
 		if self.morreu:

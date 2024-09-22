@@ -8,8 +8,6 @@ HEIGHT = int(240 / CELL)
 CENTRO = (int(428 / 2 / CELL), int(240 / 2 / CELL) + 1)
 
 def gerar():
-	random.seed()
-
 	mapa = [[True for x in range(WIDTH + 2)] for y in range(HEIGHT + 2)]
 
 	mapa[CENTRO[1]][CENTRO[0]] = False
@@ -21,8 +19,10 @@ def gerar():
 	tombos = [[random.choice([False, False, False, False, True]) for x in range(WIDTH + 2)] for y in range(HEIGHT + 2)]
 	tombos[CENTRO[1]][CENTRO[0] + 1] = True
 	i = 0
-	while i < 64 or (len(snake_posicoes) >= 4 and i < 512):
+	while len(snake_posicoes) < 2 or i < 64 or (len(snake_posicoes) >= 4 and i < 512):
 		i += 1
+		if i >= 512 and len(snake_posicoes) == 0:
+			return gerar()
 		if abs(snake_pos[0] - CENTRO[0]) >= 1 and mapa[snake_pos[1]][snake_pos[0]]:
 			snake_posicoes.append(snake_pos)
 		mapa[snake_pos[1]][snake_pos[0]] = False
@@ -56,9 +56,10 @@ def gerar():
 	random.shuffle(shuffled)
 	baldes = [shuffled[0], shuffled[1], shuffled[2], snake_posicoes[len(snake_posicoes) - 1]]
 	for i in range(len(baldes)):
-		baldes[i] = (baldes[i][0] * CELL, baldes[i][1] * CELL)
+		baldes[i] = (baldes[i][0] * CELL - 16, baldes[i][1] * CELL - 32)
 	data = bytearray()
 	data2 = bytearray()
+	data3 = bytearray()
 	for y in range(240):
 		y_factor = y % CELL / CELL
 		row = mapa[int(y / CELL)]
@@ -70,22 +71,31 @@ def gerar():
 			data.append(255)
 			data.append(255)
 			data.append(255)
+			data2.append(255)
+			data2.append(255)
+			data2.append(255)
+			data3.append(255)
+			data3.append(255)
+			data3.append(255)
 			val = util.lerp(val_top, val_bottom, y_factor)
 			if val >= 0.35:
 				data.append(255)
-				data2.append(255)
-				data2.append(255)
-				data2.append(255)
 				if val < 0.4:
 					data2.append(255)
 				elif val < 0.45:
-					data2.append(131)
+					data2.append(127)
 				else:
 					data2.append(0)
+				data3.append(0)
 			else:
 				data.append(0)
 				data2.append(0)
-				data2.append(0)
-				data2.append(0)
-				data2.append(0)
-	return (pygame.image.frombytes(bytes(data), (428, 240), "RGBA"), baldes, pygame.image.frombytes(bytes(data2), (428, 240), "RGBA"))
+				if val >= 0.32:
+					data3.append(255)
+				elif val >= 0.28:
+					data3.append(231)
+				elif val >= 0.15:
+					data3.append(191)
+				else:
+					data3.append(0)
+	return (pygame.image.frombytes(bytes(data), (428, 240), "RGBA"), baldes, pygame.image.frombytes(bytes(data2), (428, 240), "RGBA"), pygame.image.frombytes(bytes(data3), (428, 240), "RGBA"))
