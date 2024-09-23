@@ -64,7 +64,7 @@ cartabg = pygame.image.load("tabuleiro/cartabg.png").convert_alpha()
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
 interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
-moedinha = pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha()
+moedinha = pygame.transform.smoothscale_by(pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha(), 0.1)
 fonte = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 50)
 fonte_big = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 64)
 texto_dire = "Escolha a direção!"
@@ -82,11 +82,11 @@ dadobgs = [
 	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Amarelo.png").convert_alpha(), (DADO_SIZE, DADO_SIZE))
 ]
 barras = [
-	pygame.image.load("tabuleiro/barra.png").convert_alpha(),
-	pygame.image.load("tabuleiro/barra3.png").convert_alpha(),
-	pygame.image.load("tabuleiro/barra2.png").convert_alpha(),
-	pygame.image.load("tabuleiro/barra5.png").convert_alpha(),
-	pygame.image.load("tabuleiro/barra4.png").convert_alpha()
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra3.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra2.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra5.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra4.png").convert_alpha(), 0.25)
 ]
 
 #cordenadas pra posição
@@ -361,14 +361,15 @@ class Tabuleiro:
 		# mostrar dados dos jogadores
 		util.smoothscaleblit(screen, 600, fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, "black"), (4 + 2, 4 + 2), None, 0.5)
 		util.smoothscaleblit(screen, 600, fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, selecion.border_colors[jogo.jogador_atual]), (4, 4), None, 0.5)
-		util.smoothscaleblit(screen, 600, util.tint_mult(jogador.get_icone(), "black"), (2, 47), None, 0.06)
-		util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
-		util.smoothscaleblit(screen, 600, util.tint_mult(moedinha, "black"), (130, 96 + 2), None, 0.04)
-		util.smoothscaleblit(screen, 600, moedinha, (128, 96), None, 0.04)
+		icon = pygame.transform.smoothscale_by(jogador.get_icone(), 0.1)
+		util.smoothscaleblit(screen, 600, util.tint_mult(icon, "black"), (2, 47), None, 0.6)
+		util.smoothscaleblit(screen, 600, icon, (0, 45), None, 0.6)
+		util.smoothscaleblit(screen, 600, util.tint_mult(moedinha, "black"), (130, 96 + 2), None, 0.4)
+		util.smoothscaleblit(screen, 600, moedinha, (128, 96), None, 0.4)
 		util.smoothscaleblit(screen, 600, fonte_big.render(str(jogador.moedas), True, "black"), (180 + 2, 96 + 8 + 2), None, 0.5)
 		util.smoothscaleblit(screen, 600, fonte_big.render(str(jogador.moedas), True, "white"), (180 + 0, 96 + 8 + 0), None, 0.5)
-		util.smoothscaleblit(screen, 600, util.tint_mult(barras[jogador.medalhas], "black"), (6, 152), None, 0.125)
-		util.smoothscaleblit(screen, 600, barras[jogador.medalhas], (4, 150), None, 0.125)
+		util.smoothscaleblit(screen, 600, util.tint_mult(barras[jogador.medalhas], "black"), (6, 152), None, 0.5)
+		util.smoothscaleblit(screen, 600, barras[jogador.medalhas], (4, 150), None, 0.5)
 
 		movimento = util.movimento(1024, delta)
 		if self.modo == "andando" or self.modo == "dado":
