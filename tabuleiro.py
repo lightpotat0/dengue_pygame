@@ -2,6 +2,7 @@ import pygame
 import util
 import random
 import math
+import perguntas
 import selecion
 
 #detalhe das casa do mapa
@@ -16,10 +17,7 @@ TIPOS = [
 	"dado", "dado", "dado",
 	"carta",
 	"minigame", "minigame", "minigame",
-	"teleporte",
-	#"item",
-	#"loja",
-	#"sorte"
+	"teleporte"
 ]
 
 MAPA = [
@@ -62,6 +60,7 @@ minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.pn
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
 medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Medalha.png").convert_alpha(), (256, 256))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
+cartabg = pygame.image.load("tabuleiro/cartabg.png").convert_alpha()
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
 interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
@@ -105,8 +104,9 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
+		self.font_pergunta = pygame.font.Font(None, 16)
 		self.font_dado = pygame.font.Font(None, 128)
-		self.dado_numero = random.randint(6, 12)
+		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
 		self.tempo = 0
 		self.pode_entrar_em_camera = False
@@ -145,9 +145,9 @@ class Tabuleiro:
 	#próxima casa e direção
 	def proxima_casa_e_direcao(self, jogador):
 		direcoes = [
-			(jogador.direcao[0], jogador.direcao[1]), #frente
+			(jogador.direcao[0], jogador.direcao[1]), #cima
 			(jogador.direcao[1], jogador.direcao[0]), #direita
-			(-jogador.direcao[1], -jogador.direcao[0]), #trás
+			(-jogador.direcao[1], -jogador.direcao[0]), #baixo
 			(-jogador.direcao[0], -jogador.direcao[1]) #esquerda
 		]
 
@@ -263,7 +263,7 @@ class Tabuleiro:
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(6, 12)
+						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
 					x = (tempo - tempo_inicio) / 250 * math.pi
 					if x % math.tau > math.pi:
@@ -277,7 +277,7 @@ class Tabuleiro:
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(6, 12)
+						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
 					x = (tempo - tempo_inicio) / 250 * math.pi
 					if x % math.tau > math.pi:
@@ -291,7 +291,7 @@ class Tabuleiro:
 							jogador.casa = (random.randint(0, len(MAPA)), random.randint(0, len(MAPA[0])))
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(6, 12)
+						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 				case ("carta", tempo_inicio, _):
@@ -329,13 +329,15 @@ class Tabuleiro:
 		if self.modo == "dado":
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.1:
-				self.dado_numero = random.randint(6, 12)
+				self.dado_numero = random.randint(1, 6)
 				self.dado_tempo = 0
 
 		# mover a camera
 		proxima_cam_pos = casa_id_para_pos(jogo.jogadores[jogo.jogador_atual].casa)
 		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
-		if self.modo == "camera":
+		if self.modo == "carta":
+			proxima_cam_pos = (proxima_cam_pos[0] + 128, proxima_cam_pos[1])
+		elif self.modo == "camera":
 			self.escala_mapa = util.lerp(self.escala_mapa, 1.25, 16 * delta)
 			proxima_cam_pos = self.cam_movida
 		else:
@@ -373,7 +375,20 @@ class Tabuleiro:
 			util.smoothscaleblit(screen, 600, dado_texto, (dado_rect.x + 24, dado_rect.y + 10))
 			util.smoothscaleblit(screen, 600, dado_texto, (dado_rect.x + 23, dado_rect.y + 9))
 		elif self.modo == "carta":
-			pass
+			tempo_inicio = self.animacoes[jogador.numero][1]
+			vw = screen.get_width() * 600 / screen.get_height()
+			cartabgw = cartabg.get_width() * 0.25
+			cartabgh = cartabg.get_height() * 0.25
+			tempo_anim = tempo - tempo_inicio
+			t = util.clamp(tempo_anim / 200, 0, 1)
+			t *= t
+			screen.fill((255 - t * 127, 255 - t * 127, 255 - t * 127), None, pygame.BLEND_MULT)
+			carta_pos = (vw * 2 / 3 - cartabgw / 2, util.lerp(600, 300 - cartabgh * 0.5, t))
+			util.smoothscaleblit(screen, 600, cartabg, (carta_pos[0] + 24, carta_pos[1] + 24), None, 0.25)
+			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
+			pergunta = perguntas.get_pergunta()
+			pgt_text = self.font_pergunta.render(pergunta[0], True, "white")
+			util.smoothscaleblit(screen, 600, pgt_text, (carta_pos[0] + cartabgw / 2 - pgt_text.get_width() / 2, carta_pos[1] + 56))
 		elif self.modo == "camera":
 			# mostrar setas do movimento da camera
 			self.setas_mults = [
@@ -411,12 +426,13 @@ class Tabuleiro:
 							if self.dado_tempo >= 1:
 								return "minigame"
 						case "carta":
-							if self.dado_tempo >= 1:
-								return "minigame"
+							self.modo = "carta"
+							self.animar("carta", jogador.numero)
+							perguntas.reescolher_pergunta()
 						case "dado":
 							if self.dado_tempo >= 1:
 								self.modo = "dado"
-								self.dado_numero = random.randint(6, 12)
+								self.dado_numero = random.randint(1, 6)
 								self.dado_tempo = 0
 							self.animar(None, jogador.numero)
 						case "+R$5":
@@ -444,14 +460,14 @@ class Tabuleiro:
 								jogador.medalhas += 1
 								if self.dado_tempo >= 1:
 									self.modo = "dado"
-									self.dado_numero = random.randint(6, 12)
+									self.dado_numero = random.randint(1, 6)
 									self.dado_tempo = 0
 							else:
 								self.animar("pobreza", jogador.numero)
 								self.modo = "animando"
 								if self.dado_tempo >= 1:
 									self.modo = "dado"
-									self.dado_numero = random.randint(6, 12)
+									self.dado_numero = random.randint(1, 6)
 									self.dado_tempo = 0
 						case "decisao":
 							self.animar("riqueza", jogador.numero)
