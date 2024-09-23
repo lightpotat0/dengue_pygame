@@ -105,7 +105,7 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
-		self.font_pergunta = pygame.font.Font(None, 18)
+		self.font_pergunta = pygame.font.Font(None, 16)
 		self.font_dado = pygame.font.Font(None, 128)
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
@@ -296,14 +296,9 @@ class Tabuleiro:
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 				case ("carta", tempo_inicio, _):
-<<<<<<< HEAD
 					util.smoothscaleblit(screen, 600, interrogacao, self.camerado((pos[0] + 0, pos[1] + 0)))
 				case ("decisao", tempo_inicio, _):
 					texto_dec = self.font_dado.render(str(self.texto_dire), True, "black")
-=======
-					tempo_anim = tempo - tempo_inicio
-					util.smoothscaleblit(screen, 600 * self.escala_mapa, interrogacao, self.camerado((pos[0] + 0, pos[1] - util.lerp(0, 160, tempo_anim / 160))))
->>>>>>> df053e339a8df7ab3abb5e7f59f6ba05401c9838
 			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
 				if self.alphas[numero] == 0:
