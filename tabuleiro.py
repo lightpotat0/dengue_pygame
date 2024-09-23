@@ -124,7 +124,7 @@ class Tabuleiro:
 					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, "medalha"))
+						self.casas.append(Casa(x, y, random.choice(TIPOS)))
 					#elif MAPA[y][x] == "Y":
 					#	if casa_inicial == None:
 					#		casa_inicial = (x, y)
