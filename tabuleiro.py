@@ -58,7 +58,7 @@ lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").conv
 dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (256, 256))
 minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (256, 256))
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
-medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Medalha.png").convert_alpha(), (256, 256))
+medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Medalha.png").convert_alpha(), (160, 160))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
 cartabg = pygame.image.load("tabuleiro/cartabg.png").convert_alpha()
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
@@ -66,6 +66,7 @@ interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunt
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
 moedinha = pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha()
 fonte = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 25)
+texto_dire = "Escolha a direção!"
 setas = [
 	seta,
 	pygame.transform.rotate(seta, 180),
@@ -104,7 +105,7 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
-		self.font_pergunta = pygame.font.Font(None, 16)
+		self.font_pergunta = pygame.font.Font(None, 18)
 		self.font_dado = pygame.font.Font(None, 128)
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
@@ -124,6 +125,7 @@ class Tabuleiro:
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
+						self.casas.append(Casa(x, y, random.choice(TIPOS)))
 						self.casas.append(Casa(x, y, "decisao"))
 					elif MAPA[y][x] == "M":
 						if casa_inicial == None:
@@ -271,8 +273,7 @@ class Tabuleiro:
 					pos = (pos[0], pos[1] - 24 * math.sin(x))
 					sprite = jogador.get_andamento("down", True)
 				case ("robux", tempo_inicio, _):
-					if tempo >= tempo_inicio + 1000:
-						screen.blit(self.medalhas, (200, pos.y))
+					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 0, pos[1] + 0)))
 				case ("pobreza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
@@ -296,6 +297,8 @@ class Tabuleiro:
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 				case ("carta", tempo_inicio, _):
 					util.smoothscaleblit(screen, 600, interrogacao, self.camerado((pos[0] + 0, pos[1] + 0)))
+				case ("decisao", tempo_inicio, _):
+					texto_dec = self.font_dado.render(str(self.texto_dire), True, "black")
 			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
 				if self.alphas[numero] == 0:
@@ -337,6 +340,12 @@ class Tabuleiro:
 		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
 		if self.modo == "carta":
 			proxima_cam_pos = (proxima_cam_pos[0] + 128, proxima_cam_pos[1])
+			if util.pressionado_agora[pygame.K_SPACE]:
+				self.modo = "dado"
+			if self.dado_tempo >= 1:
+				self.modo = "dado"
+				self.dado_numero = random.randint(1, 6)
+				self.dado_tempo = 0
 		elif self.modo == "camera":
 			self.escala_mapa = util.lerp(self.escala_mapa, 1.25, 16 * delta)
 			proxima_cam_pos = self.cam_movida
@@ -350,11 +359,11 @@ class Tabuleiro:
 			self.cam_pos = (util.lerp(self.cam_pos[0], proxima_cam_pos[0], speed * delta), util.lerp(self.cam_pos[1], proxima_cam_pos[1], speed * delta))
 
 		# mostrar dados dos jogadores
-		texto = fonte.render(f"Jogador {jogo.jogador_atual}", True, selecion.border_colors[jogo.jogador_atual])
+		texto = fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, selecion.border_colors[jogo.jogador_atual])
 		util.smoothscaleblit(screen, 600, texto, (0, 0), None, 1.3)
 		util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
 		util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
-		util.smoothscaleblit(screen, 600, fonte.render(f"{jogador.moedas}", True, selecion.border_colors[jogo.jogador_atual]), (131, 49), None, 0.8)
+		util.smoothscaleblit(screen, 600, fonte.render(f"{jogador.moedas}", True, selecion.border_colors[jogo.jogador_atual]), (131, 52), None, 0.8)
 		util.smoothscaleblit(screen, 600, barras[jogador.medalhas], (5, 150), None, 0.06)
 
 		movimento = util.movimento(1024, delta)
@@ -472,6 +481,9 @@ class Tabuleiro:
 						case "decisao":
 							self.animar("riqueza", jogador.numero)
 							self.modo = "animando"
+							if util.pressionado_agora[pygame.K_g]:
+								return (nova_casa, direcao)
+
 							self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
@@ -481,6 +493,9 @@ class Tabuleiro:
 					jogador.casa = casa
 					jogador.direcao = direcao
 					if self.encontrar_casa(jogador.casa).tipo == "medalha":
+						self.dado_numero = 0
+						self.dado_tempo = 0
+					if self.encontrar_casa(jogador.casa).tipo == "decisao":
 						self.dado_numero = 0
 						self.dado_tempo = 0
 			if self.dado_tempo < 0.5 and self.dado_numero > 0:
