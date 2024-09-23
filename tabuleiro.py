@@ -124,7 +124,7 @@ class Tabuleiro:
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, random.choice(TIPOS), True))
+						self.casas.append(Casa(x, y, "decisao"))
 					elif MAPA[y][x] == "M":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -453,6 +453,10 @@ class Tabuleiro:
 									self.modo = "dado"
 									self.dado_numero = random.randint(6, 12)
 									self.dado_tempo = 0
+						case "decisao":
+							self.animar("riqueza", jogador.numero)
+							self.modo = "animando"
+							self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
 					if self.dado_numero > 0:
