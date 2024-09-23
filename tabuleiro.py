@@ -83,10 +83,11 @@ dadobgs = [
 ]
 barras = [
 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra.png").convert_alpha(), 0.25),
-	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra3.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra1.png").convert_alpha(), 0.25),
 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra2.png").convert_alpha(), 0.25),
-	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra5.png").convert_alpha(), 0.25),
-	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra4.png").convert_alpha(), 0.25)
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra3.png").convert_alpha(), 0.25),
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra4.png").convert_alpha(), 0.25),
+ 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra5.png").convert_alpha(), 0.25)
 ]
 
 #cordenadas pra posição
@@ -279,7 +280,9 @@ class Tabuleiro:
 						self.modo = "dado"
 						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
-					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 0, pos[1] + 0)))
+					t = (tempo - tempo_inicio) / 1000
+					t *= t
+					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 0, pos[1] - t * 72)), 0.25)
 				case ("pobreza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
@@ -492,11 +495,13 @@ class Tabuleiro:
 						case "medalha":
 							if jogador.moedas >= 30:
 								self.animar("robux", jogador.numero)
-								self.animar("riqueza", jogador.numero)
+								#self.animar("riqueza", jogador.numero)
 								self.modo = "animando"
 								jogo.perder_moedas(30)
 								jogador.medalhas += 1
-								if self.dado_tempo >= 1:
+								if jogador.medalhas >= 5:
+									return "venceu"
+								elif self.dado_tempo >= 1:
 									self.modo = "dado"
 									self.dado_numero = random.randint(1, 6)
 									self.dado_tempo = 0
@@ -552,6 +557,7 @@ class Tabuleiro:
 							self.animar("riqueza", jogador.numero)
 							self.modo = "animando"
 						else:
+							jogo.passar_vez()
 							self.modo = "dado"
 							self.dado_tempo = 0
 							self.dado_numero = random.randint(1, 6)

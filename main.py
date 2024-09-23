@@ -8,14 +8,15 @@ screen.set_alpha(None)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
 if True:
-    loading = pygame.image.load("titulo/loading.jpg")
-    screen.blit(pygame.transform.scale(loading, screen.get_size()), (0, 0))
-    pygame.display.update()
+	loading = pygame.image.load("titulo/loading.jpg")
+	screen.blit(pygame.transform.scale(loading, screen.get_size()), (0, 0))
+	pygame.display.update()
 
 import util
 import tabuleiro
 import titulo
 import selecion
+import final_tela
 from pingominigame import PingoMinigame
 from walkminigame import WalkMinigame
 from spacedengue import SpaceMinigame
@@ -38,7 +39,7 @@ casas = None
 pygame.event.clear()
 
 while True:
-    #posicion de lo mouse
+	#posicion de lo mouse
 	util.mouse_pos = pygame.mouse.get_pos()
 	if tela_minigame != None:
 		util.mouse_pos = (util.mouse_pos[0] * modo.tamanho[0] / screen.get_width(), util.mouse_pos[1] * modo.tamanho[1] / screen.get_height())
@@ -98,6 +99,9 @@ while True:
 		case "selecion":
 			jogo = Jogo()
 			modo = selecion.Selecion(None, jogo)
+			tela_minigame = None
+		case "venceu":
+			modo = final_tela.FinalTela(jogo.jogador_atual, jogo.jogadores[jogo.jogador_atual].personagem)
 			tela_minigame = None
 		case "iniciar jogo":
 			modo = tabuleiro.Tabuleiro(None, jogo)
