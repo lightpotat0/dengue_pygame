@@ -183,5 +183,3 @@ PERGUNTAS = [("O que é a dengue?",
 "Pelo suor e pela respiração",
 "Pela luz de lanternas",
 "Pelo som da voz humana", 1)]
-
-alternativas = []

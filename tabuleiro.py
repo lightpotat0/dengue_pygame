@@ -105,7 +105,8 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
-		self.font_pergunta = pygame.font.Font(None, 16)
+		self.font_pergunta = pygame.font.Font(None, 20)
+		self.font_resposta = pygame.font.Font(None, 20)
 		self.font_dado = pygame.font.Font(None, 128)
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
@@ -121,7 +122,7 @@ class Tabuleiro:
 					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, random.choice(TIPOS)))
+						self.casas.append(Casa(x, y, "carta"))
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -340,12 +341,6 @@ class Tabuleiro:
 		proxima_cam_pos = (proxima_cam_pos[0] + jogador_atual_offset[0] + 36, proxima_cam_pos[1] + jogador_atual_offset[1] + 36)
 		if self.modo == "carta":
 			proxima_cam_pos = (proxima_cam_pos[0] + 128, proxima_cam_pos[1])
-			if util.pressionado_agora[pygame.K_SPACE]:
-				self.modo = "dado"
-			if self.dado_tempo >= 1:
-				self.modo = "dado"
-				self.dado_numero = random.randint(1, 6)
-				self.dado_tempo = 0
 		elif self.modo == "camera":
 			self.escala_mapa = util.lerp(self.escala_mapa, 1.25, 16 * delta)
 			proxima_cam_pos = self.cam_movida
@@ -397,14 +392,16 @@ class Tabuleiro:
 			util.smoothscaleblit(screen, 600, cartabg, (carta_pos[0] + 24, carta_pos[1] + 24), None, 0.25)
 			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
 			pergunta = perguntas.get_pergunta()
+			pgt_text = self.font_pergunta.render(pergunta[0], True, "white")
+			
 			pgt_rect = pygame.Rect(carta_pos[0] + 32, carta_pos[1] + 72, cartabg.get_width() * 0.25 - 64, 0)
-			util.smoothscale_draw_text(screen, 600, pergunta[0], "white", pgt_rect, self.font_pergunta, 0.5, sombra=True)
+			util.smoothscale_draw_text(screen, 600, pergunta[0], "white", pgt_rect, self.font_pergunta, 1, sombra=True)
 			pgt_rect.left += 12
 			pgt_rect.y = carta_pos[1] + cartabg.get_height() * 0.125 + 12
 			pgt_rect.height = 36
 			for i in range(4):
 				util.smoothscale_draw_text(screen, 600, ["A)", "B)", "C)", "D)"][i], "white", pgt_rect.move(-16, 0), self.font_resposta, 0.5, sombra=True)
-				util.smoothscale_draw_text(screen, 600, pergunta[i + 1], "white", pgt_rect, self.font_resposta, 0.5, sombra=True)
+				util.smoothscale_draw_text(screen, 600, pergunta[i + 1], "white", pgt_rect, self.font_resposta, 0.9, sombra=True)
 				pgt_rect.y += 36
 		elif self.modo == "camera":
 			# mostrar setas do movimento da camera
@@ -489,9 +486,6 @@ class Tabuleiro:
 						case "decisao":
 							self.animar("riqueza", jogador.numero)
 							self.modo = "animando"
-							if util.pressionado_agora[pygame.K_g]:
-								return (nova_casa, direcao)
-
 							self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
