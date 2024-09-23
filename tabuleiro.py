@@ -13,8 +13,8 @@ SOMBRA_SIZE = int(80 * 1600 / 1280)
 #mapeamento
 TIPOS = [
 	"+R$5", "+R$5", "+R$5",
-	"-R$2", "-R$2",
-	"dado", "dado", "dado",
+	"-R$2",
+	"dado", "dado",
 	"carta", "carta", "carta",
 	"minigame", "minigame", "minigame",
 	"teleporte"
@@ -296,9 +296,14 @@ class Tabuleiro:
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 				case ("carta", tempo_inicio, _):
+<<<<<<< HEAD
 					util.smoothscaleblit(screen, 600, interrogacao, self.camerado((pos[0] + 0, pos[1] + 0)))
 				case ("decisao", tempo_inicio, _):
 					texto_dec = self.font_dado.render(str(self.texto_dire), True, "black")
+=======
+					tempo_anim = tempo - tempo_inicio
+					util.smoothscaleblit(screen, 600 * self.escala_mapa, interrogacao, self.camerado((pos[0] + 0, pos[1] - util.lerp(0, 160, tempo_anim / 160))))
+>>>>>>> df053e339a8df7ab3abb5e7f59f6ba05401c9838
 			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
 				if self.alphas[numero] == 0:
@@ -393,11 +398,19 @@ class Tabuleiro:
 			t *= t
 			screen.fill((255 - t * 127, 255 - t * 127, 255 - t * 127), None, pygame.BLEND_MULT)
 			carta_pos = (vw * 2 / 3 - cartabgw / 2, util.lerp(600, 300 - cartabgh * 0.5, t))
+			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
 			util.smoothscaleblit(screen, 600, cartabg, (carta_pos[0] + 24, carta_pos[1] + 24), None, 0.25)
 			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
 			pergunta = perguntas.get_pergunta()
-			pgt_text = self.font_pergunta.render(pergunta[0], True, "white")
-			util.smoothscaleblit(screen, 600, pgt_text, (carta_pos[0] + cartabgw / 2 - pgt_text.get_width() / 2, carta_pos[1] + 56))
+			pgt_rect = pygame.Rect(carta_pos[0] + 32, carta_pos[1] + 72, cartabg.get_width() * 0.25 - 64, 0)
+			util.smoothscale_draw_text(screen, 600, pergunta[0], "white", pgt_rect, self.font_pergunta, 0.5, sombra=True)
+			pgt_rect.left += 12
+			pgt_rect.y = carta_pos[1] + cartabg.get_height() * 0.125 + 12
+			pgt_rect.height = 36
+			for i in range(4):
+				util.smoothscale_draw_text(screen, 600, ["A)", "B)", "C)", "D)"][i], "white", pgt_rect.move(-16, 0), self.font_resposta, 0.5, sombra=True)
+				util.smoothscale_draw_text(screen, 600, pergunta[i + 1], "white", pgt_rect, self.font_resposta, 0.5, sombra=True)
+				pgt_rect.y += 36
 		elif self.modo == "camera":
 			# mostrar setas do movimento da camera
 			self.setas_mults = [
