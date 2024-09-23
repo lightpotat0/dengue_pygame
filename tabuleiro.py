@@ -499,7 +499,7 @@ class Tabuleiro:
 								self.modo = "animando"
 								jogo.perder_moedas(30)
 								jogador.medalhas += 1
-								if jogador.medalhas >= 2: # TODO: desfazer isso
+								if jogador.medalhas >= 5:
 									return "venceu"
 								elif self.dado_tempo >= 1:
 									self.modo = "dado"
