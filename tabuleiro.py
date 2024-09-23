@@ -60,6 +60,7 @@ minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.pn
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
+interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.png").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
 setas = [
 	seta,
@@ -273,6 +274,8 @@ class Tabuleiro:
 						self.dado_numero = random.randint(1, 6)
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
+				case ("carta", tempo_inicio, _):
+					util.smoothscaleblit(screen, 600, interrogacao, self.camerado((pos[0] + 0, pos[1] + 0)))
 			sprite_tamanho = (72, 72)
 			if jogo.jogador_atual != numero:
 				if self.alphas[numero] == 0:
@@ -388,12 +391,14 @@ class Tabuleiro:
 			util.smoothscaleblit(screen, 600, setas[2], ((1 - self.setas_mults[2]) * 8, 300 - 32), None, 0.25)
 			util.smoothscaleblit(screen, 600, setas[3], (screen.get_width() * 600 / screen.get_height() - 64 - (1 - self.setas_mults[3]) * 8, 300 - 32), None, 0.25)
 
+		# processar o andamento do jogador
 		if self.modo == "andando":
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.5:
-				if self.dado_numero == 0:
+				casa = self.encontrar_casa(jogador.casa)
+				if casa.tipo == "medalha":
 					self.dado_numero = 0
-					casa = self.encontrar_casa(jogador.casa)
+				if self.dado_numero == 0:
 					match casa.tipo:
 						case "minigame":
 							if self.dado_tempo >= 1:
