@@ -1,7 +1,6 @@
 import pygame
 import random
-
-pygame.init()
+import tabuleiro
 
 class Confete:
     def __init__(self, x, y):
@@ -91,5 +90,3 @@ while rodando:
     tela_vitoria.desenha_tela_vitoria(screen)
 
     pygame.display.flip()
-
-pygame.quit()
