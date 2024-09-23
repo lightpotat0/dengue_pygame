@@ -59,7 +59,7 @@ lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").conv
 dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (256, 256))
 minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (256, 256))
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
-medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets\Medalha.png").convert_alpha(), (256, 256))
+medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets/Medalha.png").convert_alpha(), (256, 256))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
 interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
@@ -95,7 +95,7 @@ class Tabuleiro:
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
 		self.font_dado = pygame.font.Font(None, 128)
-		self.dado_numero = random.randint(1, 6)
+		self.dado_numero = random.randint(6, 12)
 		self.dado_tempo = 0
 		self.tempo = 0
 		self.pode_entrar_em_camera = False
@@ -252,7 +252,7 @@ class Tabuleiro:
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(1, 6)
+						self.dado_numero = random.randint(6, 12)
 						self.animar(None, numero)
 					x = (tempo - tempo_inicio) / 250 * math.pi
 					if x % math.tau > math.pi:
@@ -266,7 +266,7 @@ class Tabuleiro:
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(1, 6)
+						self.dado_numero = random.randint(6, 12)
 						self.animar(None, numero)
 					x = (tempo - tempo_inicio) / 250 * math.pi
 					if x % math.tau > math.pi:
@@ -280,7 +280,7 @@ class Tabuleiro:
 							jogador.casa = (random.randint(0, len(MAPA)), random.randint(0, len(MAPA[0])))
 						jogo.passar_vez()
 						self.modo = "dado"
-						self.dado_numero = random.randint(1, 6)
+						self.dado_numero = random.randint(6, 12)
 						self.animar(None, numero)
 					sprite = jogador.get_andamento(["down", "left", "up", "right"][(tempo - tempo_inicio) // 100 % 4], True)
 				case ("carta", tempo_inicio, _):
@@ -318,7 +318,7 @@ class Tabuleiro:
 		if self.modo == "dado":
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.1:
-				self.dado_numero = random.randint(1, 6)
+				self.dado_numero = random.randint(6, 12)
 				self.dado_tempo = 0
 
 		# mover a camera
@@ -416,7 +416,7 @@ class Tabuleiro:
 						case "dado":
 							if self.dado_tempo >= 1:
 								self.modo = "dado"
-								self.dado_numero = random.randint(1, 6)
+								self.dado_numero = random.randint(6, 12)
 								self.dado_tempo = 0
 							self.animar(None, jogador.numero)
 						case "+R$5":
@@ -444,14 +444,14 @@ class Tabuleiro:
 								jogador.medalhas += 1
 								if self.dado_tempo >= 1:
 									self.modo = "dado"
-									self.dado_numero = random.randint(1, 6)
+									self.dado_numero = random.randint(6, 12)
 									self.dado_tempo = 0
 							else:
 								self.animar("pobreza", jogador.numero)
 								self.modo = "animando"
 								if self.dado_tempo >= 1:
 									self.modo = "dado"
-									self.dado_numero = random.randint(1, 6)
+									self.dado_numero = random.randint(6, 12)
 									self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
