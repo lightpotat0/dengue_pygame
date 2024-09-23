@@ -12,12 +12,12 @@ SOMBRA_SIZE = int(80 * 1600 / 1280)
 
 #mapeamento
 TIPOS = [
-	#"+R$5", "+R$5", "+R$5",
-	#"-R$2",
-	#"dado", "dado",
+	"+R$5", "+R$5", "+R$5",
+	"-R$2",
+	"dado", "dado",
 	"carta", "carta", "carta",
-	#"minigame", "minigame", "minigame",
-	#"teleporte"
+	"minigame", "minigame", "minigame",
+	"teleporte"
 ]
 
 MAPA = [
@@ -125,7 +125,7 @@ class Tabuleiro:
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, random.choice(TIPOS), True))
+						self.casas.append(Casa(x, y, "decisao"))
 					elif MAPA[y][x] == "M":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -479,6 +479,10 @@ class Tabuleiro:
 									self.modo = "dado"
 									self.dado_numero = random.randint(1, 6)
 									self.dado_tempo = 0
+						case "decisao":
+							self.animar("riqueza", jogador.numero)
+							self.modo = "animando"
+							self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
 					if self.dado_numero > 0:
