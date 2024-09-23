@@ -3,7 +3,7 @@ import util
 
 class Jogador:
 	numero = 0
-	personagem = 0
+	personagem = None
 	moedas = 50
 	medalhas = 0
 	medalha_y = 50
