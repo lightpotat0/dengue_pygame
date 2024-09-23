@@ -30,11 +30,11 @@ MAPA = [
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
-	"    XXXXXXMXXXXXX ",
+	"    XXXXYXMXYXXXX ",
 	"        X   X     ",
 	"        M   M     ",
 	"        X   X     ",
-	"    XXXXXXMXXXXXX ",
+	"    XXXXYXMXYXXXX ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
@@ -84,10 +84,11 @@ def casa_id_para_pos(id):
 
 #casa do tabuleiro
 class Casa:
-	def __init__(self, x, y, tipo):
+	def __init__(self, x, y, tipo, escolha=False):
 		self.id = (x, y)
 		self.pos = casa_id_para_pos(self.id)
 		self.tipo = tipo
+		self.escolha = escolha
 
 #o tabuleiro
 class Tabuleiro:
@@ -106,18 +107,18 @@ class Tabuleiro:
 			casa_inicial = None
 			for y in range(len(MAPA)):
 				for x in range(len(MAPA[0])):
-					if MAPA[y][x] == "m":
+					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
-					elif MAPA[y][x] == "X":
-						if casa_inicial == None:
-							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, "medalha"))
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, "desisao "))
+						self.casas.append(Casa(x, y, random.choice(TIPOS), True))
+					elif MAPA[y][x] == "M":
+						if casa_inicial == None:
+							casa_inicial = (x, y)
+						self.casas.append(Casa(x, y, "medalha"))
 					elif MAPA[y][x] == " ":
 						self.casas.append(Casa(x, y, "vazio"))
 
