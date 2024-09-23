@@ -76,7 +76,8 @@ while True:
 		size = 0.2
 		height = screen.get_height() * size
 		char_size = height
-	#rg do personagem
+		
+	#icone do personagem
 		screen.blit(pygame.transform.scale(jogo.jogadores[jogo.jogador_atual].get_icone(), (char_size, char_size)), pygame.Rect(screen.get_width() - char_size, screen.get_height() - char_size, char_size, height))
 
 	#tempo da PERDIÇÃO

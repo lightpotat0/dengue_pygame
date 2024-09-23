@@ -64,6 +64,8 @@ carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").co
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
 interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
+moedinha = pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha()
+fonte = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 30)
 setas = [
 	seta,
 	pygame.transform.rotate(seta, 180),
@@ -76,6 +78,13 @@ dadobgs = [
 	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Azul.png").convert_alpha(), (DADO_SIZE, DADO_SIZE)),
 	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Verde.png").convert_alpha(), (DADO_SIZE, DADO_SIZE)),
 	pygame.transform.smoothscale(pygame.image.load("tabuleiro/Dados/Dado Amarelo.png").convert_alpha(), (DADO_SIZE, DADO_SIZE))
+]
+barras = [
+	pygame.image.load("tabuleiro/barra1.png").convert_alpha(),
+	pygame.image.load("tabuleiro/barra2.png").convert_alpha(),
+	pygame.image.load("tabuleiro/barra3.png").convert_alpha(),
+	pygame.image.load("tabuleiro/barra4.png").convert_alpha(),
+	pygame.image.load("tabuleiro/barra5.png").convert_alpha()
 ]
 
 #cordenadas pra posição
@@ -339,21 +348,29 @@ class Tabuleiro:
 		# mostrar dados dos jogadores
 		cor = "white"
 		if len(jogo.jogadores) >= 1:
-			texto = self.font_dado.render("Jogador 1", True, "green" if jogo.jogador_atual == 0 else cor)
-			util.smoothscaleblit(screen, 600, texto, (0, 0), None, 0.5)
-			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[0].moedas}", True, cor), (0, texto.get_height() / 2), None, 0.5)
+			texto = fonte.render("Jogador 1", True, "green" if jogo.jogador_atual == 0 else cor)
+			util.smoothscaleblit(screen, 600, texto, (0, 0), None, 1.3)
+			util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
+			util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
+			util.smoothscaleblit(screen, 600, fonte.render(f"{jogo.jogadores[0].moedas}", True, cor), (131, 49), None, 0.8)
 		if len(jogo.jogadores) >= 2:
-			texto = self.font_dado.render("Jogador 2", True, "green" if jogo.jogador_atual == 1 else cor)
-			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 0), None, 0.5)
-			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[1].moedas}", True, cor), (1066 - texto.get_width() / 2, texto.get_height() / 2), None, 0.5)
+			texto = fonte.render("Jogador 2", True, "green" if jogo.jogador_atual == 1 else cor)
+			util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
+			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 0), None, 1.3)
+			util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
+			util.smoothscaleblit(screen, 600, fonte.render(f"{jogo.jogadores[1].moedas}", True, cor), (131, 49), None, 0.8)
 		if len(jogo.jogadores) >= 3:
-			texto = self.font_dado.render("Jogador 3", True, "green" if jogo.jogador_atual == 2 else cor)
-			util.smoothscaleblit(screen, 600, texto, (0, 600 - texto.get_height() * 2), None, 0.5)
-			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[2].moedas}", True, cor), (0, 600 - texto.get_height() / 2), None, 0.5)
+			texto = fonte.render("Jogador 3", True, "green" if jogo.jogador_atual == 2 else cor)
+			util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
+			util.smoothscaleblit(screen, 600, texto, (0, 600 - texto.get_height() * 2), None, 1.3)
+			util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
+			util.smoothscaleblit(screen, 600, fonte.render(f"{jogo.jogadores[2].moedas}", True, cor), (131, 49), None, 0.8)
 		if len(jogo.jogadores) >= 4:
-			texto = self.font_dado.render("Jogador 4", True, "green" if jogo.jogador_atual == 3 else cor)
-			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2), None, 0.5)
-			util.smoothscaleblit(screen, 600, self.font_dado.render(f"R${jogo.jogadores[3].moedas}", True, cor), (1066 - texto.get_width() / 2, 600 - texto.get_height() / 2), None, 0.5)
+			texto = fonte.render("Jogador 4", True, "green" if jogo.jogador_atual == 3 else cor)
+			util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
+			util.smoothscaleblit(screen, 600, texto, (1066 - texto.get_width(), 600 - texto.get_height() * 2), None, 1.3)
+			util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
+			util.smoothscaleblit(screen, 600, fonte.render(f"{jogo.jogadores[3].moedas}", True, cor), (131, 49), None, 0.8)
 
 		movimento = util.movimento(1024, delta)
 		if self.modo == "andando" or self.modo == "dado":
