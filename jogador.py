@@ -4,7 +4,9 @@ import util
 class Jogador:
 	numero = 0
 	personagem = None
-	moedas = 50
+	moedas = 100
+	medalhas = 0
+	medalha_y = 50
 	casa = (0, 0)
 	direcao = (1, 0)
 	def get_icone(self):

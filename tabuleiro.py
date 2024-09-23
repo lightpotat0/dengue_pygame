@@ -41,6 +41,7 @@ MAPA = [
 	"    XXXXX   XXXXX ",
 	"                  "
 ]
+
 CENTRO = (1066 / 2 - (CASA_STRIDE * len(MAPA[0]) - (CASA_STRIDE - CASA_SIZE)) / 2, 600 / 2 - (CASA_STRIDE * len(MAPA) - (CASA_STRIDE - CASA_SIZE)) / 2)
 CASAS_OFFSET = (8, 24)
 
@@ -58,6 +59,7 @@ lixo = pygame.transform.smoothscale(pygame.image.load("tabuleiro/lixo.png").conv
 dado = pygame.transform.smoothscale(pygame.image.load("tabuleiro/dado.png").convert_alpha(), (256, 256))
 minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.png").convert_alpha(), (256, 256))
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
+medalhas = pygame.transform.smoothscale(pygame.image.load("Biblioteca de Assets\Medalha.png").convert_alpha(), (256, 256))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
@@ -103,14 +105,18 @@ class Tabuleiro:
 			casa_inicial = None
 			for y in range(len(MAPA)):
 				for x in range(len(MAPA[0])):
-					if MAPA[y][x] == "X":
+					if MAPA[y][x] == "m":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
-					elif MAPA[y][x] == "M":
+					elif MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, "medalha"))
+					elif MAPA[y][x] == "Y":
+						if casa_inicial == None:
+							casa_inicial = (x, y)
+						self.casas.append(Casa(x, y, "desisao "))
 					elif MAPA[y][x] == " ":
 						self.casas.append(Casa(x, y, "vazio"))
 
@@ -252,6 +258,9 @@ class Tabuleiro:
 						x -= math.pi
 					pos = (pos[0], pos[1] - 24 * math.sin(x))
 					sprite = jogador.get_andamento("down", True)
+				case ("robux", tempo_inicio, _):
+					if tempo >= tempo_inicio + 1000:
+						screen.blit(self.medalhas, (200, pos.y))
 				case ("pobreza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
@@ -415,12 +424,32 @@ class Tabuleiro:
 						case "-R$2":
 							self.animar("pobreza", jogador.numero)
 							jogador.moedas -= 3
+							if jogador.moedas < 0:
+								jogador.moedas = 0
 							self.modo = "animando"
 							self.dado_tempo = 0
 						case "teleporte":
 							self.animar("teleporte", jogador.numero)
 							self.modo = "animando"
 							self.dado_tempo = 0
+						case "medalha":
+							if jogador.moedas >= 30:
+								self.animar("robux", jogador.numero)
+								self.animar("riqueza", jogador.numero)
+								self.modo = "animando"
+								jogador.moedas -= 30
+								jogador.medalhas += 1
+								if self.dado_tempo >= 1:
+									self.modo = "dado"
+									self.dado_numero = random.randint(1, 6)
+									self.dado_tempo = 0
+							else: 
+								self.animar("pobreza", jogador.numero)
+								self.modo = "animando"
+								if self.dado_tempo >= 1:
+									self.modo = "dado"
+									self.dado_numero = random.randint(1, 6)
+									self.dado_tempo = 0
 				else:
 					self.dado_numero -= 1
 					if self.dado_numero > 0:
