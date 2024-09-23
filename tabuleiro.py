@@ -25,19 +25,19 @@ MAPA = [
 	"                  ",
 	"                  ",
 	"                  ",
-	"    XXXXX   XXXXX ",
+	"    MXXXX   XXXXM ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
-	"    XXXXYXMXYXXXX ",
+	"    XXXXMXXXMXXXX ",
 	"        X   X     ",
-	"        M   M     ",
 	"        X   X     ",
-	"    XXXXYXMXYXXXX ",
+	"        X   X     ",
+	"    XXXXMXXXMXXXX ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
 	"    X   X   X   X ",
-	"    XXXXX   XXXXX ",
+	"    MXXXX   XXXXM ",
 	"                  "
 ]
 
@@ -87,7 +87,7 @@ barras = [
 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra2.png").convert_alpha(), 0.25),
 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra3.png").convert_alpha(), 0.25),
 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra4.png").convert_alpha(), 0.25),
- 	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra5.png").convert_alpha(), 0.25)
+	pygame.transform.smoothscale_by(pygame.image.load("tabuleiro/barra5.png").convert_alpha(), 0.25)
 ]
 
 #cordenadas pra posição
@@ -124,11 +124,11 @@ class Tabuleiro:
 					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, random.choice(TIPOS)))
-					elif MAPA[y][x] == "Y":
-						if casa_inicial == None:
-							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, random.choice(TIPOS)))
+						self.casas.append(Casa(x, y, "medalha"))
+					#elif MAPA[y][x] == "Y":
+					#	if casa_inicial == None:
+					#		casa_inicial = (x, y)
+					#	self.casas.append(Casa(x, y, random.choice(TIPOS)))
 					elif MAPA[y][x] == "M":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -282,7 +282,7 @@ class Tabuleiro:
 						self.animar(None, numero)
 					t = (tempo - tempo_inicio) / 1000
 					t *= t
-					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 0, pos[1] - t * 72)), 0.25)
+					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 8, pos[1] - 32 - t * 72)), None, 0.4)
 				case ("pobreza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
 						jogo.passar_vez()
@@ -499,7 +499,7 @@ class Tabuleiro:
 								self.modo = "animando"
 								jogo.perder_moedas(30)
 								jogador.medalhas += 1
-								if jogador.medalhas >= 5:
+								if jogador.medalhas >= 2: # TODO: desfazer isso
 									return "venceu"
 								elif self.dado_tempo >= 1:
 									self.modo = "dado"
