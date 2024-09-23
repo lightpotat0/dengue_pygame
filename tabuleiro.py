@@ -15,7 +15,7 @@ TIPOS = [
 	"+R$5", "+R$5", "+R$5",
 	"-R$2", "-R$2",
 	"dado", "dado", "dado",
-	"carta",
+	"carta", "carta", "carta",
 	"minigame", "minigame", "minigame",
 	"teleporte"
 ]
