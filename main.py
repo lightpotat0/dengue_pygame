@@ -96,6 +96,10 @@ while True:
 
 	#timeline do game
 	match resultado:
+		case "titulo":
+			jogo = Jogo()
+			modo = titulo.Titulo()
+			tela_minigame = None
 		case "selecion":
 			jogo = Jogo()
 			modo = selecion.Selecion(None, jogo)

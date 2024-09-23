@@ -61,6 +61,7 @@ class FinalTela:
 		self.frame_atual = 0
 		self.tempo_frame = 250
 		self.ultimo_tempo = pygame.time.get_ticks()
+		self.tempo = 0.0
 
 	def desenha_texto(self, tela, texto, fonte, y):
 		text_surface = fonte.render(texto, True, (255, 255, 255))
@@ -85,6 +86,10 @@ class FinalTela:
 		for confete in self.confetes:
 			confete.update()
 			confete.draw(tela)
+
+		self.tempo += delta
+		if self.tempo >= 5:
+			return "titulo"
 
 # screen = pygame.display.set_mode((1066, 600))
 # pygame.display.set_caption('Tela de Vitória')
