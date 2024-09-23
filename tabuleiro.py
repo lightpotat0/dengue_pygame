@@ -60,7 +60,7 @@ minigame = pygame.transform.smoothscale(pygame.image.load("tabuleiro/minigame.pn
 medalha = pygame.transform.smoothscale(pygame.image.load("tabuleiro/medalha.png").convert_alpha(), (256, 256))
 carta = pygame.transform.smoothscale(pygame.image.load("tabuleiro/carta.png").convert_alpha(), (256, 256))
 sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").convert_alpha(), (320, 320))
-interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.png").convert_alpha(), (160, 160))
+interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
 setas = [
 	seta,
