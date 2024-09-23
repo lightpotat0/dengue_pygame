@@ -102,6 +102,7 @@ while True:
 			tela_minigame = None
 		case "selecion":
 			jogo = Jogo()
+			jogo.jogador_atual = 0
 			modo = selecion.Selecion(None, jogo)
 			tela_minigame = None
 		case "venceu":

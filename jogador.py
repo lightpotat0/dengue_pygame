@@ -40,11 +40,17 @@ class Jogo:
 		jogadores[i].numero = i
 	jogadores[0].personagem = 0
 	jogador_atual = 0
+
+	def __init__(self):
+		self.jogador_atual = 0
+
 	def passar_vez(self):
 		self.jogador_atual += 1
 		if self.jogador_atual >= len(self.jogadores):
 			self.jogador_atual = 0
+
 	def receber_moedas(self, moedas):
 		self.jogadores[self.jogador_atual].moedas += moedas
+
 	def perder_moedas(self, moedas):
 		self.jogadores[self.jogador_atual].moedas = max(self.jogadores[self.jogador_atual].moedas - moedas, 0)
