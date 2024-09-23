@@ -14,7 +14,7 @@ class Confete:
 
     def update(self):
         self.y += self.speed_y
-        self.alpha -= 5  
+        self.alpha -= 5
         if self.alpha < 0:
             self.alpha = 0
 
@@ -34,27 +34,27 @@ class Tela:
         self.mensagem1 = "Parabéns ao Jogador!"
 
         self.personagens = [
-            pygame.image.load("assets/characterswalk1.png").convert_alpha(), 
+            pygame.image.load("assets/characterswalk1.png").convert_alpha(),
             pygame.image.load("assets/characterswalk2.png").convert_alpha(),
             pygame.image.load("assets/characterswalk3.png").convert_alpha(),
             pygame.image.load("assets/characterswalk4.png").convert_alpha()
-        ]  
+        ]
 
         self.confetes = []
         for _ in range(100):
-            x = random.randint(0, 800) 
-            y = random.randint(0, 600) 
+            x = random.randint(0, 800)
+            y = random.randint(0, 600)
             self.confetes.append(Confete(x, y))
 
-        self.font = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 50) 
+        self.font = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", 50)
 
         self.frame_atual = 0
-        self.tempo_frame = 250  
+        self.tempo_frame = 250
         self.ultimo_tempo = pygame.time.get_ticks()
 
     def desenha_texto(self, tela, texto, tamanho, y):
-        font = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", tamanho)  
-        text_surface = font.render(texto, True, (255, 255, 255))  
+        font = pygame.font.Font("Biblioteca de Assets/fontes/tt-milks-casual-pie-base.ttf", tamanho)
+        text_surface = font.render(texto, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(tela.get_width() // 2, y))
         tela.blit(text_surface, text_rect.topleft)
 
@@ -93,5 +93,3 @@ while rodando:
     pygame.display.flip()
 
 pygame.quit()
-
-
