@@ -405,9 +405,7 @@ class Tabuleiro:
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.5:
 				casa = self.encontrar_casa(jogador.casa)
-				if casa.tipo == "medalha":
-					self.dado_numero = 0
-				if self.dado_numero == 0:
+				if self.dado_numero == 0 or casa.tipo == "medalha":
 					match casa.tipo:
 						case "minigame":
 							if self.dado_tempo >= 1:
@@ -448,7 +446,7 @@ class Tabuleiro:
 									self.modo = "dado"
 									self.dado_numero = random.randint(1, 6)
 									self.dado_tempo = 0
-							else: 
+							else:
 								self.animar("pobreza", jogador.numero)
 								self.modo = "animando"
 								if self.dado_tempo >= 1:
