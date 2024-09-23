@@ -404,8 +404,8 @@ class Tabuleiro:
 		if self.modo == "andando":
 			self.dado_tempo += delta
 			if self.dado_tempo >= 0.5:
-				casa = self.encontrar_casa(jogador.casa)
-				if self.dado_numero == 0 or casa.tipo == "medalha":
+				if self.dado_numero == 0:
+					casa = self.encontrar_casa(jogador.casa)
 					match casa.tipo:
 						case "minigame":
 							if self.dado_tempo >= 1:
@@ -460,6 +460,9 @@ class Tabuleiro:
 					(casa, direcao) = self.proxima_casa_e_direcao(jogador)
 					jogador.casa = casa
 					jogador.direcao = direcao
+					if self.encontrar_casa(jogador.casa).tipo == "medalha":
+						self.dado_numero = 0
+						self.dado_tempo = 0
 			if self.dado_tempo < 0.5 and self.dado_numero > 0:
 				(casa, direcao) = self.proxima_casa_e_direcao(jogador)
 				self.animar("andando", jogador.numero, (casa_id_para_pos(jogador.casa), direcao))
