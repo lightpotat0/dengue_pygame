@@ -136,15 +136,17 @@ def deslize(img, obj, pos, movimento):
 def smoothscale_draw_text(surface, altura_esperada, text, color, rect, font, escala=1, aa=True, bkg=None, sombra=False):
 	rect = pygame.Rect(rect)
 	if sombra:
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-0.5, -0.5), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-1, 0), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-0.5, 0.5), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0, -1), font, escala)
+		C = 1
+		E = 2
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-C, -C), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-E, 0), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(-C, C), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0, -E), font, escala)
 		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0, 0), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0, 1), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0.5, -0.5), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(1, 0), font, escala)
-		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0.5, 0.5), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(0, E), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(C, -C), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(E, 0), font, escala)
+		smoothscale_draw_text(surface, altura_esperada, text, (0, 0, 0, 63), rect.move(C, C), font, escala)
 	y = rect.top
 	lineSpacing = -2
 

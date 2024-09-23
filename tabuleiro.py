@@ -65,7 +65,8 @@ sombra = pygame.transform.smoothscale(pygame.image.load("tabuleiro/casabg.png").
 interrogacao = pygame.transform.smoothscale(pygame.image.load("tabuleiro/pergunta.webp").convert_alpha(), (160, 160))
 seta = pygame.image.load("tabuleiro/seta.png").convert_alpha()
 moedinha = pygame.image.load("Biblioteca de Assets/Moeda.png").convert_alpha()
-fonte = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 25)
+fonte = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 50)
+fonte_big = pygame.font.Font("Biblioteca de Assets/fontes/PressStart2P-Regular.ttf", 64)
 texto_dire = "Escolha a direção!"
 setas = [
 	seta,
@@ -105,8 +106,8 @@ class Tabuleiro:
 	def __init__(self, casas, jogo):
 		self.modo = "dado"
 		self.font = pygame.font.Font(None, 24)
-		self.font_pergunta = pygame.font.Font(None, 20)
-		self.font_resposta = pygame.font.Font(None, 20)
+		self.font_pergunta = pygame.font.Font(None, 56)
+		self.font_resposta = pygame.font.Font(None, 48)
 		self.font_dado = pygame.font.Font(None, 128)
 		self.dado_numero = random.randint(1, 6)
 		self.dado_tempo = 0
@@ -122,12 +123,11 @@ class Tabuleiro:
 					if MAPA[y][x] == "X":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
-						self.casas.append(Casa(x, y, "carta"))
+						self.casas.append(Casa(x, y, random.choice(TIPOS)))
 					elif MAPA[y][x] == "Y":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
 						self.casas.append(Casa(x, y, random.choice(TIPOS)))
-						self.casas.append(Casa(x, y, "decisao"))
 					elif MAPA[y][x] == "M":
 						if casa_inicial == None:
 							casa_inicial = (x, y)
@@ -274,6 +274,11 @@ class Tabuleiro:
 					pos = (pos[0], pos[1] - 24 * math.sin(x))
 					sprite = jogador.get_andamento("down", True)
 				case ("robux", tempo_inicio, _):
+					if tempo >= tempo_inicio + 1000:
+						jogo.passar_vez()
+						self.modo = "dado"
+						self.dado_numero = random.randint(1, 6)
+						self.animar(None, numero)
 					util.smoothscaleblit(screen, 600, medalhas, self.camerado((pos[0] + 0, pos[1] + 0)))
 				case ("pobreza", tempo_inicio, _):
 					if tempo >= tempo_inicio + 1000:
@@ -300,7 +305,7 @@ class Tabuleiro:
 					util.smoothscaleblit(screen, 600, interrogacao, self.camerado((pos[0] + 0, pos[1] + 0)))
 				case ("decisao", tempo_inicio, _):
 					texto_dec = self.font_dado.render(str(self.texto_dire), True, "black")
-			sprite_tamanho = (72, 72)
+			sprite_tamanho = (72, 78)
 			if jogo.jogador_atual != numero:
 				if self.alphas[numero] == 0:
 					self.alphas[numero] = 0.5
@@ -321,11 +326,11 @@ class Tabuleiro:
 						pos = (pos[0] - 2, pos[1] + 52)
 					case 3:
 						pos = (pos[0] + 58, pos[1] + 52)
-				sprite_tamanho = (24, 24)
+				sprite_tamanho = (24, 26)
 			else:
 				pos = (pos[0] + 6, pos[1] + 6)
 			claridade = util.clamp(255 * self.alphas[numero], 0, 255)
-			pos = (pos[0] - 2, pos[1] - 2)
+			pos = (pos[0] - 2, pos[1] - 8)
 			util.scaleblit(screen, 600 * self.escala_mapa, util.tint_mult(pygame.transform.scale(sprite, sprite_tamanho), (claridade, claridade, claridade, 255)), self.camerado(pos))
 
 		# processar a vez do jogador
@@ -354,12 +359,16 @@ class Tabuleiro:
 			self.cam_pos = (util.lerp(self.cam_pos[0], proxima_cam_pos[0], speed * delta), util.lerp(self.cam_pos[1], proxima_cam_pos[1], speed * delta))
 
 		# mostrar dados dos jogadores
-		texto = fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, selecion.border_colors[jogo.jogador_atual])
-		util.smoothscaleblit(screen, 600, texto, (0, 0), None, 1.3)
+		util.smoothscaleblit(screen, 600, fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, "black"), (4 + 2, 4 + 2), None, 0.5)
+		util.smoothscaleblit(screen, 600, fonte.render(f"Jogador {jogo.jogador_atual +  1}", True, selecion.border_colors[jogo.jogador_atual]), (4, 4), None, 0.5)
+		util.smoothscaleblit(screen, 600, util.tint_mult(jogador.get_icone(), "black"), (2, 47), None, 0.06)
 		util.smoothscaleblit(screen, 600, jogador.get_icone(), (0, 45), None, 0.06)
-		util.smoothscaleblit(screen, 600, moedinha, (105, 50), None, 0.02)
-		util.smoothscaleblit(screen, 600, fonte.render(f"{jogador.moedas}", True, selecion.border_colors[jogo.jogador_atual]), (131, 52), None, 0.8)
-		util.smoothscaleblit(screen, 600, barras[jogador.medalhas], (5, 150), None, 0.06)
+		util.smoothscaleblit(screen, 600, util.tint_mult(moedinha, "black"), (130, 96 + 2), None, 0.04)
+		util.smoothscaleblit(screen, 600, moedinha, (128, 96), None, 0.04)
+		util.smoothscaleblit(screen, 600, fonte_big.render(str(jogador.moedas), True, "black"), (180 + 2, 96 + 8 + 2), None, 0.5)
+		util.smoothscaleblit(screen, 600, fonte_big.render(str(jogador.moedas), True, "white"), (180 + 0, 96 + 8 + 0), None, 0.5)
+		util.smoothscaleblit(screen, 600, util.tint_mult(barras[jogador.medalhas], "black"), (6, 152), None, 0.125)
+		util.smoothscaleblit(screen, 600, barras[jogador.medalhas], (4, 150), None, 0.125)
 
 		movimento = util.movimento(1024, delta)
 		if self.modo == "andando" or self.modo == "dado":
@@ -381,28 +390,44 @@ class Tabuleiro:
 		elif self.modo == "carta":
 			tempo_inicio = self.animacoes[jogador.numero][1]
 			vw = screen.get_width() * 600 / screen.get_height()
-			cartabgw = cartabg.get_width() * 0.25
-			cartabgh = cartabg.get_height() * 0.25
+			CARTA_ESCALA = 0.4
+			cartabgw = cartabg.get_width() * CARTA_ESCALA
+			cartabgh = cartabg.get_height() * CARTA_ESCALA
 			tempo_anim = tempo - tempo_inicio
 			t = util.clamp(tempo_anim / 200, 0, 1)
 			t *= t
 			screen.fill((255 - t * 127, 255 - t * 127, 255 - t * 127), None, pygame.BLEND_MULT)
 			carta_pos = (vw * 2 / 3 - cartabgw / 2, util.lerp(600, 300 - cartabgh * 0.5, t))
-			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
+			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, CARTA_ESCALA)
 			util.smoothscaleblit(screen, 600, cartabg, (carta_pos[0] + 24, carta_pos[1] + 24), None, 0.25)
-			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, 0.25)
+			util.smoothscaleblit(screen, 600, cartabg, carta_pos, None, CARTA_ESCALA)
 			pergunta = perguntas.get_pergunta()
-			pgt_text = self.font_pergunta.render(pergunta[0], True, "white")
-			
-			pgt_rect = pygame.Rect(carta_pos[0] + 32, carta_pos[1] + 72, cartabg.get_width() * 0.25 - 64, 0)
-			util.smoothscale_draw_text(screen, 600, pergunta[0], "white", pgt_rect, self.font_pergunta, 1, sombra=True)
-			pgt_rect.left += 12
-			pgt_rect.y = carta_pos[1] + cartabg.get_height() * 0.125 + 12
-			pgt_rect.height = 36
+			pgt_rect = pygame.Rect(carta_pos[0] + 40, carta_pos[1] + 96, cartabg.get_width() * CARTA_ESCALA - 80, 0)
+			util.smoothscale_draw_text(screen, 600, pergunta[0], "white", pgt_rect, self.font_pergunta, 0.5, sombra=True)
+			pgt_rect.left += 32
+			pgt_rect.width = cartabg.get_width() * CARTA_ESCALA - 112
+			pgt_rect.y = carta_pos[1] + cartabg.get_height() * CARTA_ESCALA * 0.5 + 24
+			pgt_rect.height = 56
+			alt_fundo = pygame.Surface((737 * CARTA_ESCALA, pgt_rect.height))
 			for i in range(4):
-				util.smoothscale_draw_text(screen, 600, ["A)", "B)", "C)", "D)"][i], "white", pgt_rect.move(-16, 0), self.font_resposta, 0.5, sombra=True)
-				util.smoothscale_draw_text(screen, 600, pergunta[i + 1], "white", pgt_rect, self.font_resposta, 0.9, sombra=True)
-				pgt_rect.y += 36
+				resposta = perguntas.get_resposta()
+				if resposta == i or resposta == None or (resposta != None and pergunta[5] == i):
+					alt_fundo_rect = pygame.Rect(carta_pos[0] + 53 * CARTA_ESCALA, pgt_rect.y - 4, 737 * CARTA_ESCALA, pgt_rect.height)
+					alt_fundo = pygame.Surface(alt_fundo_rect.size)
+					if resposta != None and pergunta[5] == i:
+						alt_fundo.fill(0x0fbb1e)
+						util.smoothscaleblit(screen, 600, alt_fundo, alt_fundo_rect.topleft)
+					elif resposta == i:
+						alt_fundo.fill(0xbb0f1e)
+						util.smoothscaleblit(screen, 600, alt_fundo, alt_fundo_rect.topleft)
+					elif alt_fundo_rect.collidepoint(util.mouse_pos_para(screen, 600)):
+						alt_fundo.fill(0x550f1e)
+						util.smoothscaleblit(screen, 600, alt_fundo, alt_fundo_rect.topleft)
+						if pygame.mouse.get_pressed()[0]:
+							perguntas.escolher_resposta(i)
+				util.smoothscale_draw_text(screen, 600, ["A)", "B)", "C)", "D)"][i], "white", pgt_rect.move(-24, 0), self.font_resposta, 0.5, sombra=True)
+				util.smoothscale_draw_text(screen, 600, pergunta[i + 1], "white", pgt_rect, self.font_resposta, 0.5, sombra=True)
+				pgt_rect.y += pgt_rect.height
 		elif self.modo == "camera":
 			# mostrar setas do movimento da camera
 			self.setas_mults = [
@@ -451,14 +476,12 @@ class Tabuleiro:
 							self.animar(None, jogador.numero)
 						case "+R$5":
 							self.animar("riqueza", jogador.numero)
-							jogador.moedas += 5
+							jogo.receber_moedas(3)
 							self.modo = "animando"
 							self.dado_tempo = 0
 						case "-R$2":
 							self.animar("pobreza", jogador.numero)
-							jogador.moedas -= 3
-							if jogador.moedas < 0:
-								jogador.moedas = 0
+							jogo.perder_moedas(3)
 							self.modo = "animando"
 							self.dado_tempo = 0
 						case "teleporte":
@@ -470,7 +493,7 @@ class Tabuleiro:
 								self.animar("robux", jogador.numero)
 								self.animar("riqueza", jogador.numero)
 								self.modo = "animando"
-								jogador.moedas -= 30
+								jogo.perder_moedas(30)
 								jogador.medalhas += 1
 								if self.dado_tempo >= 1:
 									self.modo = "dado"
@@ -520,6 +543,18 @@ class Tabuleiro:
 						self.modo = "camera"
 				else:
 					self.pode_entrar_em_camera = True
+			case "carta":
+				if perguntas.get_resposta() != None:
+					if perguntas.get_tempo_apos_escolha() >= 1000:
+						if perguntas.get_resposta() == perguntas.get_pergunta()[5]:
+							jogo.receber_moedas(10)
+							self.animar("riqueza", jogador.numero)
+							self.modo = "animando"
+						else:
+							self.modo = "dado"
+							self.dado_tempo = 0
+							self.dado_numero = random.randint(1, 6)
+							self.animar(None, jogador.numero)
 			case "camera":
 				virtual_width = screen.get_width() * 600 / screen.get_height()
 				self.cam_movida = (util.clamp(self.cam_movida[0] + movimento[0], 1066 / 2, fundo.get_width() - 1960 * virtual_width / 1066), util.clamp(self.cam_movida[1] + movimento[1], 600 / 2, fundo.get_height() - 1620))

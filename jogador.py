@@ -25,13 +25,13 @@ class Jogador:
 		#animação dos sprites no hover
 		match direcao:
 			case "down":
-				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 0 * 26, 24, 26))
 			case "up":
-				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 1 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 1 * 26, 24, 26))
 			case "right":
-				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 2 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 2 * 26, 24, 26))
 			case "left":
-				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 3 * 26 + 1, 24, 24))
+				out.blit(util.andamentos[1 if parado else pygame.time.get_ticks() // 150 % 4], (0, 0), (self.personagem * 24, 3 * 26, 24, 26))
 		return out
 
 class Jogo:
@@ -46,3 +46,5 @@ class Jogo:
 			self.jogador_atual = 0
 	def receber_moedas(self, moedas):
 		self.jogadores[self.jogador_atual].moedas += moedas
+	def perder_moedas(self, moedas):
+		self.jogadores[self.jogador_atual].moedas = max(self.jogadores[self.jogador_atual].moedas - moedas, 0)

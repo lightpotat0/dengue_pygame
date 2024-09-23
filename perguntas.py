@@ -1,12 +1,28 @@
 import random
+import pygame
 escolhida = 0
 
 def reescolher_pergunta():
-	global escolhida
+	global escolhida, resposta_escolhida
 	escolhida = random.randint(0, len(PERGUNTAS) - 1)
+	resposta_escolhida = None
 
 def get_pergunta():
 	return PERGUNTAS[escolhida]
+
+resposta_escolhida = None
+tempo_escolhido = None
+
+def escolher_resposta(idx):
+	global resposta_escolhida, tempo_escolhido
+	resposta_escolhida = idx
+	tempo_escolhido = pygame.time.get_ticks()
+
+def get_resposta():
+	return resposta_escolhida
+
+def get_tempo_apos_escolha():
+	return pygame.time.get_ticks() - tempo_escolhido
 
 PERGUNTAS = [("O que é a dengue?",
 "Uma infecção bacteriana transmitida pela água contaminada",
