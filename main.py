@@ -8,19 +8,15 @@ screen.set_alpha(None)
 pygame.display.set_caption("Alerta Mosquito")
 clock = pygame.time.Clock()
 if True:
-	loading = pygame.image.load("titulo/loading.jpg")
+	loading = pygame.image.load("assets/images/ui/logo/loading.jpg")
 	screen.blit(pygame.transform.scale(loading, screen.get_size()), (0, 0))
 	pygame.display.update()
 
-import util
-import tabuleiro
-import titulo
-import selecion
-import final_tela
-from pingominigame import PingoMinigame
-from walkminigame import WalkMinigame
-from spacedengue import SpaceMinigame
-from fnaf_minigame import PistolMosquito
+from src import util, tabuleiro, title, selection_screen, final_screen
+from src.minigames.pingominigame import PingoMinigame
+from src.minigames.walkminigame import WalkMinigame
+from src.minigames.spacedengue import SpaceMinigame
+from src.minigames.fnaf_minigame import PistolMosquito
 
 minigames = [PingoMinigame, WalkMinigame, SpaceMinigame, PistolMosquito]
 
@@ -29,10 +25,10 @@ tela_minigame = None
 tempo_inicio_minigame = 0
 delta = 1 / 60
 
-mosquiton = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-export.png").convert_alpha()
-barra = pygame.image.load("fnaf_minigame/sprites/mosquito_door1-exportq.png").convert_alpha()
+mosquiton = pygame.image.load("assets/images/ui/timer/mosquito_door1-export.png").convert_alpha()
+barra = pygame.image.load("assets/images/ui/timer/mosquito_door1-exportq.png").convert_alpha()
 
-from jogador import Jogo
+from src.jogador import Jogo
 jogo = Jogo()
 casas = None
 
