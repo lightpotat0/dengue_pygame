@@ -92,32 +92,35 @@ class PistolMosquito:
     tamanho = (screen_width, screen_height)
 
     def __init__(self):
-        # quantidade de mosquitos
         self.mosquitos = [Mosquito() for _ in range(10)]
         self.start_time = time.time()
         self.timer_duration = 8  # tempo pra atirar
         self.clock = pygame.time.Clock()
         self.veia = Veia('fnaf_minigame/sprites/vea.png')
+        self.pontos = 0  #pontuação inicial
 
     def event(self, event):
-        # clicar
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.atirar(event.pos)
 
     def atirar(self, posicao_click):
-        # clicou no mosquito
         for mosquito in self.mosquitos:
             if mosquito.active and mosquito.mosquito_rect.collidepoint(posicao_click):
-                mosquito.deactivate()  # mata o mosquito
+                mosquito.deactivate()
+                self.pontos += 1  #ganha ponto ao acertar mosquito
 
     def get_tempo_da_perdicao(self, tempo_inicio):
-       return tempo_inicio + self.timer_duration * 1000  # bixo que cresce o nariz
+        return tempo_inicio + self.timer_duration * 1000
 
     def frame(self, screen, delta, jogo):
         elapsed_time = time.time() - self.start_time
         screen.blit(pygame.transform.scale(bg, (screen_width, screen_height)), (0, 0))
 
         self.veia.update()
+
+        # mostra pontuação
+        score_text = font.render(f"Pontos: {self.pontos}", True, (255, 0, 0))
+        screen.blit(score_text, (10, 10))
 
         if elapsed_time < self.timer_duration:
             for mosquito in self.mosquitos:
@@ -132,9 +135,12 @@ class PistolMosquito:
         else:
             for mosquito in self.mosquitos:
                 mosquito.deactivate()
-            text = font.render("Você perdeu", True, (255, 0, 0))  # texto de derrota
-            screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 1))  # Exibe o texto centralizado
-            if elapsed_time >= self.timer_duration + 2:  # Dá um intervalo de 2 segundos antes de finalizar
+            text = font.render("Você perdeu", True, (255, 0, 0))
+            screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 1))
+            if elapsed_time >= self.timer_duration + 2:
                 return "perdeu"
+
+        self.veia.draw(screen)
+
 
         self.veia.draw(screen)
